@@ -1,0 +1,22 @@
+﻿
+create PROCEDURE [dbo].[xsp_realization_upload_file_memo_update]
+(
+	@p_code			   nvarchar(50)
+	,@p_file_name	   nvarchar(250)
+	,@p_file_paths	   nvarchar(250)
+	--
+	,@p_mod_date	   datetime
+	,@p_mod_by		   nvarchar(15)
+	,@p_mod_ip_address nvarchar(15)
+)
+as
+begin
+	update	dbo.realization
+	set		file_memo		= upper(@p_file_name)
+			,file_path_memo		= upper(@p_file_paths)
+			--
+			,mod_date		= @p_mod_date
+			,mod_by			= @p_mod_by
+			,mod_ip_address	= @p_mod_ip_address
+	where	code = @p_code ;
+end ;

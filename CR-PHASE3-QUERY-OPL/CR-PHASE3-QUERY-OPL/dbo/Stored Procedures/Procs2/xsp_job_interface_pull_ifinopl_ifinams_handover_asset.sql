@@ -1,0 +1,205 @@
+﻿/*
+exec xsp_job_interface_pull_ifinopl_ifinams_handover_asset
+*/
+CREATE PROCEDURE dbo.xsp_job_interface_pull_ifinopl_ifinams_handover_asset
+as
+	declare @msg				 nvarchar(max)
+			,@row_to_process	 int
+			,@last_id			 bigint		   = 0
+			,@code_sys_job		 nvarchar(50)
+			,@number_rows		 int		   = 0
+			,@is_active			 nvarchar(1)
+			,@id_interface		 bigint
+			,@asset_no			 nvarchar(50)
+			,@mod_date			 datetime	   = getdate()
+			,@mod_by			 nvarchar(15)  = 'job'
+			,@mod_ip_address	 nvarchar(15)  = '127.0.0.1'
+			,@current_mod_date	 datetime
+			,@from_id			 bigint		   = 0
+			,@code_interface	 nvarchar(50)
+			,@status			 nvarchar(15)
+			,@handover_code		 nvarchar(50)
+			,@handover_bast_date datetime
+			,@handover_remark	 nvarchar(4000)
+			,@handover_status	 nvarchar(15)
+			,@asset_status		 nvarchar(15) ;
+	
+	begin try
+		select	@row_to_process		= row_to_process 
+				,@code_sys_job	    = code
+				,@is_active = is_active
+		from	dbo.sys_job_tasklist
+		where	sp_name = 'xsp_job_interface_pull_ifinopl_ifinams_handover_asset' -- sesuai dengan nama sp ini
+	
+		if(@is_active <> '0')
+		begin
+			--get cashier received request
+			declare curr_handover_asset cursor for
+			select		oiha.id
+						,aiha.reff_no
+						,aiha.status
+						,aiha.handover_code		
+						,aiha.handover_bast_date	
+						,aiha.handover_remark	
+						,aiha.handover_status	
+						,aiha.asset_status		
+			from		ifinams.dbo.ams_interface_handover_asset aiha
+						inner join dbo.opl_interface_handover_asset oiha on (oiha.code = aiha.code)
+			where		aiha.status in ('POST')
+						and oiha.status = 'HOLD'
+			order by	id asc offset 0 rows fetch next @row_to_process rows only ;
+
+			open curr_handover_asset
+			
+			fetch next from curr_handover_asset 
+			into @id_interface 
+				 ,@asset_no
+				 ,@status			
+				 ,@handover_code		
+				 ,@handover_bast_date
+				 ,@handover_remark	
+				 ,@handover_status	
+				 ,@asset_status		
+		
+			while @@fetch_status = 0
+			begin
+				begin try
+					begin transaction
+
+					if (@number_rows = 0)
+					begin
+						set @from_id = @id_interface ;
+					end ;						
+
+					update	dbo.opl_interface_handover_asset
+					set		status				= @handover_status 
+							,handover_code		= @handover_code		
+							,handover_bast_date	= @handover_bast_date	
+							,handover_remark	= @handover_remark	
+							,handover_status	= @handover_status	
+							,asset_status		= @asset_status		
+							--
+							,mod_date			= @mod_date
+							,mod_by				= @mod_by
+							,mod_ip_address		= @mod_ip_address
+					where	id					= @id_interface
+
+					set @number_rows =+ 1 ;
+					set @last_id = @id_interface ;
+
+					commit transaction
+				end try
+				begin catch
+					rollback transaction 
+
+					 --cek poin
+					set @msg = error_message() ;
+					/*insert into dbo.sys_job_tasklist_log*/
+					set @current_mod_date = getdate() ;
+			
+					exec dbo.xsp_sys_job_tasklist_log_insert @p_job_tasklist_code	= @code_sys_job
+															 ,@p_status				= N'Error'
+															 ,@p_start_date			= @mod_date
+															 ,@p_end_date			= @current_mod_date
+															 ,@p_log_description	= @msg
+															 ,@p_run_by				= @mod_by
+															 ,@p_from_id			= @from_id 
+															 ,@p_to_id				= @id_interface
+															 ,@p_number_of_rows		= @number_rows
+															 ,@p_cre_date			= @current_mod_date 
+															 ,@p_cre_by				= @mod_by
+															 ,@p_cre_ip_address		= @mod_ip_address
+															 ,@p_mod_date			= @current_mod_date 
+															 ,@p_mod_by				= @mod_by
+															 ,@p_mod_ip_address		= @mod_ip_address  ;
+			
+					-- clear cursor when error
+					close curr_handover_asset ;
+					deallocate curr_handover_asset ;
+			
+					-- stop looping
+					break ;
+				end catch ;   
+	
+				fetch next from curr_handover_asset 
+				into @id_interface 
+					 ,@asset_no
+					 ,@status			
+					 ,@handover_code		
+					 ,@handover_bast_date
+					 ,@handover_remark	
+					 ,@handover_status	
+					 ,@asset_status	
+
+			end ;
+		
+			begin -- close cursor
+				if cursor_status('global', 'curr_handover_asset') >= -1
+				begin
+					if cursor_status('global', 'curr_handover_asset') > -1
+					begin
+						close curr_handover_asset ;
+					end ;
+
+					deallocate curr_handover_asset ;
+				end ;
+			end ;
+
+			--cek poin
+			if (@last_id > 0)
+			begin
+				update	dbo.sys_job_tasklist
+				set		last_id = @last_id
+				where	code = @code_sys_job ;
+
+				/*insert into dbo.sys_job_tasklist_log*/
+				set @current_mod_date = getdate() ;
+		
+				exec dbo.xsp_sys_job_tasklist_log_insert @p_job_tasklist_code	= @code_sys_job
+														 ,@p_status				= 'Success'
+														 ,@p_start_date			= @mod_date
+														 ,@p_end_date			= @current_mod_date
+														 ,@p_log_description	= ''
+														 ,@p_run_by				= @mod_by
+														 ,@p_from_id			= @from_id
+														 ,@p_to_id				= @last_id
+														 ,@p_number_of_rows		= @number_rows
+														 ,@p_cre_date			= @current_mod_date
+														 ,@p_cre_by				= @mod_by
+														 ,@p_cre_ip_address		= @mod_ip_address
+														 ,@p_mod_date			= @current_mod_date
+														 ,@p_mod_by				= @mod_by
+														 ,@p_mod_ip_address		= @mod_ip_address
+			end ;
+		end
+	end try
+	Begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ; 

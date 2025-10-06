@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[MTN_NEW_INVOICE_DATE] (
+    [INVOICE_NO]       NVARCHAR (50) NULL,
+    [NEW_INVOICE_DATE] DATETIME      NULL,
+    [STATUS]           NVARCHAR (10) NULL,
+    [CRE_DATE]         DATETIME      NULL,
+    [CRE_BY]           NVARCHAR (15) NULL,
+    [CRE_IP_ADDRESS]   NVARCHAR (15) NULL,
+    [MOD_BY]           NVARCHAR (15) NULL,
+    [MOD_DATE]         DATETIME      NULL,
+    [MOD_IP_ADDRESS]   NVARCHAR (15) NULL
+);
+

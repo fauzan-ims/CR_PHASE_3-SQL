@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[RPT_KEUNTUNGAN_KERUGIAN_PENJUALAN_ASET_LIST_DETAIL] (
+    [USER_ID]              NVARCHAR (50)   NULL,
+    [BARCODE]              NVARCHAR (50)   NOT NULL,
+    [NAMA_ASET]            NVARCHAR (50)   NOT NULL,
+    [CATEGORY]             NVARCHAR (50)   NOT NULL,
+    [ITEM_GROUP]           NVARCHAR (50)   NOT NULL,
+    [BIAYA_PEROLEHAN]      NVARCHAR (50)   NOT NULL,
+    [AKUMULASI_PENYUSUTAN] NVARCHAR (50)   NOT NULL,
+    [NILAI_BUKU_NETO]      NVARCHAR (50)   NOT NULL,
+    [HARGA_JUAL]           DECIMAL (18, 2) NOT NULL,
+    [KEUNTUNGAN_KERUGIAN]  NVARCHAR (50)   NOT NULL,
+    [TOTAL]                DECIMAL (18, 2) NOT NULL,
+    [CRE_DATE]             DATETIME        NOT NULL,
+    [CRE_BY]               NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]       NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]             DATETIME        NOT NULL,
+    [MOD_BY]               NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]       NVARCHAR (15)   NOT NULL
+);
+

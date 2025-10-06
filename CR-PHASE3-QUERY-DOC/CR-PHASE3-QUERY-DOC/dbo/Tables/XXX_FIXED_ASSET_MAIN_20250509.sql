@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_FIXED_ASSET_MAIN_20250509] (
+    [ASSET_NO]                 NVARCHAR (50)   NOT NULL,
+    [ASSET_TYPE_CODE]          NVARCHAR (50)   NOT NULL,
+    [ASSET_NAME]               NVARCHAR (250)  NOT NULL,
+    [ASSET_CONDITION]          NVARCHAR (5)    NOT NULL,
+    [MARKET_VALUE]             DECIMAL (18, 2) NOT NULL,
+    [ASSET_VALUE]              DECIMAL (18, 2) NOT NULL,
+    [DOC_ASSET_NO]             NVARCHAR (50)   NULL,
+    [ASSET_YEAR]               NVARCHAR (4)    NOT NULL,
+    [REFF_NO_1]                NVARCHAR (50)   NULL,
+    [REFF_NO_2]                NVARCHAR (50)   NULL,
+    [REFF_NO_3]                NVARCHAR (50)   NULL,
+    [VENDOR_CODE]              NVARCHAR (50)   NULL,
+    [VENDOR_NAME]              NVARCHAR (250)  NULL,
+    [VENDOR_ADDRESS]           NVARCHAR (4000) NULL,
+    [VENDOR_PIC_NAME]          NVARCHAR (250)  NULL,
+    [VENDOR_PIC_AREA_PHONE_NO] NVARCHAR (4)    NULL,
+    [VENDOR_PIC_PHONE_NO]      NVARCHAR (15)   NULL,
+    [CRE_DATE]                 DATETIME        NOT NULL,
+    [CRE_BY]                   NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]           NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                 DATETIME        NOT NULL,
+    [MOD_BY]                   NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]           NVARCHAR (15)   NOT NULL
+);
+

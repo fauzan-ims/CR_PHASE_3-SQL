@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[AREA_BLACKLIST_HISTORY] (
+    [ID]                  BIGINT          IDENTITY (1, 1) NOT NULL,
+    [AREA_BLACKLIST_CODE] NVARCHAR (50)   NOT NULL,
+    [SOURCE]              NVARCHAR (10)   NOT NULL,
+    [HISTORY_DATE]        DATETIME        NOT NULL,
+    [HISTORY_REMARKS]     NVARCHAR (4000) NOT NULL,
+    [CRE_DATE]            DATETIME        NOT NULL,
+    [CRE_BY]              NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]            DATETIME        NOT NULL,
+    [MOD_BY]              NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    CONSTRAINT [PK_AREA_BLACKLIST_HISTORY] PRIMARY KEY CLUSTERED ([ID] ASC),
+    CONSTRAINT [FK_AREA_BLACKLIST_HISTORY_AREA_BLACKLIST] FOREIGN KEY ([AREA_BLACKLIST_CODE]) REFERENCES [dbo].[AREA_BLACKLIST] ([CODE]) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MANUAL, AUTOMATIC', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AREA_BLACKLIST_HISTORY', @level2type = N'COLUMN', @level2name = N'SOURCE';
+

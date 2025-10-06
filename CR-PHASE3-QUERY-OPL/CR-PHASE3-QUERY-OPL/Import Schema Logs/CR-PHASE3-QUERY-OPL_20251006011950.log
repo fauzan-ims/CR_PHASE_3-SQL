@@ -1,0 +1,88 @@
+06/10/2025 08:19:50	This log contains information about the import schema operation into project 'CR-PHASE3-QUERY-OPL' on computer 'PC-FAUZAN' by user 'IMS-FAUZAN'.
+06/10/2025 08:19:51	Import of database schema has started.
+06/10/2025 08:20:12	Gathering database credentials
+06/10/2025 08:20:12	Gathering database options
+06/10/2025 08:20:12	Gathering generic database scoped configuration option
+06/10/2025 08:20:12	Gathering users
+06/10/2025 08:20:13	Gathering roles
+06/10/2025 08:20:13	Gathering application roles
+06/10/2025 08:20:13	Gathering role memberships
+06/10/2025 08:20:13	Gathering filegroups
+06/10/2025 08:20:13	Gathering full-text catalogs
+06/10/2025 08:20:13	Gathering assemblies
+06/10/2025 08:20:13	Gathering certificates
+06/10/2025 08:20:13	Gathering asymmetric keys
+06/10/2025 08:20:13	Gathering symmetric keys
+06/10/2025 08:20:13	Gathering encrypted symmetric keys
+06/10/2025 08:20:13	Gathering schemas
+06/10/2025 08:20:13	Gathering XML schema collections
+06/10/2025 08:20:13	Gathering user-defined data types
+06/10/2025 08:20:13	Gathering user-defined types
+06/10/2025 08:20:13	Gathering table types
+06/10/2025 08:20:13	Gathering unique keys for table types
+06/10/2025 08:20:13	Gathering primary keys for table types
+06/10/2025 08:20:13	Gathering indexes for table types
+06/10/2025 08:20:13	Gathering check constraints for table types
+06/10/2025 08:20:13	Gathering default constraints for table types
+06/10/2025 08:20:13	Gathering partition functions
+06/10/2025 08:20:13	Gathering partition schemes
+06/10/2025 08:20:13	Gathering functions
+06/10/2025 08:20:14	Gathering encrypted functions
+06/10/2025 08:20:14	Gathering aggregates
+06/10/2025 08:20:14	Gathering procedures
+06/10/2025 08:20:23	Gathering encrypted procedures
+06/10/2025 08:20:23	Gathering tables
+06/10/2025 08:20:36	Gathering primary keys
+06/10/2025 08:20:36	Gathering unique constraints
+06/10/2025 08:20:36	Gathering foreign keys
+06/10/2025 08:20:36	Gathering default constraints
+06/10/2025 08:20:36	Gathering check constraints
+06/10/2025 08:20:36	Gathering views
+06/10/2025 08:20:36	Gathering encrypted views
+06/10/2025 08:20:36	Gathering indexes
+06/10/2025 08:20:36	Gathering statistics
+06/10/2025 08:20:36	Gathering full-text index stoplists
+06/10/2025 08:20:36	Gathering search property lists
+06/10/2025 08:20:36	Gathering search properties
+06/10/2025 08:20:36	Gathering full-text indexes
+06/10/2025 08:20:36	Gathering column store indexes
+06/10/2025 08:20:36	Gathering spatial indexes
+06/10/2025 08:20:36	Gathering XML indexes
+06/10/2025 08:20:36	Gathering Selective XML indexes
+06/10/2025 08:20:36	Gathering encrypted triggers
+06/10/2025 08:20:36	Gathering triggers
+06/10/2025 08:20:37	Gathering encrypted and clr ddl triggers
+06/10/2025 08:20:37	Gathering ddl triggers
+06/10/2025 08:20:37	Creating edge constraints
+06/10/2025 08:20:37	Gathering synonyms
+06/10/2025 08:20:37	Gathering defaults
+06/10/2025 08:20:37	Gathering data constraint uddt bindings
+06/10/2025 08:20:37	Gathering rules
+06/10/2025 08:20:37	Gathering data constraint uddt bindings
+06/10/2025 08:20:37	Gathering message types
+06/10/2025 08:20:37	Gathering queues
+06/10/2025 08:20:37	Gathering contracts
+06/10/2025 08:20:38	Gathering services
+06/10/2025 08:20:38	Gathering event notifications
+06/10/2025 08:20:38	Gathering remote service bindings
+06/10/2025 08:20:38	Gathering broker priorities
+06/10/2025 08:20:38	Gathering signatures
+06/10/2025 08:20:38	Gathering compression options
+06/10/2025 08:20:38	Gathering sequence types
+06/10/2025 08:20:38	Gathering security policies
+06/10/2025 08:20:38	Gather column encryption keys
+06/10/2025 08:20:38	Gathering column master keys
+06/10/2025 08:20:38	Gathering external data sources
+06/10/2025 08:20:38	Gathering external file formats
+06/10/2025 08:20:38	Gathering external tables
+06/10/2025 08:20:38	Gathering database permissions
+06/10/2025 08:20:38	Gathering extended properties
+06/10/2025 08:20:45	Gathering assemblies
+06/10/2025 08:20:45	Gathering credentials
+06/10/2025 08:20:45	Gathering logins
+06/10/2025 08:20:46	Gathering server audits
+06/10/2025 08:20:55	Scanning project for duplicate elements
+06/10/2025 08:21:02	Finished duplicate element processing
+06/10/2025 08:21:21	Finished importing database.
+06/10/2025 08:21:21	A summary of the import was saved to the following location: D:\fauzan\dipo\cr-phase-3\CR-PHASE3-QUERY\CR-PHASE3-QUERY-OPL\CR-PHASE3-QUERY-OPL\Import Schema Logs\CR-PHASE3-QUERY-OPL_20251006011950.log
+06/10/2025 08:21:21	Click Finish to continue...

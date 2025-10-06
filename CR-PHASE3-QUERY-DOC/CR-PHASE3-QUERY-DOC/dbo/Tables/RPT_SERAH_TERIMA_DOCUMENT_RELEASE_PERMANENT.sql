@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[RPT_SERAH_TERIMA_DOCUMENT_RELEASE_PERMANENT] (
+    [USER_ID]                      NVARCHAR (50)  NOT NULL,
+    [MUTATION_NO]                  NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]               NVARCHAR (250) NULL,
+    [REPORT_TITLE]                 NVARCHAR (250) NULL,
+    [REPORT_IMAGE]                 NVARCHAR (250) NULL,
+    [TANGGAL_PERJANJIAN]           DATETIME       NULL,
+    [VALUE_DATE]                   DATETIME       NULL,
+    [LESSE_OR_CONSUMER]            NVARCHAR (250) NULL,
+    [PERJANJIAN_LESSE_OR_CONSUMER] NVARCHAR (50)  NULL,
+    [JUMLAH]                       INT            NULL,
+    [DESCRIPTION]                  NVARCHAR (250) NULL,
+    [DOKUMEN_OR_SURAT]             NVARCHAR (50)  NULL,
+    [ALASAN_DOKUMEN_OR_SURAT]      NVARCHAR (50)  NULL,
+    [REKOMENDASI]                  NVARCHAR (50)  NULL,
+    [KOTA]                         NVARCHAR (50)  NULL,
+    [TANGGAL]                      DATETIME       NULL,
+    [CRE_DATE]                     DATETIME       NOT NULL,
+    [CRE_BY]                       NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]               NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]                     DATETIME       NOT NULL,
+    [MOD_BY]                       NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]               NVARCHAR (15)  NOT NULL
+);
+

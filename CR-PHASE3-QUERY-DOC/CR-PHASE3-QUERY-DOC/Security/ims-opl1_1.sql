@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [ims-opl1]
+    WITH PASSWORD = N'Rs;wamyibeahrcn3_juhSmzdmsFT7_&#$!~<ml;yrM|Fl!4|', SID = 0x01B93AF3584B04428C1E4F29BD749621, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

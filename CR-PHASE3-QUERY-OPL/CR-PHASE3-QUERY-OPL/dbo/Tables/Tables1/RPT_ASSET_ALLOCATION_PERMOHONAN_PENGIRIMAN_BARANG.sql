@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[RPT_ASSET_ALLOCATION_PERMOHONAN_PENGIRIMAN_BARANG] (
+    [USER_ID]               NVARCHAR (50)  NOT NULL,
+    [APPLICATION_NO]        NVARCHAR (50)  NOT NULL,
+    [COUNT_ASSET]           INT            NOT NULL,
+    [TERBILANG_COUNT_ASSET] NVARCHAR (250) NOT NULL,
+    [CLIENT_NAME]           NVARCHAR (50)  NOT NULL,
+    [FA_CODE]               NVARCHAR (50)  NOT NULL,
+    [FA_NAME]               NVARCHAR (50)  NOT NULL,
+    [FROM_DATE]             DATETIME       NULL,
+    [TO_DATE]               DATETIME       NULL,
+    [COLOR]                 NVARCHAR (50)  NOT NULL,
+    [ENGINE_NO]             NVARCHAR (50)  NOT NULL,
+    [CHASIS_NO]             NVARCHAR (50)  NOT NULL,
+    [PICKUP_DATE]           DATETIME       NOT NULL,
+    [REPORT_IMAGE]          NVARCHAR (50)  NOT NULL,
+    [REPORT_TITLE]          NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]        NVARCHAR (50)  NOT NULL,
+    [CRE_DATE]              DATETIME       NOT NULL,
+    [CRE_BY]                NVARCHAR (50)  NOT NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (50)  NOT NULL,
+    [MOD_DATE]              DATETIME       NOT NULL,
+    [MOD_BY]                NVARCHAR (50)  NOT NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (50)  NOT NULL
+);
+

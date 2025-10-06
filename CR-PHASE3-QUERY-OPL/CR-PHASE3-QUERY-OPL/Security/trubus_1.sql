@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [trubus]
+    WITH PASSWORD = N';csado}t9gpMhx&dsfpK8LdhmsFT7_&#$!~<jf|xxbjrKonG', SID = 0x6C35BAB24A36AF41ABE85FC9CA1F5870, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

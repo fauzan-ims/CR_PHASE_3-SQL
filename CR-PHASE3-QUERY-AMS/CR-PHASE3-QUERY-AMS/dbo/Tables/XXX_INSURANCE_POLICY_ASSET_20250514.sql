@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_INSURANCE_POLICY_ASSET_20250514] (
+    [CODE]                     NVARCHAR (50)   NOT NULL,
+    [POLICY_CODE]              NVARCHAR (50)   NOT NULL,
+    [FA_CODE]                  NVARCHAR (50)   NOT NULL,
+    [SUM_INSURED_AMOUNT]       DECIMAL (18, 2) NOT NULL,
+    [DEPRECIATION_CODE]        NVARCHAR (50)   NULL,
+    [COLLATERAL_TYPE]          NVARCHAR (10)   NULL,
+    [COLLATERAL_CATEGORY_CODE] NVARCHAR (50)   NULL,
+    [OCCUPATION_CODE]          NVARCHAR (50)   NULL,
+    [REGION_CODE]              NVARCHAR (50)   NULL,
+    [COLLATERAL_YEAR]          NVARCHAR (4)    NULL,
+    [IS_AUTHORIZED_WORKSHOP]   NVARCHAR (1)    NOT NULL,
+    [IS_COMMERCIAL]            NVARCHAR (1)    NOT NULL,
+    [STATUS_ASSET]             NVARCHAR (10)   NULL,
+    [INSERT_TYPE]              NVARCHAR (20)   NULL,
+    [SPPA_CODE]                NVARCHAR (50)   NULL,
+    [INVOICE_CODE]             NVARCHAR (50)   NULL,
+    [ACCESSORIES]              NVARCHAR (4000) NULL,
+    [CRE_DATE]                 DATETIME        NOT NULL,
+    [CRE_BY]                   NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]           NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                 DATETIME        NOT NULL,
+    [MOD_BY]                   NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]           NVARCHAR (15)   NOT NULL
+);
+

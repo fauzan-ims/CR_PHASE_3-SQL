@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[RPT_PURCHASE_ORDER_KAROSERI_DETAIL] (
+    [USER_ID]        NVARCHAR (50)   NOT NULL,
+    [DESKIRPSI_ITEM] NVARCHAR (4000) NULL,
+    [JUMLAH]         INT             NULL,
+    [HARGA]          DECIMAL (18, 2) NULL,
+    [TOTAL]          DECIMAL (18, 2) NULL,
+    [TERBILANG]      NVARCHAR (4000) NULL
+);
+

@@ -1,0 +1,8 @@
+# Visual Studio Temporary Files
+.vs/
+*.user
+*.suo
+# Visual Studio Project Cache
+*.dbmdl
+# File sementara lainnya yang menyebabkan error
+*.jfm

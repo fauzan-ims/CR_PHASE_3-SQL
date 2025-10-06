@@ -1,0 +1,617 @@
+﻿CREATE PROCEDURE [dbo].[xsp_deposit_allocation_reversal]
+(
+	@p_code					nvarchar(50)
+	--,@p_approval_reff		nvarchar(250)
+	--,@p_approval_remark	nvarchar(4000)
+	--
+	,@p_cre_date			datetime
+	,@p_cre_by				nvarchar(15)
+	,@p_cre_ip_address		nvarchar(15)
+	,@p_mod_date			datetime
+	,@p_mod_by				nvarchar(15)
+	,@p_mod_ip_address		nvarchar(15)
+)
+as
+begin
+	declare @msg								  nvarchar(max)
+			,@gl_link_transaction_code			  nvarchar(50)
+			,@received_request_code				  nvarchar(50)
+			,@transaction_code					  nvarchar(50)
+			,@deposit_code						  nvarchar(50)
+			,@deposit_gl_link_code				  nvarchar(50)
+			,@gl_link_code						  nvarchar(50)
+			,@allocation_currency_code			  nvarchar(3)
+			,@currency_code						  nvarchar(3)
+			,@orig_currency_code				  nvarchar(3)
+			,@agreement_no						  nvarchar(50)
+			,@branch_code						  nvarchar(50)
+			,@branch_name						  nvarchar(250)
+			,@agreement_branch_code				  nvarchar(50)
+			,@agreement_branch_name				  nvarchar(250)
+			,@cr_branch_code					  nvarchar(50)
+			,@cr_branch_name					  nvarchar(250)
+			,@reff_source_name					  nvarchar(250)
+			,@division_code						  nvarchar(50)
+			,@division_name						  nvarchar(250)
+			,@department_code					  nvarchar(50)
+			,@department_name					  nvarchar(250)
+			,@allocation_exch_rate				  decimal(18, 6)
+			,@allocation_base_amount			  decimal(18, 2)
+			,@allocation_orig_amount			  decimal(18, 2)
+			,@allocation_trx_date				  datetime
+			,@allocation_value_date				  datetime
+			,@remarks							  nvarchar(4000)
+			,@allocationt_remarks				  nvarchar(4000)
+			,@exch_rate							  decimal(18, 6)
+			,@orig_amount						  decimal(18, 2)
+			,@orig_amount_db					  decimal(18, 2)
+			,@orig_amount_cr					  decimal(18, 2)
+			,@base_amount						  decimal(18, 2)
+			,@base_amount_db					  decimal(18, 2)
+			,@base_amount_cr					  decimal(18, 2)
+			,@transaction_code_temp				  nvarchar(50)
+			,@is_paid							  nvarchar(1)
+			,@index								  bigint
+			,@detail_id							  bigint
+			,@installment_no					  int
+			,@sequence							  int			= 0
+			,@parsial							  int			= 0
+			,@first								  int			= 1
+			,@reversal_date						  datetime
+			,@charges_amount					  decimal(18, 2)
+			,@deposit_type						  nvarchar(20)
+			,@cashier_received_request_invoice_no nvarchar(50)
+			,@detail_agreement_no				  nvarchar(50) ;
+
+	begin try
+
+		if exists (select 1 from dbo.deposit_allocation where code = @p_code and allocation_status <> 'ON REVERSE')
+		begin
+			set @msg = dbo.xfn_get_msg_err_data_already_proceed();
+			raiserror(@msg ,16,-1)
+		end
+		else
+		begin
+	
+			select	@reversal_date		= reversal_date
+			from	dbo.reversal_main
+			where	source_reff_code = @p_code
+
+			declare cur_deposit_allocation_reversal cursor fast_forward read_only for
+			
+			select	orig_amount
+					,dad.base_amount
+					,dad.exch_rate
+					,case dad.transaction_code
+						when 'INST' then 
+							case isnull(am.agreement_sub_status,'') 
+							when 'WO ACC'  then (select value from dbo.sys_global_param where code = 'INCOME')
+							else mt.gl_link_code
+						end
+						else mt.gl_link_code
+					end
+					,dad.orig_currency_code
+					,dad.received_request_code
+					,dad.transaction_code
+					,da.branch_code
+					,da.branch_name
+					,da.allocation_trx_date
+					,da.allocation_value_date
+					,da.agreement_no
+					,dad.remarks
+					,da.allocationt_remarks
+					,dad.id
+					,da.deposit_type
+					,row_number() over(order by dad.id asc) as row#
+			from	dbo.deposit_allocation_detail dad
+					inner join dbo.deposit_allocation da on (da.code = dad.deposit_allocation_code)
+					left join dbo.master_transaction mt on (mt.code = dad.transaction_code)
+					left join dbo.agreement_main am on (am.agreement_no = da.agreement_no)
+			where	dad.deposit_allocation_code = @p_code
+					and is_paid = '1'
+
+			open cur_deposit_allocation_reversal
+		
+			fetch next from cur_deposit_allocation_reversal 
+			into	@orig_amount
+					,@base_amount
+					,@exch_rate
+					,@gl_link_code
+					,@currency_code
+					,@received_request_code
+					,@transaction_code
+					,@branch_code
+					,@branch_name
+					,@allocation_trx_date
+					,@allocation_value_date
+					,@agreement_no
+					,@remarks
+					,@allocationt_remarks
+					,@detail_id
+					,@deposit_type
+					,@index
+
+			while @@fetch_status = 0
+			begin
+				
+				 if (@index = 1)
+				begin
+				    select	@deposit_gl_link_code		= deposit_gl_link_code
+							,@allocation_orig_amount	= allocation_orig_amount 
+							,@allocation_exch_rate		= allocation_exch_rate 
+							,@allocation_base_amount	= allocation_base_amount
+							,@allocation_currency_code	= allocation_currency_code 
+							,@deposit_code				= deposit_code 
+					from	dbo.deposit_allocation
+					where	code = @p_code
+
+					set @reff_source_name = 'Reversal Deposit Allocation, Deposit No : '+ @deposit_code + ' ' + @allocationt_remarks
+			
+					exec dbo.xsp_fin_interface_journal_gl_link_transaction_insert @p_id							= 0
+																				  ,@p_code						= @gl_link_transaction_code output
+																				  ,@p_branch_code				= @branch_code 
+																				  ,@p_branch_name				= @branch_name 
+																				  ,@p_transaction_status		= N'NEW' 
+																				  ,@p_transaction_date			= @reversal_date --@allocation_trx_date
+																				  ,@p_transaction_value_date	= @allocation_value_date--@allocation_trx_date
+																				  ,@p_transaction_code			= @p_code
+																				  ,@p_transaction_name			= N'Reversal Deposit Allocation'
+																				  ,@p_reff_module_code			= N'IFINFIN'
+																				  ,@p_reff_source_no			= @p_code
+																				  ,@p_reff_source_name			= @reff_source_name
+																				  ,@p_is_journal_reversal		= '1'
+																				  ,@p_reversal_reff_no			= @p_code
+																				  ,@p_cre_date					= @p_cre_date		
+																				  ,@p_cre_by					= @p_cre_by			
+																				  ,@p_cre_ip_address			= @p_cre_ip_address
+																				  ,@p_mod_date					= @p_mod_date		
+																				  ,@p_mod_by					= @p_mod_by			
+																				  ,@p_mod_ip_address			= @p_mod_ip_address
+
+					exec dbo.xsp_fin_interface_journal_gl_link_transaction_detail_insert @p_id							= 0
+																						 ,@p_gl_link_transaction_code	= @gl_link_transaction_code
+																						 ,@p_branch_code				= @branch_code
+																						 ,@p_branch_name				= @branch_name
+																						 ,@p_gl_link_code				= @deposit_gl_link_code
+																						 ,@p_contra_gl_link_code		= null
+																						 ,@p_agreement_no				= @agreement_no
+																						 ,@p_orig_currency_code			= @allocation_currency_code
+																						 ,@p_orig_amount_db				= 0
+																						 ,@p_orig_amount_cr				= @allocation_orig_amount
+																						 ,@p_exch_rate					= @allocation_exch_rate
+																						 ,@p_base_amount_db				= 0
+																						 ,@p_base_amount_cr				= @allocation_base_amount
+																						 ,@p_remarks					= @allocationt_remarks
+																						 ,@p_division_code				= null
+																						 ,@p_division_name				= null
+																						 ,@p_department_code			= null
+																						 ,@p_department_name			= null
+																						 ,@p_cre_date					= @p_cre_date		
+																						 ,@p_cre_by						= @p_cre_by			
+																						 ,@p_cre_ip_address				= @p_cre_ip_address
+																						 ,@p_mod_date					= @p_mod_date		
+																						 ,@p_mod_by						= @p_mod_by			
+																						 ,@p_mod_ip_address				= @p_mod_ip_address
+				end
+
+				if (isnull(@transaction_code,'') <> '')
+				begin
+						select	@agreement_branch_code = branch_code
+								,@agreement_branch_name = branch_name
+						from	dbo.agreement_main
+						where	agreement_no = @agreement_no ;
+						
+						if (@orig_amount < 0)
+						begin
+							set @orig_amount_db = 0; 
+							set @orig_amount_cr = abs(@orig_amount);
+						end
+						else
+						begin
+							set @orig_amount_db = abs(@orig_amount);
+							set @orig_amount_cr = 0;
+						end
+
+						if (@base_amount < 0)
+						begin
+							set @base_amount_db = 0;
+							set @base_amount_cr = abs(@base_amount);
+						end
+						else
+						begin
+							set @base_amount_db = abs(@base_amount);
+							set @base_amount_cr = 0;
+						end
+
+						exec dbo.xsp_fin_interface_journal_gl_link_transaction_detail_insert @p_id							= 0
+																							 ,@p_gl_link_transaction_code	= @gl_link_transaction_code
+																							 ,@p_branch_code				= @agreement_branch_code
+																							 ,@p_branch_name				= @agreement_branch_name
+																							 ,@p_gl_link_code				= @gl_link_code
+																							 ,@p_contra_gl_link_code		= null
+																							 ,@p_agreement_no				= @agreement_no
+																							 ,@p_orig_currency_code			= @currency_code
+																							 ,@p_orig_amount_db				= @orig_amount_db
+																							 ,@p_orig_amount_cr				= @orig_amount_cr
+																							 ,@p_exch_rate					= @exch_rate
+																							 ,@p_base_amount_db				= @base_amount_db
+																							 ,@p_base_amount_cr				= @base_amount_cr
+																							 ,@p_remarks					= @remarks
+																							 ,@p_division_code				= null
+																							 ,@p_division_name				= null
+																							 ,@p_department_code			= null
+																							 ,@p_department_name			= null
+																							 ,@p_cre_date					= @p_cre_date		
+																							 ,@p_cre_by						= @p_cre_by			
+																							 ,@p_cre_ip_address				= @p_cre_ip_address
+																							 ,@p_mod_date					= @p_mod_date		
+																							 ,@p_mod_by						= @p_mod_by			
+																							 ,@p_mod_ip_address				= @p_mod_ip_address
+
+					if (@transaction_code  = 'INST') -- untuk angsuran
+					begin
+						exec dbo.xsp_agreement_amortization_payment_sync @p_id					= @detail_id
+																		 ,@p_Type				= N'REVERSAL DEPOSIT' -- nvarchar(10)
+																		 ,@p_cre_date			= @p_cre_date		
+																		 ,@p_cre_by				= @p_cre_by			
+																		 ,@p_cre_ip_address		= @p_cre_ip_address
+																		 ,@p_mod_date			= @p_mod_date		
+																		 ,@p_mod_by				= @p_mod_by	
+																		 ,@p_mod_ip_address		= @p_mod_ip_address			
+					end
+					else if(@transaction_code = 'OVDP' or @transaction_code = 'LRAP' or @transaction_code = 'BYTR')-- untuk obligasi
+					begin
+						exec dbo.xsp_agreement_obligation_payment_sync @p_id					= @detail_id
+																	   ,@p_Type					= N'REVERSAL DEPOSIT' -- nvarchar(10)
+																	   ,@p_cre_date				= @p_cre_date		
+																	   ,@p_cre_by				= @p_cre_by			
+																	   ,@p_cre_ip_address		= @p_cre_ip_address
+																	   ,@p_mod_date				= @p_mod_date		
+																	   ,@p_mod_by				= @p_mod_by			
+																	   ,@p_mod_ip_address		= @p_mod_ip_address					
+					end
+					else if(@transaction_code in ('SVCH','PUGR','FTXP','GO_LIVE','INVA','CRNC','FCCA')) 
+					begin 
+						set @remarks = @remarks + @allocationt_remarks
+						set @charges_amount = @orig_amount * -1
+						exec dbo.xsp_fin_interface_agreement_fund_in_used_history_insert @p_agreement_no				= @agreement_no
+																						 ,@p_charges_date				= @allocation_trx_date
+																						 ,@p_charges_type				= @transaction_code
+																						 ,@p_transaction_no				= @p_code
+																						 ,@p_transaction_name			= 'REVERSAL CASHIER'
+																						 ,@p_charges_amount				= @charges_amount 
+																						 ,@p_source_reff_module			= 'IFINFIN'
+																						 ,@p_source_reff_remarks		= @remarks
+																						 ,@p_cre_date					= @p_cre_date		
+																						 ,@p_cre_by						= @p_cre_by			
+																						 ,@p_cre_ip_address				= @p_cre_ip_address
+																						 ,@p_mod_date					= @p_mod_date		
+																						 ,@p_mod_by						= @p_mod_by			
+																						 ,@p_mod_ip_address				= @p_mod_ip_address
+					end
+
+				end
+				else
+				begin
+					
+					declare cur_cashier_received_request_detail cursor fast_forward read_only for
+					
+					select	dad.received_request_code
+							,crrd.remarks
+							,dad.exch_rate
+							,crrd.orig_amount
+							,dad.exch_rate * crrd.orig_amount
+							,crrd.division_code
+							,crrd.division_name
+							,crrd.department_code
+							,crrd.department_name
+							,crrd.orig_currency_code
+							,crrd.gl_link_code
+							,crrd.branch_code
+							,crrd.branch_name
+							,crr.invoice_no
+							,crrd.agreement_no
+					from	dbo.deposit_allocation_detail dad
+							inner join dbo.cashier_received_request crr on (crr.code = dad.received_request_code)
+							inner join dbo.cashier_received_request_detail crrd on (crrd.cashier_received_request_code = crr.code)
+					where	dad.deposit_allocation_code = @p_code
+							and dad.received_request_code = @received_request_code 
+
+					open cur_cashier_received_request_detail
+		
+					fetch next from cur_cashier_received_request_detail 
+					into	@received_request_code
+							,@remarks
+							,@exch_rate
+							,@orig_amount
+							,@base_amount
+							,@division_code
+							,@division_name
+							,@department_code
+							,@department_name
+							,@orig_currency_code
+							,@gl_link_code
+							,@cr_branch_code
+							,@cr_branch_name
+							,@cashier_received_request_invoice_no
+							,@detail_agreement_no
+
+					while @@fetch_status = 0
+					begin
+							if exists
+							(
+								select	1
+								from	ifinopl.dbo.invoice
+								where	invoice_no	   = @cashier_received_request_invoice_no
+										and is_journal = '0'
+							)
+							begin
+								if (@gl_link_code = 'OLAR')
+								begin
+									set @gl_link_code = N'OLARND' ;
+								end ;
+							end ;
+							else
+							begin
+								if (@gl_link_code = 'OLARND')
+								begin
+									set @gl_link_code = N'OLAR' ;
+								end ;
+							end ;
+						
+							if (@orig_amount < 0)
+							begin
+								set @orig_amount_db =  abs(@orig_amount);
+								set @orig_amount_cr = 0;
+							end
+							else
+							begin
+								set @orig_amount_db = 0;
+								set @orig_amount_cr = abs(@orig_amount);
+							end
+
+							if (@base_amount < 0)
+							begin
+								set @base_amount_db = abs(@base_amount);
+								set @base_amount_cr = 0;
+							end
+							else
+							begin
+								set @base_amount_db = 0;
+								set @base_amount_cr = abs(@base_amount);
+							end
+
+							exec dbo.xsp_fin_interface_journal_gl_link_transaction_detail_insert @p_id							= 0
+																								 ,@p_gl_link_transaction_code	= @gl_link_transaction_code
+																								 ,@p_branch_code				= @cr_branch_code
+																								 ,@p_branch_name				= @cr_branch_name
+																								 ,@p_gl_link_code				= @gl_link_code
+																								 ,@p_contra_gl_link_code		= null
+																								 ,@p_agreement_no				= @detail_agreement_no
+																								 ,@p_orig_currency_code			= @orig_currency_code
+																								 ,@p_orig_amount_db				= @orig_amount_db
+																								 ,@p_orig_amount_cr				= @orig_amount_cr
+																								 ,@p_exch_rate					= @exch_rate
+																								 ,@p_base_amount_db				= @base_amount_db
+																								 ,@p_base_amount_cr				= @base_amount_cr
+																								 ,@p_remarks					= @remarks
+																								 ,@p_division_code				= @division_code
+																								 ,@p_division_name				= @division_name
+																								 ,@p_department_code			= @department_code
+																								 ,@p_department_name			= @department_name																			 
+																								 ,@p_add_reff_01				= @cashier_received_request_invoice_no
+																								 ,@p_add_reff_02				= ''
+																								 ,@p_add_reff_03				= ''
+																								 ,@p_cre_date					= @p_cre_date		
+																								 ,@p_cre_by						= @p_cre_by			
+																								 ,@p_cre_ip_address				= @p_cre_ip_address
+																								 ,@p_mod_date					= @p_mod_date		
+																								 ,@p_mod_by						= @p_mod_by			
+																								 ,@p_mod_ip_address				= @p_mod_ip_address
+
+					fetch next from cur_cashier_received_request_detail 
+						into	@received_request_code
+								,@remarks
+								,@exch_rate
+								,@orig_amount
+								,@base_amount
+								,@division_code
+								,@division_name
+								,@department_code
+								,@department_name
+								,@orig_currency_code
+								,@gl_link_code
+								,@cr_branch_code
+								,@cr_branch_name
+								,@cashier_received_request_invoice_no
+								,@detail_agreement_no
+					
+					end
+					close cur_cashier_received_request_detail
+					deallocate cur_cashier_received_request_detail
+
+				    update cashier_received_request
+					set		request_status		= 'HOLD'
+							,process_date		= NULL
+							,process_reff_code	= NULL
+							,process_reff_name	= NULL
+							,voucher_no			= NULL
+							--
+							,mod_date			= @p_mod_date
+							,mod_by				= @p_mod_by
+							,mod_ip_address		= @p_mod_ip_address
+					where	code				= @received_request_code
+
+					update dbo.fin_interface_cashier_received_request
+					set		request_status			= 'REVERSAL'
+							,mod_date				= @p_mod_date
+							,mod_by					= @p_mod_by
+							,mod_ip_address			= @p_mod_ip_address
+					where	code					= @received_request_code
+
+				end
+
+				fetch next from cur_deposit_allocation_reversal 
+				into	@orig_amount
+						,@base_amount
+						,@exch_rate
+						,@gl_link_code
+						,@currency_code
+						,@received_request_code
+						,@transaction_code
+						,@branch_code
+						,@branch_name
+						,@allocation_trx_date
+						,@allocation_value_date
+						,@agreement_no
+						,@remarks
+						,@allocationt_remarks
+						,@detail_id
+						,@deposit_type
+						,@index
+			
+			end
+			close cur_deposit_allocation_reversal
+			deallocate cur_deposit_allocation_reversal
+			
+			--SEPRIA 18/07/2023: UNTUK TRANSAKSI DARI REQUEST TP NGK JADI ADA PEMBAYARAN, UPDATE STATUS KEMBALI JADI HOLD.
+			update	dbo.cashier_received_request
+			set		request_status		= 'HOLD'
+					,process_reff_code	= NULL
+					,process_reff_name	= NULL
+			from	dbo.cashier_received_request crr 
+					inner join dbo.deposit_allocation_detail ctd on ctd.received_request_code = crr.code
+			where	ctd.deposit_allocation_code = @p_code
+			and		is_paid = '0'
+
+			if	(isnull(@gl_link_transaction_code,'') <> '')
+			begin
+				select	@base_amount_cr		= sum(base_amount_cr) 
+						,@base_amount_db	= sum(base_amount_db) 
+				from	dbo.fin_interface_journal_gl_link_transaction_detail
+				where	gl_link_transaction_code = @gl_link_transaction_code
+
+				--+ validasi : total detail =  payment_amount yang di header
+				if (@base_amount_db <> @base_amount_cr)
+				begin
+					set @msg = 'Journal does not balance';
+    				raiserror(@msg, 16, -1) ;
+				end
+
+				update dbo.fin_interface_journal_gl_link_transaction
+				set		transaction_status	= 'HOLD'
+						,mod_date			= @p_mod_date
+						,mod_by				= @p_mod_by
+						,mod_ip_address		= @p_mod_ip_address
+				where	code				= @gl_link_transaction_code
+			end
+
+			select	@deposit_code			   = deposit_code 
+					,@deposit_type			    = deposit_type
+					,@branch_code			   = branch_code
+					,@branch_name			   = branch_name
+					--,@allocation_trx_date	   = allocation_trx_date
+					,@allocation_exch_rate	   = allocation_exch_rate
+					,@allocation_base_amount   = allocation_base_amount
+					,@allocation_orig_amount   = allocation_orig_amount
+					,@allocation_currency_code = allocation_currency_code
+			from	dbo.deposit_allocation 
+			where	code = @p_code
+			
+			--- proses update request ketika ada request
+			if (isnull(@received_request_code,'') <> '')
+			begin
+				update cashier_received_request
+				set		request_status		= 'HOLD'
+						--,process_date		= @reversal_date --@allocation_value_date
+						--,process_reff_code	= @p_code
+						--,process_reff_name	= 'DEPOSIT ALLOCATION'
+						,process_date		= NULL
+						,process_reff_code	= null
+						,process_reff_name	= null
+						,voucher_no			= null
+
+						,mod_date			= @p_mod_date
+						,mod_by				= @p_mod_by
+						,mod_ip_address		= @p_mod_ip_address
+				where	code				= @received_request_code
+
+				update dbo.fin_interface_cashier_received_request
+				set		request_status			= 'REVERSAL'
+						,mod_date				= @p_mod_date
+						,mod_by					= @p_mod_by
+						,mod_ip_address			= @p_mod_ip_address
+				where	code					= @received_request_code    
+			end
+									
+			update	dbo.deposit_allocation
+			set		allocation_status	= 'REVERSAL'
+					,voucher_no			= @gl_link_transaction_code
+					--
+					,mod_date			= @p_mod_date
+					,mod_by				= @p_mod_by
+					,mod_ip_address		= @p_mod_ip_address
+			where	code = @p_code
+
+			--01/07/2021 deposit insert ke fin_interface_agreement_deposit_history
+			set @allocation_orig_amount = @allocation_orig_amount * 1
+			set @allocation_base_amount = @allocation_orig_amount * @allocation_exch_rate
+
+			exec dbo.xsp_fin_interface_agreement_deposit_history_insert @p_id						= 0                    
+						                                                ,@p_branch_code				= @branch_code
+						                                                ,@p_branch_name				= @branch_name
+						                                                ,@p_agreement_no			= @agreement_no
+																		,@p_agreement_deposit_code  = @deposit_code
+						                                                ,@p_deposit_type			= @deposit_type
+						                                                ,@p_transaction_date		= @reversal_date--@allocation_trx_date
+						                                                ,@p_orig_amount				= @allocation_orig_amount
+						                                                ,@p_orig_currency_code		= @currency_code
+						                                                ,@p_exch_rate				= @exch_rate  
+						                                                ,@p_base_amount				= @allocation_base_amount
+						                                                ,@p_source_reff_module		= 'IFINFIN'
+						                                                ,@p_source_reff_code		= @p_code
+						                                                ,@p_source_reff_name		= 'Reversal Deposit Allocation'
+						                                                ,@p_cre_date				= @p_cre_date		
+																		,@p_cre_by					= @p_cre_by			
+																		,@p_cre_ip_address			= @p_cre_ip_address
+																		,@p_mod_date				= @p_mod_date		
+																		,@p_mod_by					= @p_mod_by			
+																		,@p_mod_ip_address			= @p_mod_ip_address 
+		end
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ;
+
+end
+
+
+
+

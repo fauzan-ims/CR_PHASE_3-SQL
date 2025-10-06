@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[RPT_SURAT_PERMOHONAN_PEMBAYARAN_SERVICE_JASA] (
+    [USER_ID]       NVARCHAR (50)   NOT NULL,
+    [PART]          NVARCHAR (250)  NULL,
+    [SERVICE_FEE]   DECIMAL (18, 2) NULL,
+    [QUANTITY]      INT             NULL,
+    [TOTAL_AMOUNT]  DECIMAL (18, 2) NULL,
+    [PPH]           DECIMAL (18, 2) NULL,
+    [PPN]           DECIMAL (18, 2) NULL,
+    [TOTAL_PAYMENT] DECIMAL (18, 2) NULL
+);
+

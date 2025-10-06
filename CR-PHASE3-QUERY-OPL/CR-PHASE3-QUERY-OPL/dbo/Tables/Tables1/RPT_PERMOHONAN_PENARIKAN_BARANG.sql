@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[RPT_PERMOHONAN_PENARIKAN_BARANG] (
+    [USER_ID]           NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_NO]      NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]    NVARCHAR (250)  NULL,
+    [REPORT_TITLE]      NVARCHAR (250)  NULL,
+    [REPORT_IMAGE]      NVARCHAR (250)  NULL,
+    [TANGGAL]           DATETIME        NULL,
+    [REQUEST_BY]        NVARCHAR (50)   NULL,
+    [ASSET_CODE]        NVARCHAR (50)   NULL,
+    [PERIODE_FROM]      DATETIME        NULL,
+    [PERIODE_TO]        DATETIME        NULL,
+    [UNIT_NAME]         NVARCHAR (250)  NULL,
+    [COLOUR]            NVARCHAR (50)   NULL,
+    [ENGINE_NO]         NVARCHAR (50)   NULL,
+    [CHASSIE_NO]        NVARCHAR (50)   NULL,
+    [TANGGAL_PENARIKAN] DATETIME        NULL,
+    [NAME]              NVARCHAR (250)  NULL,
+    [TELEPON]           NVARCHAR (20)   NULL,
+    [ALAMAT]            NVARCHAR (4000) NULL,
+    [CRE_DATE]          DATETIME        NOT NULL,
+    [CRE_BY]            NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]    NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]          DATETIME        NOT NULL,
+    [MOD_BY]            NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]    NVARCHAR (15)   NOT NULL
+);
+

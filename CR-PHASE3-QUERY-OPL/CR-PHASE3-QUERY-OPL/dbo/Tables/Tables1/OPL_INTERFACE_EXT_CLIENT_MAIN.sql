@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[OPL_INTERFACE_EXT_CLIENT_MAIN] (
+    [CustId]               BIGINT        IDENTITY (1, 1) NOT NULL,
+    [CustNo]               NVARCHAR (50) NULL,
+    [CustName]             NVARCHAR (50) NULL,
+    [MrCustTypeCode]       NVARCHAR (50) NULL,
+    [MrCustModelCode]      NVARCHAR (50) NULL,
+    [MrIdTypeCode]         NVARCHAR (50) NULL,
+    [IdNoIdNo]             NVARCHAR (50) NULL,
+    [IdExpiredDt]          DATETIME      NULL,
+    [TaxIdNo]              NVARCHAR (50) NULL,
+    [IsVip]                NVARCHAR (1)  NULL,
+    [OriginalOfficeCode]   NVARCHAR (50) NULL,
+    [IsAffiliateWithMf]    NVARCHAR (1)  NULL,
+    [VipNotes]             NVARCHAR (50) NULL,
+    [ThirdPartyTrxNo]      NVARCHAR (50) NULL,
+    [ThirdPartyGroupTrxNo] NVARCHAR (50) NULL,
+    [CreDate]              DATETIME      NULL,
+    [CreBy]                NVARCHAR (50) NULL,
+    [CreIPAddress]         NVARCHAR (50) NULL,
+    [ModDate]              DATETIME      NULL,
+    [ModBy]                NVARCHAR (50) NULL,
+    [ModIPAddress]         NVARCHAR (50) NULL,
+    CONSTRAINT [PK_OPL_INTERFACE_EXT_CLIENT_MAIN] PRIMARY KEY CLUSTERED ([CustId] ASC)
+);
+

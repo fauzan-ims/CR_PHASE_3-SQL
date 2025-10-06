@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[DEBIT_NOTE] (
+    [CODE] NVARCHAR (50) NOT NULL
+);
+

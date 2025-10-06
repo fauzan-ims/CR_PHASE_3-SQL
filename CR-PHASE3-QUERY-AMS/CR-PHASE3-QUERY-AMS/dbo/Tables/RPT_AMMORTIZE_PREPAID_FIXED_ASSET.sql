@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RPT_AMMORTIZE_PREPAID_FIXED_ASSET] (
+    [USER_ID]              NVARCHAR (50)   NULL,
+    [REPORT_TITLE]         NVARCHAR (200)  NULL,
+    [REPORT_COMPANY]       NVARCHAR (200)  NULL,
+    [REPORT_IMAGE]         NVARCHAR (200)  NULL,
+    [BRANCH_CODE]          NVARCHAR (50)   NULL,
+    [BRANCH_NAME]          NVARCHAR (50)   NULL,
+    [ASSET_CODE]           NVARCHAR (50)   NULL,
+    [ASSET_NAME]           NVARCHAR (250)  NULL,
+    [PURCHASE_PRICE]       DECIMAL (18, 2) NULL,
+    [PURCHASE_DATE]        DATETIME        NULL,
+    [STATUS]               NVARCHAR (50)   NULL,
+    [FISICAL_STATUS]       NVARCHAR (50)   NULL,
+    [AGREEMENT_NO]         NVARCHAR (50)   NULL,
+    [CLIENT_NAME]          NVARCHAR (50)   NULL,
+    [PREPAID_NO]           NVARCHAR (50)   NULL,
+    [PREPAID_DATE]         DATETIME        NULL,
+    [TOTAL_PREPAID_AMOUNT] DECIMAL (18, 2) NULL,
+    [ACCRUE_DATE]          DATETIME        NULL,
+    [PREPAID_AMOUNT]       DECIMAL (18, 2) NULL,
+    [TOTAL_ACCRUE_AMOUNT]  DECIMAL (18, 2) NULL,
+    [OUTSTANDING_AMOUNT]   DECIMAL (18, 2) NULL,
+    [IS_CONDITION]         NVARCHAR (3)    NULL,
+    [MONTH]                NVARCHAR (20)   NULL,
+    [YEAR]                 NVARCHAR (4)    NULL,
+    [PLAT_NO]              NVARCHAR (10)   NULL
+);
+

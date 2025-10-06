@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [dsf-lita]
+    WITH PASSWORD = N'Vaamwxz}yng+uo2kacu2oN>+msFT7_&#$!~<8SkWjxzCo{cy', SID = 0x32780150DB2CC149AA966C30901706B3, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

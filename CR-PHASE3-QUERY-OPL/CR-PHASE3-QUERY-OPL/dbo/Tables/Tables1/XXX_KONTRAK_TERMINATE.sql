@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[XXX_KONTRAK_TERMINATE] (
+    [KONTRAK]               NVARCHAR (255) NULL,
+    [Agreement Asset]       NVARCHAR (255) NULL,
+    [Asset_status]          NVARCHAR (255) NULL,
+    [TERMINATE_DATE]        DATETIME       NULL,
+    [REAL_AGREEMENT_STATUS] NVARCHAR (255) NULL,
+    [REAL_ASSET_STATUS]     NVARCHAR (255) NULL,
+    [TERMINATE_STATUS]      NVARCHAR (50)  NULL
+);
+

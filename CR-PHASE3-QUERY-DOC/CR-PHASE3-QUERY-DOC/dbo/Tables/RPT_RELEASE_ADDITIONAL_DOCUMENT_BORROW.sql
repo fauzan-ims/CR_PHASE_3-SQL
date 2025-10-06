@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RPT_RELEASE_ADDITIONAL_DOCUMENT_BORROW] (
+    [USER_ID]             NVARCHAR (50)   NOT NULL,
+    [MUTATION_NO]         NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]      NVARCHAR (250)  NULL,
+    [REPORT_TITLE]        NVARCHAR (250)  NULL,
+    [REPORT_IMAGE]        NVARCHAR (250)  NULL,
+    [PERJANJIAN_NO]       NVARCHAR (50)   NULL,
+    [ATAS_NAMA]           NVARCHAR (250)  NULL,
+    [TANGGAL_DIKELUARKAN] DATETIME        NULL,
+    [NAMA_DOKUMEN]        NVARCHAR (250)  NULL,
+    [NO_DOKUMEN]          NVARCHAR (50)   NULL,
+    [KETERANGAN]          NVARCHAR (4000) NULL,
+    [ALASAN]              NVARCHAR (250)  NULL,
+    [KOTA]                NVARCHAR (50)   NULL,
+    [TANGGAL]             DATETIME        NULL,
+    [CRE_DATE]            DATETIME        NOT NULL,
+    [CRE_BY]              NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]            DATETIME        NOT NULL,
+    [MOD_BY]              NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    [PIC_NAME]            NVARCHAR (50)   NULL,
+    [USER_LOGIN]          NVARCHAR (50)   NULL,
+    [HEAD_OPL]            NVARCHAR (50)   NULL,
+    [JABATAN]             NVARCHAR (50)   NULL,
+    [TANGGAL_SURAT_KUASA] DATETIME        NULL
+);
+

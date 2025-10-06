@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_SYS_NOTIFICATION] (
+    [ID]             BIGINT          NULL,
+    [FROM_ADDRESS]   NVARCHAR (250)  NOT NULL,
+    [TO_EMAIL]       NVARCHAR (250)  NOT NULL,
+    [TO_EMAIL_CC]    NVARCHAR (250)  NULL,
+    [TO_EMAIL_BCC]   NVARCHAR (250)  NULL,
+    [SUBJECT]        NVARCHAR (250)  NOT NULL,
+    [HEADER]         NVARCHAR (4000) NOT NULL,
+    [BODY1]          NVARCHAR (4000) NOT NULL,
+    [BODY2]          NVARCHAR (4000) NOT NULL,
+    [BODY3]          NVARCHAR (4000) NOT NULL,
+    [FOOTER]         NVARCHAR (4000) NOT NULL,
+    [ATTACHMENT]     NVARCHAR (4000) NULL,
+    [CRE_DATE]       DATETIME        NOT NULL,
+    [CRE_BY]         NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS] NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]       DATETIME        NOT NULL,
+    [MOD_BY]         NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS] NVARCHAR (15)   NOT NULL,
+    [AuditDataState] VARCHAR (10)    NULL,
+    [AuditDMLAction] VARCHAR (10)    NULL,
+    [AuditUser]      [sysname]       NULL,
+    [AuditDateTime]  DATETIME        NULL,
+    [UpdateColumns]  VARCHAR (MAX)   NULL
+);
+

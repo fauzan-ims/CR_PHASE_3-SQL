@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_MASTER_INSURANCE_COVERAGE_LOADING] (
+    [ID]                      BIGINT          NULL,
+    [INSURANCE_COVERAGE_CODE] NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [LOADING_CODE]            NVARCHAR (50)   NOT NULL,
+    [AGE_FROM]                INT             NULL,
+    [AGE_TO]                  INT             NULL,
+    [RATE_TYPE]               NVARCHAR (10)   NULL,
+    [RATE_PCT]                DECIMAL (9, 6)  NULL,
+    [RATE_AMOUNT]             DECIMAL (18, 2) NULL,
+    [LOADING_TYPE]            NVARCHAR (10)   NULL,
+    [BUY_RATE_PCT]            DECIMAL (9, 6)  NULL,
+    [BUY_RATE_AMOUNT]         DECIMAL (18, 2) NULL,
+    [IS_ACTIVE]               NVARCHAR (1)    NOT NULL,
+    [CRE_DATE]                DATETIME        NOT NULL,
+    [CRE_BY]                  NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]          NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                DATETIME        NOT NULL,
+    [MOD_BY]                  NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]          NVARCHAR (15)   NOT NULL,
+    [AuditDataState]          VARCHAR (10)    NULL,
+    [AuditDMLAction]          VARCHAR (10)    NULL,
+    [AuditUser]               [sysname]       NULL,
+    [AuditDateTime]           DATETIME        NULL,
+    [UpdateColumns]           VARCHAR (MAX)   NULL
+);
+

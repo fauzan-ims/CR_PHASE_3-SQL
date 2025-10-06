@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_APPLICATION_EXPOSURE_20250710] (
+    [ID]                     BIGINT          IDENTITY (1, 1) NOT NULL,
+    [APPLICATION_NO]         NVARCHAR (50)   NOT NULL,
+    [RELATION_TYPE]          NVARCHAR (20)   NOT NULL,
+    [AGREEMENT_NO]           NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_DATE]         DATETIME        NOT NULL,
+    [FACILITY_NAME]          NVARCHAR (250)  NOT NULL,
+    [AMOUNT_FINANCE_AMOUNT]  DECIMAL (18, 2) NOT NULL,
+    [OS_INSTALLMENT_AMOUNT]  DECIMAL (18, 2) NOT NULL,
+    [INSTALLMENT_AMOUNT]     DECIMAL (18, 2) NOT NULL,
+    [TENOR]                  INT             NOT NULL,
+    [OS_TENOR]               INT             NOT NULL,
+    [LAST_DUE_DATE]          DATETIME        NOT NULL,
+    [OVD_DAYS]               INT             NOT NULL,
+    [OVD_INSTALLMENT_AMOUNT] DECIMAL (18, 2) NOT NULL,
+    [DESCRIPTION]            NVARCHAR (4000) NOT NULL,
+    [CRE_DATE]               DATETIME        NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]               DATETIME        NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MAX_OVD_DAYS]           INT             NOT NULL,
+    [GROUP_NAME]             NVARCHAR (250)  NULL
+);
+

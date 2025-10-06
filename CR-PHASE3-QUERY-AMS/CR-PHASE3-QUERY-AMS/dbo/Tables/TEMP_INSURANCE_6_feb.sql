@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[TEMP_INSURANCE_6_feb] (
+    [NO_POLIS]                   NVARCHAR (50)   NULL,
+    [PERIODE]                    INT             NULL,
+    [JANGKA_WAKTU]               INT             NULL,
+    [ASSET_CODE]                 NVARCHAR (50)   NULL,
+    [AGREEMENT_NUMBER]           NVARCHAR (50)   NULL,
+    [CUSTOMER]                   NVARCHAR (250)  NULL,
+    [OBJECT_LEASED]              NVARCHAR (250)  NULL,
+    [YEAR]                       NVARCHAR (4)    NULL,
+    [CHASIS_NUMBER]              NVARCHAR (50)   NULL,
+    [ENGINE_NUMBER]              NVARCHAR (50)   NULL,
+    [POLICE_NUMBER]              NVARCHAR (50)   NULL,
+    [TGL_EMAIL_SPPA]             DATETIME        NULL,
+    [TGL_PENERIMAAN_POLIS]       DATETIME        NULL,
+    [START_POLIS_ASURANSI]       DATETIME        NULL,
+    [END_POLIS_ASURANSI]         DATETIME        NULL,
+    [TGL_JATUH_TEMPO_PEMBAYARAN] DATETIME        NULL,
+    [NILAI_PERTANGGUNGAN]        DECIMAL (18, 2) NULL,
+    [NET_PREMI]                  DECIMAL (18, 2) NULL,
+    [SISA_BUDGET]                DECIMAL (18, 2) NULL,
+    [TGL_KIRIM_KE_AP]            DATETIME        NULL,
+    [TGL_BAYAR_KE_ASURANSI]      DATETIME        NULL,
+    [LAST_YEAR_PAID]             INT             NULL
+);
+

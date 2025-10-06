@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[RPT_TANDA_TERIMA_DOKUMEN_RELEASE] (
+    [USER_ID]             NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]      NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]        NVARCHAR (250)  NULL,
+    [REPORT_SUB_TITLE]    NVARCHAR (250)  NULL,
+    [REPORT_IMAGE]        NVARCHAR (50)   NULL,
+    [DEPTHEAD]            NVARCHAR (250)  NULL,
+    [AGREEMENT_NO]        NVARCHAR (250)  NULL,
+    [CLIENT_NAME]         NVARCHAR (250)  NULL,
+    [TANGGAL_CETAK]       NVARCHAR (50)   NULL,
+    [NAMA_USER]           NVARCHAR (50)   NULL,
+    [JABATAN_DEPT]        NVARCHAR (250)  NULL,
+    [BRANCH_CODE]         NVARCHAR (50)   NULL,
+    [BRANCH_NAME]         NVARCHAR (250)  NULL,
+    [CITY_NAME]           NVARCHAR (4000) NULL,
+    [TANGGAL_SURAT_KUASA] DATETIME        NULL,
+    [PIC_NAME]            NVARCHAR (250)  NULL,
+    [CRE_DATE]            DATETIME        NOT NULL,
+    [CRE_BY]              NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]            DATETIME        NOT NULL,
+    [MOD_BY]              NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]      NVARCHAR (15)   NOT NULL,
+    [ENGINE_NO]           NVARCHAR (50)   NULL
+);
+

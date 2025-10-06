@@ -1,0 +1,2 @@
+﻿CREATE USER [DSF\Raffi] FOR LOGIN [DSF\Raffi];
+

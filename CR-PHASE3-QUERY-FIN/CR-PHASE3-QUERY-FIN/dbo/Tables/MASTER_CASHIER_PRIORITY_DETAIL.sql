@@ -1,0 +1,84 @@
+﻿CREATE TABLE [dbo].[MASTER_CASHIER_PRIORITY_DETAIL] (
+    [ID]                    BIGINT        IDENTITY (1, 1) NOT NULL,
+    [CASHIER_PRIORITY_CODE] NVARCHAR (50) NOT NULL,
+    [ORDER_NO]              INT           NOT NULL,
+    [TRANSACTION_CODE]      NVARCHAR (50) NOT NULL,
+    [IS_PARTIAL]            NVARCHAR (1)  CONSTRAINT [DF_MASTER_CASHIER_PRIORITY_DETAIL_IS_PARTIAL] DEFAULT ((0)) NOT NULL,
+    [CRE_DATE]              DATETIME      NOT NULL,
+    [CRE_BY]                NVARCHAR (15) NOT NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (15) NOT NULL,
+    [MOD_DATE]              DATETIME      NOT NULL,
+    [MOD_BY]                NVARCHAR (15) NOT NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (15) NOT NULL,
+    CONSTRAINT [PK_MASTER_CASHIER_PRIORITY_DETAIL] PRIMARY KEY CLUSTERED ([ID] ASC),
+    CONSTRAINT [FK_MASTER_CASHIER_PRIORITY_DETAIL_MASTER_CASHIER_PRIORITY] FOREIGN KEY ([CASHIER_PRIORITY_CODE]) REFERENCES [dbo].[MASTER_CASHIER_PRIORITY] ([CODE]) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT [FK_MASTER_CASHIER_PRIORITY_DETAIL_MASTER_TRANSACTION] FOREIGN KEY ([TRANSACTION_CODE]) REFERENCES [dbo].[MASTER_TRANSACTION] ([CODE])
+);
+
+
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_CASHIER_PRIORITY_DETAIL_Insert_Audit] 
+			ON [dbo].[MASTER_CASHIER_PRIORITY_DETAIL]    
+			FOR INSERT    
+			AS    
+			
+ INSERT INTO [dbo].[Z_AUDIT_MASTER_CASHIER_PRIORITY_DETAIL]
+([ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'New','Insert',SUSER_SNAME(),getdate(),''  FROM INSERTED 
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_CASHIER_PRIORITY_DETAIL_Delete_Audit]    
+			ON [dbo].[MASTER_CASHIER_PRIORITY_DETAIL]    
+			FOR DELETE    
+			AS   
+  INSERT INTO [dbo].[Z_AUDIT_MASTER_CASHIER_PRIORITY_DETAIL]
+([ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'Old','Delete',SUSER_SNAME(),getdate(),''  FROM DELETED
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_CASHIER_PRIORITY_DETAIL_Update_Audit]      
+			ON [dbo].[MASTER_CASHIER_PRIORITY_DETAIL]    
+			FOR UPDATE    
+			AS 
+   
+			 
+			    DECLARE @UpdatedCols varchar(max) 
+			 
+			   SELECT @UpdatedCols =  CASE WHEN UPDATE([ID]) THEN '[ID]-' ELSE '' END + 
+CASE WHEN UPDATE([CASHIER_PRIORITY_CODE]) THEN '[CASHIER_PRIORITY_CODE]-' ELSE '' END + 
+CASE WHEN UPDATE([ORDER_NO]) THEN '[ORDER_NO]-' ELSE '' END + 
+CASE WHEN UPDATE([TRANSACTION_CODE]) THEN '[TRANSACTION_CODE]-' ELSE '' END + 
+CASE WHEN UPDATE([IS_PARTIAL]) THEN '[IS_PARTIAL]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_DATE]) THEN '[CRE_DATE]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_BY]) THEN '[CRE_BY]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_IP_ADDRESS]) THEN '[CRE_IP_ADDRESS]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_DATE]) THEN '[MOD_DATE]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_BY]) THEN '[MOD_BY]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_IP_ADDRESS]) THEN '[MOD_IP_ADDRESS]-' ELSE '' END  
+			    
+			   IF LTRIM(RTRIM(@UpdatedCols)) <> '' 
+			   BEGIN 
+			          INSERT INTO [dbo].[Z_AUDIT_MASTER_CASHIER_PRIORITY_DETAIL]
+([ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'New','Update',SUSER_SNAME(),getdate(),@UpdatedCols  FROM INSERTED     
+			    
+			          INSERT INTO [dbo].[Z_AUDIT_MASTER_CASHIER_PRIORITY_DETAIL]
+([ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[CASHIER_PRIORITY_CODE],[ORDER_NO],[TRANSACTION_CODE],[IS_PARTIAL],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'Old','Update',SUSER_SNAME(),getdate(),@UpdatedCols  FROM DELETED  
+			   END
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Auto generate', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_CASHIER_PRIORITY_DETAIL', @level2type = N'COLUMN', @level2name = N'ID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Kode prioritas kasir pada data cashier priority detail tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_CASHIER_PRIORITY_DETAIL', @level2type = N'COLUMN', @level2name = N'CASHIER_PRIORITY_CODE';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nomor urut pada data cashier priority detail tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_CASHIER_PRIORITY_DETAIL', @level2type = N'COLUMN', @level2name = N'ORDER_NO';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Kode transaksi penerimaan cashier pada data cashier priority detail tersebut. Data ini diambil dari Master Transaction', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_CASHIER_PRIORITY_DETAIL', @level2type = N'COLUMN', @level2name = N'TRANSACTION_CODE';
+

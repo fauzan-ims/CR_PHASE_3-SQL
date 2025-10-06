@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_MASTER_ITEM_GROUP_GL] (
+    [ID]                 BIGINT         NULL,
+    [COMPANY_CODE]       NVARCHAR (50)  NOT NULL,
+    [ITEM_GROUP_CODE]    NVARCHAR (50)  NOT NULL,
+    [CURRENCY_CODE]      NVARCHAR (10)  NOT NULL,
+    [GL_ASSET_CODE]      NVARCHAR (50)  NOT NULL,
+    [GL_ASSET_NAME]      NVARCHAR (250) NOT NULL,
+    [GL_ASSET_RENT_CODE] NVARCHAR (50)  NOT NULL,
+    [GL_ASSET_RENT_NAME] NVARCHAR (250) NOT NULL,
+    [GL_EXPEND_CODE]     NVARCHAR (50)  NOT NULL,
+    [GL_INPROGRESS_CODE] NVARCHAR (50)  NOT NULL,
+    [CATEGORY]           NVARCHAR (250) NULL,
+    [CRE_DATE]           DATETIME       NOT NULL,
+    [CRE_BY]             NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]           DATETIME       NOT NULL,
+    [MOD_BY]             NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [AuditDataState]     VARCHAR (10)   NULL,
+    [AuditDMLAction]     VARCHAR (10)   NULL,
+    [AuditUser]          [sysname]      NULL,
+    [AuditDateTime]      DATETIME       NULL,
+    [UpdateColumns]      VARCHAR (MAX)  NULL
+);
+

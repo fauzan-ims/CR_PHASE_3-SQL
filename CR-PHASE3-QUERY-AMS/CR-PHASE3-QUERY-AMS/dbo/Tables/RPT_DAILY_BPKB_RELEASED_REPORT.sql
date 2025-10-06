@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[RPT_DAILY_BPKB_RELEASED_REPORT] (
+    [USER_ID]            NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (250) NOT NULL,
+    [REPORT_TITLE]       NVARCHAR (250) NOT NULL,
+    [REPORT_IMAGE]       NVARCHAR (250) NOT NULL,
+    [BRANCH_CODE]        NVARCHAR (50)  NULL,
+    [BRANCH_NAME]        NVARCHAR (50)  NULL,
+    [FROM_DATE]          DATETIME       NULL,
+    [AGREEMENT_NO]       NVARCHAR (50)  NULL,
+    [CLIENT_NAME]        NVARCHAR (50)  NULL,
+    [SEQ]                NVARCHAR (50)  NULL,
+    [MERK]               NVARCHAR (50)  NULL,
+    [MODEL]              NVARCHAR (50)  NULL,
+    [TYPE]               NVARCHAR (50)  NULL,
+    [CHASSIS_NO]         NVARCHAR (50)  NULL,
+    [ENGINE_NO]          NVARCHAR (50)  NULL,
+    [BPKB_NO]            NVARCHAR (50)  NULL,
+    [YEAR]               INT            NULL,
+    [REGISTERED_NAME]    NVARCHAR (50)  NULL,
+    [BORROWED_DATE]      DATETIME       NULL,
+    [RETURNED_DATE]      DATETIME       NULL,
+    [FILTER_BRANCH_NAME] NVARCHAR (250) NULL,
+    [IS_CONDITION]       NVARCHAR (1)   NULL,
+    [TO_DATE]            DATETIME       NULL
+);
+

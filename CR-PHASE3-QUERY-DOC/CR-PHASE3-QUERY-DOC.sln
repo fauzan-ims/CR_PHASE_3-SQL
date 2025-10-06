@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CR-PHASE3-QUERY-DOC", "CR-PHASE3-QUERY-DOC\CR-PHASE3-QUERY-DOC.sqlproj", "{AFE11C51-ED7D-44AB-B73C-5CC25394A173}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE11C51-ED7D-44AB-B73C-5CC25394A173}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {757E3AD7-605F-479A-A0CB-0BA73288FF79}
+	EndGlobalSection
+EndGlobal

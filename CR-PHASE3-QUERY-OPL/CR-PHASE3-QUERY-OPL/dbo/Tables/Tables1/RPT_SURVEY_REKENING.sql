@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[RPT_SURVEY_REKENING] (
+    [USER_ID]        NVARCHAR (50)  NOT NULL,
+    [COMPANY_NAME]   NVARCHAR (250) NULL,
+    [MONTHLY_AMOUNT] DECIMAL (18)   NULL,
+    [MONTH]          NVARCHAR (50)  NULL,
+    [YEAR]           NVARCHAR (4)   NULL
+);
+

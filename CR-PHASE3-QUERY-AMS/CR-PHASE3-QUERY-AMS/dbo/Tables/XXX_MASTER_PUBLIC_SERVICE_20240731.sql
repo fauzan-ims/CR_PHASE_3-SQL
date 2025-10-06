@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[XXX_MASTER_PUBLIC_SERVICE_20240731] (
+    [CODE]                         NVARCHAR (50)  NOT NULL,
+    [PUBLIC_SERVICE_NO]            NVARCHAR (50)  NOT NULL,
+    [PUBLIC_SERVICE_NAME]          NVARCHAR (250) NOT NULL,
+    [CONTACT_PERSON_NAME]          NVARCHAR (250) NOT NULL,
+    [CONTACT_PERSON_AREA_PHONE_NO] NVARCHAR (4)   NOT NULL,
+    [CONTACT_PERSON_PHONE_NO]      NVARCHAR (15)  NOT NULL,
+    [TAX_FILE_TYPE]                NVARCHAR (10)  NOT NULL,
+    [TAX_FILE_NO]                  NVARCHAR (50)  NOT NULL,
+    [TAX_FILE_NAME]                NVARCHAR (250) NOT NULL,
+    [TAX_FILE_ADDRESS]             NVARCHAR (250) NOT NULL,
+    [AREA_PHONE_NO]                NVARCHAR (4)   NULL,
+    [PHONE_NO]                     NVARCHAR (25)  NULL,
+    [AREA_FAX_NO]                  NVARCHAR (4)   NULL,
+    [FAX_NO]                       NVARCHAR (25)  NULL,
+    [EMAIL]                        NVARCHAR (100) NULL,
+    [WEBSITE]                      NVARCHAR (100) NULL,
+    [IS_VALIDATE]                  NVARCHAR (1)   NOT NULL,
+    [KTP_NO]                       NVARCHAR (20)  NULL,
+    [CRE_DATE]                     DATETIME       NOT NULL,
+    [CRE_BY]                       NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]               NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]                     DATETIME       NOT NULL,
+    [MOD_BY]                       NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]               NVARCHAR (15)  NOT NULL
+);
+

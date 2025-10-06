@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[RPT_PENDING_COVER_NOTE] (
+    [USER_ID]             NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]      NVARCHAR (250) NOT NULL,
+    [REPORT_TITLE]        NVARCHAR (250) NOT NULL,
+    [REPORT_IMAGE]        NVARCHAR (50)  NULL,
+    [BRANCH_CODE]         NVARCHAR (50)  NULL,
+    [BRANCH_NAME]         NVARCHAR (50)  NULL,
+    [SUPPLIER_NAME]       NVARCHAR (50)  NULL,
+    [OVERDUE_DAYS]        INT            NULL,
+    [UNIT]                INT            NULL,
+    [COVER_NOTE_NO]       NVARCHAR (50)  NULL,
+    [COVER_NOTE_EXP_DATE] DATETIME       NULL,
+    [FILTER_SUPPLIER]     NVARCHAR (50)  NULL,
+    [IS_CONDITION]        NVARCHAR (1)   NULL
+);
+

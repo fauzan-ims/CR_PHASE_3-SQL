@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[RPT_BORROW_BPKB_DETAIL] (
+    [USER_ID]      NVARCHAR (50)  NOT NULL,
+    [PRODUCT_NAME] NVARCHAR (250) NULL,
+    [REASON]       NVARCHAR (250) NULL,
+    [TOTAL]        INT            NULL
+);
+

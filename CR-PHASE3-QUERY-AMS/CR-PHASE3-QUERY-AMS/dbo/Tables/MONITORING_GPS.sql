@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[MONITORING_GPS] (
+    [ID]                 BIGINT         IDENTITY (1, 1) NOT NULL,
+    [FA_CODE]            NVARCHAR (50)  NOT NULL,
+    [FIRST_PAYMENT_DATE] DATETIME       NOT NULL,
+    [GRN_DATE]           DATETIME       NOT NULL,
+    [VENDOR_CODE]        NVARCHAR (50)  NOT NULL,
+    [VENDOR_NAME]        NVARCHAR (100) NOT NULL,
+    [TOTAL_PAID]         NVARCHAR (250) NOT NULL,
+    [STATUS]             NVARCHAR (50)  NULL,
+    [CRE_DATE]           DATETIME       NOT NULL,
+    [CRE_BY]             NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]           DATETIME       NOT NULL,
+    [MOD_BY]             NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [UNSUBSCRIBE_DATE]   DATETIME       NULL,
+    CONSTRAINT [FK_MONITORING_GPS] FOREIGN KEY ([FA_CODE]) REFERENCES [dbo].[ASSET] ([CODE])
+);
+

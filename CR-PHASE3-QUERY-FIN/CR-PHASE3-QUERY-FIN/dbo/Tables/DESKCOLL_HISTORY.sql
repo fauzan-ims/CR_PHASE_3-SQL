@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[DESKCOLL_HISTORY] (
+    [DESKCOLL_MAIN_ID] BIGINT          NULL,
+    [ID]               BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CLIENT_NO]        NVARCHAR (50)   NULL,
+    [TASK_DATE]        DATETIME        NULL,
+    [POSTING_DATE]     DATETIME        NULL,
+    [RESULT_CODE]      NVARCHAR (50)   NULL,
+    [PROMISE_DATE]     DATETIME        NULL,
+    [NEXT_FU_DATE]     DATETIME        NULL,
+    [REMARKS]          NVARCHAR (4000) NULL,
+    [CRE_DATE]         DATETIME        NOT NULL,
+    [CRE_BY]           NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]   NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]         DATETIME        NOT NULL,
+    [MOD_BY]           NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]   NVARCHAR (15)   NOT NULL,
+    CONSTRAINT [PK_DESKCOLL_HISTORY] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+

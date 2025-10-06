@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[MIG2_REPLACEMENT_REQUEST] (
+    [BRANCH_CODE]              NVARCHAR (10)  NULL,
+    [BRANCH_NAME]              NVARCHAR (255) NULL,
+    [COVER_NOTE_NO]            NVARCHAR (255) NULL,
+    [COVER_NOTE_DATE]          DATETIME       NULL,
+    [COVER_NOTE_EXP_DATE]      DATETIME       NULL,
+    [VENDOR_CODE]              NVARCHAR (255) NULL,
+    [VENDOR_NAME]              NVARCHAR (255) NULL,
+    [VENDOR_ADDRESS]           NVARCHAR (255) NULL,
+    [VENDOR_PIC_NAME]          NVARCHAR (255) NULL,
+    [VENDOR_PIC_AREA_PHONE_NO] NVARCHAR (255) NULL,
+    [VENDOR_PIC_PHONE_NO]      NVARCHAR (20)  NULL,
+    [COUNT_ASSET]              INT            NULL
+);
+

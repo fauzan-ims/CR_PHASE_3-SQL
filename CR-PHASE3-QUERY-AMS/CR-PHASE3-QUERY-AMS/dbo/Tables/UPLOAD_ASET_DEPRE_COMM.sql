@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[UPLOAD_ASET_DEPRE_COMM] (
+    [ASSET_CODE]                NVARCHAR (50)   NOT NULL,
+    [DATE]                      DATETIME        NOT NULL,
+    [DEPRECIATION_AMOUNT]       DECIMAL (18, 2) NOT NULL,
+    [ACCUM_DEPRECIATION_AMOUNT] DECIMAL (18, 2) NOT NULL,
+    [NET_BOOK_VALUE]            DECIMAL (18, 2) NOT NULL
+);
+

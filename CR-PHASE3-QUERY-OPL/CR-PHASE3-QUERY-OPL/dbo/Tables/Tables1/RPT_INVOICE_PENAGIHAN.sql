@@ -1,0 +1,48 @@
+﻿CREATE TABLE [dbo].[RPT_INVOICE_PENAGIHAN] (
+    [USER_ID]            NVARCHAR (50)   NOT NULL,
+    [NO_INVOICE]         NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (250)  NULL,
+    [REPORT_TITLE]       NVARCHAR (250)  NULL,
+    [REPORT_IMAGE]       NVARCHAR (250)  NULL,
+    [TANGGAL]            NVARCHAR (50)   NULL,
+    [NPWP_COMPANY]       NVARCHAR (50)   NULL,
+    [STAR_PERIODE]       NVARCHAR (50)   NULL,
+    [END_PERIODE]        NVARCHAR (50)   NULL,
+    [JATUH_TEMPO]        NVARCHAR (50)   NULL,
+    [NO_PERJANJIAN]      NVARCHAR (50)   NULL,
+    [CLIENT_NAME]        NVARCHAR (50)   NULL,
+    [ALAMAT_CLIENT]      NVARCHAR (4000) NULL,
+    [NPWP_NO]            NVARCHAR (50)   NULL,
+    [JENIS]              NVARCHAR (50)   NULL,
+    [TYPE]               NVARCHAR (50)   NULL,
+    [URAIAN]             NVARCHAR (50)   NULL,
+    [JUMLAH]             INT             NULL,
+    [HARGA_PERUNIT]      DECIMAL (18, 2) NULL,
+    [JUMLAH_HARGA]       DECIMAL (18, 2) NULL,
+    [SUB_TOTAL]          DECIMAL (18, 2) NULL,
+    [PPN]                DECIMAL (18, 2) NULL,
+    [TOTAL]              DECIMAL (18, 2) NULL,
+    [SEJUMLAH]           NVARCHAR (250)  NULL,
+    [NAMA_BANK]          NVARCHAR (50)   NULL,
+    [REK_ATAS_NAMA]      NVARCHAR (50)   NULL,
+    [NO_REK]             NVARCHAR (50)   NULL,
+    [EMPLOYEE_NAME]      NVARCHAR (50)   NULL,
+    [EMPLOYEE_POSITION]  NVARCHAR (50)   NULL,
+    [INVOICE_TYPE]       NVARCHAR (20)   NULL,
+    [PERIODE_DENDA_FROM] NVARCHAR (50)   NULL,
+    [PERIODE_DENDA_TO]   NVARCHAR (50)   NULL,
+    [CRE_DATE]           DATETIME        NOT NULL,
+    [CRE_BY]             NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]           DATETIME        NOT NULL,
+    [MOD_BY]             NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [INVOICE_NO]         NVARCHAR (50)   NULL,
+    [DPP_NILAI_LAIN]     DECIMAL (18, 2) NULL
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_RPT_INVOICE_PENAGIHAN_20231003_2]
+    ON [dbo].[RPT_INVOICE_PENAGIHAN]([USER_ID] ASC, [NO_INVOICE] ASC);
+

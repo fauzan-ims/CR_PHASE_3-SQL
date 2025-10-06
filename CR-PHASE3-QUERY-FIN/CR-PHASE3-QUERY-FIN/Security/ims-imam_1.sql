@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [ims-imam]
+    WITH PASSWORD = N'surlr4pnbNt!o0ngMIquie@fmsFT7_&#$!~<jd|dcv6|{lQs', SID = 0xAEE3896693A44D499ADEFAD134FBA449, DEFAULT_LANGUAGE = [us_english], CHECK_EXPIRATION = ON;
+

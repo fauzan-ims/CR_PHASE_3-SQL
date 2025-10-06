@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_RPT_INVOICE_KWITANSI_DETAIL_20250904] (
+    [USER_ID]          NVARCHAR (50)   NOT NULL,
+    [RECEIPT_NO]       NVARCHAR (50)   NULL,
+    [AGREEMENT_NO]     NVARCHAR (50)   NULL,
+    [AGREEMENT_DATE]   DATETIME        NULL,
+    [JENIS_ALAT]       NVARCHAR (250)  NULL,
+    [TYPE]             VARCHAR (4000)  NULL,
+    [UNIT]             INT             NULL,
+    [STAR_PERIODE]     DATETIME        NULL,
+    [END_PERIODE]      DATETIME        NULL,
+    [NO_POLISI]        NVARCHAR (50)   NULL,
+    [STAR_CONTRACT]    DATETIME        NULL,
+    [END_CONTRACT]     DATETIME        NULL,
+    [HARGA_PERUNIT]    DECIMAL (18, 2) NULL,
+    [JUMLAH_HARGA]     DECIMAL (18, 2) NULL,
+    [SUB_TOTAL]        DECIMAL (18, 2) NULL,
+    [PPN]              DECIMAL (18, 2) NULL,
+    [PPH]              DECIMAL (18, 2) NULL,
+    [TOTAL]            DECIMAL (18, 2) NULL,
+    [SUM_AGREEMENT]    INT             NULL,
+    [SUM_JENI_OR_TYPE] INT             NULL,
+    [SUM_UNIT]         INT             NULL,
+    [KWITANSI_NO]      NVARCHAR (50)   NULL,
+    [DPP_NILAI_LAIN]   DECIMAL (18, 2) NULL
+);
+

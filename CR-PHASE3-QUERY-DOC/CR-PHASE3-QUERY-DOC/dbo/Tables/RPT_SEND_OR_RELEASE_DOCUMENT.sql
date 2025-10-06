@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RPT_SEND_OR_RELEASE_DOCUMENT] (
+    [USER_ID]              NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]       NVARCHAR (50)   NULL,
+    [REPORT_TITLE]         NVARCHAR (250)  NULL,
+    [REPORT_IMAGE]         NVARCHAR (50)   NULL,
+    [DATE]                 DATETIME        NULL,
+    [SEND_NO]              NVARCHAR (50)   NULL,
+    [EMPLOYEE]             NVARCHAR (250)  NULL,
+    [BRANCH_NAME]          NVARCHAR (250)  NULL,
+    [LOCATION]             NVARCHAR (250)  NULL,
+    [MOVEMENT_TO]          NVARCHAR (250)  NULL,
+    [ESTIMATE_RETURN_DATE] DATETIME        NULL,
+    [COURIER]              NVARCHAR (50)   NULL,
+    [RECEIVE_BY]           NVARCHAR (50)   NULL,
+    [RECEIVE_BY_NAME]      NVARCHAR (50)   NULL,
+    [RECEIVE_BY_ID]        NVARCHAR (50)   NULL,
+    [REMARK]               NVARCHAR (4000) NULL,
+    [DOCUMENT_TYPE]        NVARCHAR (50)   NULL,
+    [DOCUMENT_NO]          NVARCHAR (50)   NULL,
+    [DOCUMENT_NAME]        NVARCHAR (50)   NULL,
+    [CRE_DATE]             DATETIME        NULL,
+    [CRE_BY]               NVARCHAR (15)   NULL,
+    [CRE_IP_ADDRESS]       NVARCHAR (15)   NULL,
+    [MOD_DATE]             NVARCHAR (15)   NULL,
+    [MOD_BY]               NVARCHAR (15)   NULL,
+    [MOD_IP_ADDRESS]       NVARCHAR (15)   NULL
+);
+

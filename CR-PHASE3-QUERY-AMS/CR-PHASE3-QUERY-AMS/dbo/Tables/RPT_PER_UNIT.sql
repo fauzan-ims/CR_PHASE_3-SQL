@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RPT_PER_UNIT] (
+    [USER_ID]              NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]       NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]         NVARCHAR (250)  NOT NULL,
+    [REPORT_IMAGE]         NVARCHAR (250)  NOT NULL,
+    [BRANCH_CODE]          NVARCHAR (50)   NULL,
+    [BRANCH_NAME]          NVARCHAR (50)   NULL,
+    [AGREEMENT_NO]         NVARCHAR (50)   NULL,
+    [CUSTOMER]             NVARCHAR (150)  NULL,
+    [OBJ_LEASE]            NVARCHAR (250)  NULL,
+    [PROVINSI]             NVARCHAR (50)   NULL,
+    [KOTA]                 NVARCHAR (50)   NULL,
+    [PLAT_NO]              NVARCHAR (50)   NULL,
+    [CHASSIS_NO]           NVARCHAR (50)   NULL,
+    [ENGINE_NO]            NVARCHAR (50)   NULL,
+    [PERIODE]              NVARCHAR (50)   NULL,
+    [CONTRACT_PERIOD_FROM] DATETIME        NULL,
+    [CONTRACT_PERIOD_TO]   DATETIME        NULL,
+    [BUDGET_SKD]           DECIMAL (18, 2) NULL,
+    [BUDGET_MONTH]         DECIMAL (18, 2) NULL,
+    [CURRENT_PERIOD]       INT             NULL,
+    [CURRENT_BUDGET]       DECIMAL (18, 2) NULL,
+    [CURRENT_MAINTENANCE]  DECIMAL (18, 2) NULL,
+    [FREQUENCY_SERVICE]    INT             NULL,
+    [PROFIT_LOSS]          DECIMAL (18, 2) NULL,
+    [IS_CONDITION]         NVARCHAR (1)    NULL
+);
+

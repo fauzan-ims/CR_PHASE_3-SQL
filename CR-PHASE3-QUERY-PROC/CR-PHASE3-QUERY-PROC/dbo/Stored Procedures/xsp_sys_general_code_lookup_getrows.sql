@@ -1,0 +1,57 @@
+﻿/*
+	Created : Yunus Muslim, 19 Desember 2018
+*/
+CREATE procedure dbo.xsp_sys_general_code_lookup_getrows
+(
+	@p_keywords	   nvarchar(50)
+	,@p_pagenumber int
+	,@p_rowspage   int
+	,@p_order_by   int
+	,@p_sort_by	   nvarchar(5)
+)
+as
+begin
+	declare @rows_count int = 0 ;
+
+	select	@rows_count = count(1)
+	from	dbo.sys_general_code
+	where	(
+				code							like '%' + @p_keywords + '%'
+				or	description					like '%' + @p_keywords + '%'
+				or	case is_editable
+						when '1' then 'YES'
+						else 'NO'
+					end							like '%' + @p_keywords + '%'
+			) ;
+
+	select		code 'documenttype_code'
+				,description 'documenttype_desc'
+				,case is_editable
+					 when '1' then 'YES'
+					 else 'NO'
+				 end as 'IS_EDITABLE'
+				,@rows_count as 'rowcount'
+	from		sys_general_code
+	where		(
+					code							like '%' + @p_keywords + '%'
+					or	description					like '%' + @p_keywords + '%'
+					or	case is_editable
+							when '1' then 'YES'
+							else 'NO'
+						end							like '%' + @p_keywords + '%'
+				)
+	order by	case
+					when @p_sort_by = 'asc' then case @p_order_by
+													 when 1 then code
+													 when 2 then description
+													 when 3 then is_editable
+												 end
+				end asc
+				,case
+					 when @p_sort_by = 'desc' then case @p_order_by
+													   when 1 then code
+													   when 2 then description
+													   when 3 then is_editable
+												   end
+				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
+end ;

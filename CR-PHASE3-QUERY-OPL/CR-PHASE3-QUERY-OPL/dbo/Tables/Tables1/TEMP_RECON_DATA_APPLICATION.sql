@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[TEMP_RECON_DATA_APPLICATION] (
+    [APPLICATION_NO]                         NVARCHAR (250) NULL,
+    [LESSEE_NAME]                            NVARCHAR (250) NULL,
+    [APPLICATION_SIMULATION_STATUS]          NVARCHAR (250) NULL,
+    [APPLICATION_SIMULATION_DONE_IN_PROCESS] NVARCHAR (250) NULL,
+    [APPLICATION_PROCESS_STATUS]             NVARCHAR (250) NULL,
+    [APPLICATION_PROCESS_DONE_IN_PROCESS]    NVARCHAR (250) NULL,
+    [AGREEMENT_NO]                           NVARCHAR (250) NULL,
+    [ASSET_NO]                               NVARCHAR (250) NULL,
+    [FA_CODE]                                NVARCHAR (250) NULL,
+    [BAST_DATE]                              NVARCHAR (250) NULL,
+    [BRAND_UNIT]                             NVARCHAR (250) NULL,
+    [TIPE_UNIT]                              NVARCHAR (250) NULL,
+    [AGREEMENT_PROCESS_STATUS]               NVARCHAR (250) NULL,
+    [AGREEMENT_PROCESS_DONE_IN_PROCESS]      NVARCHAR (250) NULL,
+    [PROCUREMENT_PROCESS_STATUS]             NVARCHAR (250) NULL,
+    [PROCUREMENT_PROCESS_DONE_IN_PROCESS]    NVARCHAR (250) NULL,
+    [HANDOVER_PROCESS]                       NVARCHAR (250) NULL,
+    [REALIZATION]                            NVARCHAR (250) NULL,
+    [PURCHASE_STATUS]                        NVARCHAR (250) NULL,
+    [PURCHASE_GTS_STATUS]                    NVARCHAR (250) NULL,
+    [PURCHASE_REQUEST_STATUS]                NVARCHAR (250) NULL,
+    [PENDING_ASSET_ALLOCATION]               NVARCHAR (250) NULL,
+    [ASSET_USED_NEW]                         NVARCHAR (250) NULL,
+    [REALIZATION_REQUEST]                    NVARCHAR (50)  NULL
+);
+

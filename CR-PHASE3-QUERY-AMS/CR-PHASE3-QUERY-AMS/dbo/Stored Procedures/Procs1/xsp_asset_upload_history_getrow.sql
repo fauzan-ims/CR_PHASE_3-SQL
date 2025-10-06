@@ -1,0 +1,96 @@
+﻿
+CREATE PROCEDURE dbo.xsp_asset_upload_history_getrow
+(
+	@p_id			bigint
+) as
+begin
+
+	select	id
+			,upload_no
+			,company_code
+			,file_name
+			,status_upload
+			,item_code
+			,item_name
+			,condition
+			,barcode
+			,status
+			,po_no
+			,requestor_code
+			,requestor_name
+			,vendor_code
+			,vendor_name
+			,type_code
+			,category_code
+			,purchase_date
+			,purchase_price
+			,invoice_no
+			,invoice_date
+			,original_price
+			,sale_amount
+			,sale_date
+			,disposal_date
+			,branch_code
+			,branch_name
+			,location_code
+			,division_code
+			,division_name
+			,department_code
+			,department_name
+			,sub_department_code
+			,sub_department_name
+			,units_code
+			,units_name
+			,pic_code
+			,residual_value
+			,depre_category_comm_code
+			,total_depre_comm
+			,depre_period_comm
+			,net_book_value_comm
+			,depre_category_fiscal_code
+			,total_depre_fiscal
+			,depre_period_fiscal
+			,net_book_value_fiscal
+			,is_rental
+			,opl_code
+			,rental_date
+			,contractor_name
+			,contractor_address
+			,contractor_email
+			,contractor_pic
+			,contractor_pic_phone
+			,contractor_start_date
+			,contractor_end_date
+			,warranty
+			,warranty_start_date
+			,warranty_end_date
+			,remarks_warranty
+			,is_maintenance
+			,maintenance_time
+			,maintenance_type
+			,maintenance_cycle_time
+			,maintenance_start_date
+			,use_life
+			,last_meter
+			,last_service_date
+			,pph
+			,ppn
+			,remarks
+			,category_name
+			,regional_code
+			,regional_name
+			,location_name
+			,pic_name
+			,last_used_by_code
+			,last_used_by_name
+			,last_location_code
+			,last_location_name
+			,cost_center_code
+			,cost_center_name
+			,po_date
+			,is_depre
+			,last_so_date	
+			,last_so_condition
+	from	asset_upload_history
+	where	id	= @p_id
+end

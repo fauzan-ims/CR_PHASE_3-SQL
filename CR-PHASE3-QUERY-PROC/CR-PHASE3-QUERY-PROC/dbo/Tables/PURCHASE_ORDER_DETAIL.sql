@@ -1,0 +1,58 @@
+﻿CREATE TABLE [dbo].[PURCHASE_ORDER_DETAIL] (
+    [ID]                           BIGINT          IDENTITY (1, 1) NOT NULL,
+    [PO_CODE]                      NVARCHAR (50)   NOT NULL,
+    [ITEM_CODE]                    NVARCHAR (50)   NOT NULL,
+    [ITEM_NAME]                    NVARCHAR (250)  NOT NULL,
+    [TYPE_ASSET_CODE]              NVARCHAR (50)   NULL,
+    [ITEM_CATEGORY_CODE]           NVARCHAR (50)   NULL,
+    [ITEM_CATEGORY_NAME]           NVARCHAR (250)  NULL,
+    [ITEM_MERK_CODE]               NVARCHAR (50)   NULL,
+    [ITEM_MERK_NAME]               NVARCHAR (250)  NULL,
+    [ITEM_MODEL_CODE]              NVARCHAR (50)   NULL,
+    [ITEM_MODEL_NAME]              NVARCHAR (250)  NULL,
+    [ITEM_TYPE_CODE]               NVARCHAR (50)   NULL,
+    [ITEM_TYPE_NAME]               NVARCHAR (250)  NULL,
+    [UOM_CODE]                     NVARCHAR (50)   NOT NULL,
+    [UOM_NAME]                     NVARCHAR (250)  NOT NULL,
+    [PRICE_AMOUNT]                 DECIMAL (18, 2) NULL,
+    [DISCOUNT_AMOUNT]              DECIMAL (18, 2) NULL,
+    [ORDER_QUANTITY]               INT             NOT NULL,
+    [ORDER_REMAINING]              INT             NOT NULL,
+    [DESCRIPTION]                  NVARCHAR (4000) CONSTRAINT [DF_Table_1_REMARK] DEFAULT ('') NULL,
+    [TAX_CODE]                     NVARCHAR (50)   NOT NULL,
+    [TAX_NAME]                     NVARCHAR (250)  NOT NULL,
+    [PPN_PCT]                      DECIMAL (9, 6)  NOT NULL,
+    [PPH_PCT]                      DECIMAL (9, 6)  NOT NULL,
+    [PPN_AMOUNT]                   DECIMAL (18, 2) CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_PPN_AMOUNT] DEFAULT ((0)) NOT NULL,
+    [PPH_AMOUNT]                   DECIMAL (18, 2) CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_PPH_AMOUNT] DEFAULT ((0)) NOT NULL,
+    [REQUESTOR_CODE]               NVARCHAR (50)   NULL,
+    [REQUESTOR_NAME]               NVARCHAR (250)  NULL,
+    [SUPPLIER_SELECTION_DETAIL_ID] INT             NULL,
+    [INITIATION_ETA_DATE]          DATETIME        NULL,
+    [ETA_DATE]                     DATETIME        NULL,
+    [SPESIFICATION]                NVARCHAR (4000) NULL,
+    [UNIT_AVAILABLE_STATUS]        NVARCHAR (10)   NULL,
+    [INDENT_DAYS]                  INT             NULL,
+    [OFFERING]                     NVARCHAR (4000) NULL,
+    [CRE_DATE]                     DATETIME        NOT NULL,
+    [CRE_BY]                       NVARCHAR (15)   CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_CRE_BY] DEFAULT ('') NOT NULL,
+    [CRE_IP_ADDRESS]               NVARCHAR (15)   CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_CRE_IP_ADDRESS] DEFAULT ('') NOT NULL,
+    [MOD_DATE]                     DATETIME        NOT NULL,
+    [MOD_BY]                       NVARCHAR (15)   CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_MOD_BY] DEFAULT ('') NOT NULL,
+    [MOD_IP_ADDRESS]               NVARCHAR (15)   CONSTRAINT [DF_PURCHASE_ORDER_DETAIL_MOD_IP_ADDRESS] DEFAULT ('') NOT NULL,
+    [INVOICE_NO]                   NVARCHAR (50)   NULL,
+    [INVOICE_DETAIL_ID]            BIGINT          NULL,
+    [ETA_DATE_REMARK]              NVARCHAR (4000) NULL,
+    [BBN_NAME]                     NVARCHAR (250)  NULL,
+    [BBN_LOCATION]                 NVARCHAR (250)  NULL,
+    [BBN_ADDRESS]                  NVARCHAR (4000) NULL,
+    [DELIVER_TO_ADDRESS]           NVARCHAR (4000) NULL,
+    CONSTRAINT [PK_PURCHASE_ORDER_DETAIL_1] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_PURCHASE_ORDER_DETAIL_PO_CODE]
+    ON [dbo].[PURCHASE_ORDER_DETAIL]([PO_CODE] ASC)
+    INCLUDE([PPH_PCT], [PPN_PCT]);
+

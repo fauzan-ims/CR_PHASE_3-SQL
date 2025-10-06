@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[migback_maintenance_detail] (
+    [ID]                            BIGINT          IDENTITY (1, 1) NOT NULL,
+    [MAINTENANCE_CODE]              NVARCHAR (50)   NOT NULL,
+    [ASSET_MAINTENANCE_SCHEDULE_ID] BIGINT          NULL,
+    [SERVICE_CODE]                  NVARCHAR (50)   NOT NULL,
+    [SERVICE_NAME]                  NVARCHAR (250)  NULL,
+    [FILE_NAME]                     NVARCHAR (250)  NULL,
+    [PATH]                          NVARCHAR (250)  NULL,
+    [SERVICE_TYPE]                  NVARCHAR (50)   NULL,
+    [SERVICE_FEE]                   DECIMAL (18, 2) NULL,
+    [QUANTITY]                      INT             NULL,
+    [PPH_AMOUNT]                    DECIMAL (18, 2) NULL,
+    [PPN_AMOUNT]                    DECIMAL (18, 2) NULL,
+    [TOTAL_AMOUNT]                  DECIMAL (18, 2) NULL,
+    [PAYMENT_AMOUNT]                DECIMAL (18, 2) NULL,
+    [TAX_CODE]                      NVARCHAR (50)   NULL,
+    [TAX_NAME]                      NVARCHAR (250)  NULL,
+    [PPN_PCT]                       DECIMAL (9, 6)  NULL,
+    [PPH_PCT]                       DECIMAL (9, 6)  NULL,
+    [PART_NUMBER]                   NVARCHAR (50)   NULL,
+    [CRE_DATE]                      DATETIME        NOT NULL,
+    [CRE_BY]                        NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]                NVARCHAR (50)   NOT NULL,
+    [MOD_DATE]                      DATETIME        NOT NULL,
+    [MOD_BY]                        NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]                NVARCHAR (50)   NOT NULL
+);
+

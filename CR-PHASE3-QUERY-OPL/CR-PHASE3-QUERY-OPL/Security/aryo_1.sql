@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [aryo]
+    WITH PASSWORD = N'csadWotgph^xdsfCwU?pdjfFmsFT7_&#$!~<o|xSxb#j>mIr', SID = 0x3EF1D468F4A34745979C85676A85D063, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

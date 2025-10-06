@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_QUOTATION_REVIEW_20250106] (
+    [CODE]                  NVARCHAR (50)   NOT NULL,
+    [COMPANY_CODE]          NVARCHAR (50)   NOT NULL,
+    [QUOTATION_REVIEW_DATE] DATETIME        NOT NULL,
+    [EXPIRED_DATE]          DATETIME        NOT NULL,
+    [BRANCH_CODE]           NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]           NVARCHAR (250)  NOT NULL,
+    [DIVISION_CODE]         NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [DIVISION_NAME]         NVARCHAR (250)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [DEPARTMENT_CODE]       NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [DEPARTMENT_NAME]       NVARCHAR (250)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [REQUESTOR_CODE]        NVARCHAR (50)   NULL,
+    [REQUESTOR_NAME]        NVARCHAR (250)  NULL,
+    [STATUS]                NVARCHAR (20)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [DATE_FLAG]             DATETIME        NULL,
+    [REMARK]                NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [UNIT_FROM]             NVARCHAR (60)   NULL,
+    [CRE_DATE]              DATETIME        NOT NULL,
+    [CRE_BY]                NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_DATE]              DATETIME        NOT NULL,
+    [MOD_BY]                NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [ITEM_CODE]             NVARCHAR (50)   NULL
+);
+

@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[AGREEMENT_ASSET_LATE_RETURN] (
+    [CODE]                 NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_NO]         NVARCHAR (50)   NULL,
+    [ASSET_NO]             NVARCHAR (50)   NULL,
+    [BRANCH_CODE]          NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]          NVARCHAR (250)  NOT NULL,
+    [CURRENCY_CODE]        NVARCHAR (3)    NOT NULL,
+    [OS_OBLIGATION_AMOUNT] DECIMAL (18, 2) NOT NULL,
+    [MATURITY_DATE]        DATETIME        NOT NULL,
+    [BAST_DATE]            DATETIME        NOT NULL,
+    [PAYMENT_STATUS]       NVARCHAR (10)   NOT NULL,
+    [LATE_RETURN_DAYS]     INT             NOT NULL,
+    [INVOICE_NO]           NVARCHAR (50)   NULL,
+    [CREDIT_NOTE_NO]       NVARCHAR (50)   NULL,
+    [WAIVE_NO]             NVARCHAR (50)   NULL,
+    [CRE_DATE]             DATETIME        NOT NULL,
+    [CRE_BY]               NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]       NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]             DATETIME        NOT NULL,
+    [MOD_BY]               NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]       NVARCHAR (15)   NOT NULL,
+    [WAIVE_AMOUNT]         DECIMAL (18, 2) NULL,
+    [INVOICE_AMOUNT]       DECIMAL (18, 2) NULL,
+    [CREDIT_AMOUNT]        DECIMAL (18, 2) NULL,
+    CONSTRAINT [PK_AGREEMENT_ASSET_LATE_RETURN] PRIMARY KEY CLUSTERED ([CODE] ASC)
+);
+

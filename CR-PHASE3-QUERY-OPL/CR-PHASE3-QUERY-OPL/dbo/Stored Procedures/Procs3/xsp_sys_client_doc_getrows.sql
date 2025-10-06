@@ -1,0 +1,69 @@
+﻿CREATE PROCEDURE dbo.xsp_sys_client_doc_getrows
+(
+	@p_keywords	   nvarchar(50)
+	,@p_pagenumber int
+	,@p_rowspage   int
+	,@p_order_by   int
+	,@p_sort_by	   nvarchar(5)
+)
+as
+begin
+	declare @rows_count int = 0 ;
+
+	select	@rows_count = count(1)
+	from	sys_client_doc
+	where	(
+				code						like '%' + @p_keywords + '%'
+				or	client_code				like '%' + @p_keywords + '%'
+				or	doc_type				like '%' + @p_keywords + '%'
+				or	doc_no					like '%' + @p_keywords + '%'
+				or	doc_status				like '%' + @p_keywords + '%'
+				or	eff_date				like '%' + @p_keywords + '%'
+				or	exp_date				like '%' + @p_keywords + '%'
+				or	case is_default
+						when '1' then 'YES'
+						else 'NO'
+					end						like '%' + @p_keywords + '%'
+			) ;
+			 
+		select		code
+					,case is_default
+						 when '1' then 'YES'
+						 else 'NO'
+					 end 'is_default'
+					,@rows_count 'rowcount'
+		from		sys_client_doc
+		where		(
+						code						like '%' + @p_keywords + '%'
+						or	client_code				like '%' + @p_keywords + '%'
+						or	doc_type				like '%' + @p_keywords + '%'
+						or	doc_no					like '%' + @p_keywords + '%'
+						or	doc_status				like '%' + @p_keywords + '%'
+						or	eff_date				like '%' + @p_keywords + '%'
+						or	exp_date				like '%' + @p_keywords + '%'
+						or	case is_default
+								when '1' then 'YES'
+								else 'NO'
+							end						like '%' + @p_keywords + '%'
+					) 
+		order by case  
+					when @p_sort_by = 'asc' then case @p_order_by
+													when 1 then code
+													when 2 then client_code
+													when 3 then doc_type
+													when 4 then doc_no
+													when 5 then doc_status
+													when 6 then is_default
+												 end
+				end asc 
+				,case when @p_sort_by = 'desc' then case @p_order_by
+													when 1 then code
+													when 2 then client_code
+													when 3 then doc_type
+													when 4 then doc_no
+													when 5 then doc_status
+													when 6 then is_default
+													end
+		end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;	
+end ;
+

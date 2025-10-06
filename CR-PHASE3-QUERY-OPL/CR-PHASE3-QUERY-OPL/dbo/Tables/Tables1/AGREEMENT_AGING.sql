@@ -1,0 +1,41 @@
+﻿CREATE TABLE [dbo].[AGREEMENT_AGING] (
+    [ID]                            BIGINT          IDENTITY (1, 1) NOT NULL,
+    [AGREEMENT_NO]                  NVARCHAR (50)   NOT NULL,
+    [AGING_DATE]                    DATETIME        NOT NULL,
+    [BRANCH_CODE]                   NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]                   NVARCHAR (250)  NOT NULL,
+    [CLIENT_NO]                     NVARCHAR (50)   NOT NULL,
+    [CLIENT_NAME]                   NVARCHAR (250)  NOT NULL,
+    [AGREEMENT_STATUS]              NVARCHAR (10)   NOT NULL,
+    [AGREEMENT_SUB_STATUS]          NVARCHAR (20)   NOT NULL,
+    [DESKCOLL_STAFF_CODE]           NVARCHAR (50)   NULL,
+    [DESKCOLL_STAFF_NAME]           NVARCHAR (250)  NULL,
+    [INSTALLMENT_AMOUNT]            DECIMAL (18, 2) NOT NULL,
+    [INSTALLMENT_DUE_DATE]          DATETIME        NULL,
+    [NEXT_DUE_DATE]                 DATETIME        NULL,
+    [LAST_PAID_PERIOD]              INT             NOT NULL,
+    [OVD_PERIOD]                    INT             NOT NULL,
+    [OVD_DAYS]                      INT             NOT NULL,
+    [OVD_RENTAL_AMOUNT]             DECIMAL (18, 2) NOT NULL,
+    [OVD_PENALTY_AMOUNT]            DECIMAL (18, 2) NOT NULL,
+    [OS_RENTAL_AMOUNT]              DECIMAL (18, 2) NOT NULL,
+    [OS_DEPOSIT_INSTALLMENT_AMOUNT] DECIMAL (18, 2) NOT NULL,
+    [OS_PERIOD]                     INT             NOT NULL,
+    [LAST_PAYMENT_INSTALLMENT_DATE] DATETIME        NULL,
+    [LAST_PAYMENT_OBLIGATION_DATE]  DATETIME        NULL,
+    [PAYMENT_PROMISE_DATE]          DATETIME        NULL,
+    [CRE_DATE]                      DATETIME        NOT NULL,
+    [CRE_BY]                        NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]                NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                      DATETIME        NOT NULL,
+    [MOD_BY]                        NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]                NVARCHAR (15)   NOT NULL,
+    CONSTRAINT [PK_AGREEMENT_AGING] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_AGREEMENT_AGING_20240201]
+    ON [dbo].[AGREEMENT_AGING]([AGING_DATE] ASC)
+    INCLUDE([AGREEMENT_NO], [BRANCH_CODE], [CLIENT_NAME], [INSTALLMENT_DUE_DATE], [OVD_PERIOD], [OVD_DAYS], [OVD_RENTAL_AMOUNT], [OVD_PENALTY_AMOUNT], [OS_RENTAL_AMOUNT], [OS_PERIOD]);
+

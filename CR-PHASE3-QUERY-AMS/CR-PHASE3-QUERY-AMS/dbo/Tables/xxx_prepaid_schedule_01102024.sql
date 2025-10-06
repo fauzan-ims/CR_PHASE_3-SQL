@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[xxx_prepaid_schedule_01102024] (
+    [ID]               BIGINT          IDENTITY (1, 1) NOT NULL,
+    [PREPAID_NO]       NVARCHAR (50)   NOT NULL,
+    [PREPAID_DATE]     DATETIME        NOT NULL,
+    [PREPAID_AMOUNT]   DECIMAL (18, 2) NOT NULL,
+    [ACCRUE_REFF_CODE] NVARCHAR (50)   NULL,
+    [ACCRUE_DATE]      DATETIME        NULL,
+    [CRE_DATE]         DATETIME        NOT NULL,
+    [CRE_BY]           NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]   NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]         DATETIME        NOT NULL,
+    [MOD_BY]           NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]   NVARCHAR (15)   NOT NULL
+);
+

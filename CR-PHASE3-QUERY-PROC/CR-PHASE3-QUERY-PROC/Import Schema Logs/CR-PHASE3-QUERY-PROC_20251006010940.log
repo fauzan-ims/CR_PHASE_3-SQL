@@ -1,0 +1,90 @@
+06/10/2025 08:09:40	This log contains information about the import schema operation into project 'CR-PHASE3-QUERY-PROC' on computer 'PC-FAUZAN' by user 'IMS-FAUZAN'.
+06/10/2025 08:09:41	Import of database schema has started.
+06/10/2025 08:09:56	Gathering database credentials
+06/10/2025 08:09:56	Gathering database options
+06/10/2025 08:09:56	Gathering generic database scoped configuration option
+06/10/2025 08:09:56	Gathering users
+06/10/2025 08:09:56	Gathering roles
+06/10/2025 08:09:56	Gathering application roles
+06/10/2025 08:09:56	Gathering role memberships
+06/10/2025 08:09:56	Gathering filegroups
+06/10/2025 08:09:56	Gathering full-text catalogs
+06/10/2025 08:09:56	Gathering assemblies
+06/10/2025 08:09:56	Gathering certificates
+06/10/2025 08:09:56	Gathering asymmetric keys
+06/10/2025 08:09:56	Gathering symmetric keys
+06/10/2025 08:09:56	Gathering encrypted symmetric keys
+06/10/2025 08:09:56	Gathering schemas
+06/10/2025 08:09:56	Gathering XML schema collections
+06/10/2025 08:09:56	Gathering user-defined data types
+06/10/2025 08:09:56	Gathering user-defined types
+06/10/2025 08:09:56	Gathering table types
+06/10/2025 08:09:56	Gathering unique keys for table types
+06/10/2025 08:09:56	Gathering primary keys for table types
+06/10/2025 08:09:56	Gathering indexes for table types
+06/10/2025 08:09:57	Gathering check constraints for table types
+06/10/2025 08:09:57	Gathering default constraints for table types
+06/10/2025 08:09:57	Gathering partition functions
+06/10/2025 08:09:57	Gathering partition schemes
+06/10/2025 08:09:57	Gathering functions
+06/10/2025 08:09:57	Gathering encrypted functions
+06/10/2025 08:09:57	Gathering aggregates
+06/10/2025 08:09:57	Gathering procedures
+06/10/2025 08:10:00	Gathering encrypted procedures
+06/10/2025 08:10:01	Gathering tables
+06/10/2025 08:10:04	Gathering primary keys
+06/10/2025 08:10:04	Gathering unique constraints
+06/10/2025 08:10:04	Gathering foreign keys
+06/10/2025 08:10:04	Gathering default constraints
+06/10/2025 08:10:04	Gathering check constraints
+06/10/2025 08:10:04	Gathering views
+06/10/2025 08:10:04	Gathering encrypted views
+06/10/2025 08:10:04	Gathering indexes
+06/10/2025 08:10:04	Gathering statistics
+06/10/2025 08:10:04	Gathering full-text index stoplists
+06/10/2025 08:10:04	Gathering search property lists
+06/10/2025 08:10:04	Gathering search properties
+06/10/2025 08:10:04	Gathering full-text indexes
+06/10/2025 08:10:04	Gathering column store indexes
+06/10/2025 08:10:04	Gathering spatial indexes
+06/10/2025 08:10:04	Gathering XML indexes
+06/10/2025 08:10:04	Gathering Selective XML indexes
+06/10/2025 08:10:04	Gathering encrypted triggers
+06/10/2025 08:10:04	Gathering triggers
+06/10/2025 08:10:05	Gathering encrypted and clr ddl triggers
+06/10/2025 08:10:05	Gathering ddl triggers
+06/10/2025 08:10:05	Creating edge constraints
+06/10/2025 08:10:05	Gathering synonyms
+06/10/2025 08:10:05	Gathering defaults
+06/10/2025 08:10:05	Gathering data constraint uddt bindings
+06/10/2025 08:10:05	Gathering rules
+06/10/2025 08:10:05	Gathering data constraint uddt bindings
+06/10/2025 08:10:05	Gathering message types
+06/10/2025 08:10:05	Gathering queues
+06/10/2025 08:10:05	Gathering contracts
+06/10/2025 08:10:05	Gathering services
+06/10/2025 08:10:05	Gathering event notifications
+06/10/2025 08:10:05	Gathering remote service bindings
+06/10/2025 08:10:05	Gathering broker priorities
+06/10/2025 08:10:05	Gathering signatures
+06/10/2025 08:10:05	Gathering compression options
+06/10/2025 08:10:05	Gathering sequence types
+06/10/2025 08:10:05	Gathering security policies
+06/10/2025 08:10:05	Gather column encryption keys
+06/10/2025 08:10:05	Gathering column master keys
+06/10/2025 08:10:05	Gathering external data sources
+06/10/2025 08:10:05	Gathering external file formats
+06/10/2025 08:10:05	Gathering external tables
+06/10/2025 08:10:05	Gathering database permissions
+06/10/2025 08:10:05	Gathering extended properties
+06/10/2025 08:10:05	Gathering assemblies
+06/10/2025 08:10:06	Gathering credentials
+06/10/2025 08:10:06	Gathering logins
+06/10/2025 08:10:06	Gathering server audits
+06/10/2025 08:10:11	Scanning project for duplicate elements
+06/10/2025 08:10:14	Finished duplicate element processing
+06/10/2025 08:10:41	Finished importing database.
+06/10/2025 08:10:41	Warning: [dbo].[xfn_get_randomize_password]: The body was not imported because it is encrypted.
+06/10/2025 08:10:41	For more information about encrypted objects in SSDT see https://go.microsoft.com/fwlink/?LinkID=238374&clcid=0x409
+06/10/2025 08:10:41	A summary of the import was saved to the following location: D:\fauzan\dipo\cr-phase-3\CR-PHASE3-QUERY-PROC\CR-PHASE3-QUERY-PROC\Import Schema Logs\CR-PHASE3-QUERY-PROC_20251006010940.log
+06/10/2025 08:10:41	Click Finish to continue...

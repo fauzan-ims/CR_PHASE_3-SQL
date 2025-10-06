@@ -1,0 +1,24 @@
+﻿CREATE TABLE [dbo].[MATURITY] (
+    [CODE]               NVARCHAR (50)   NOT NULL,
+    [BRANCH_CODE]        NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]        NVARCHAR (250)  NOT NULL,
+    [AGREEMENT_NO]       NVARCHAR (50)   NOT NULL,
+    [DATE]               DATETIME        NOT NULL,
+    [STATUS]             NVARCHAR (10)   NOT NULL,
+    [RESULT]             NVARCHAR (10)   NULL,
+    [ADDITIONAL_PERIODE] INT             CONSTRAINT [DF_MATURITY_ADDITIONAL_PERIODE] DEFAULT ((0)) NULL,
+    [PICKUP_DATE]        DATETIME        NULL,
+    [FILE_NAME]          NVARCHAR (250)  NULL,
+    [FILE_PATHS]         NVARCHAR (250)  NULL,
+    [REMARK]             NVARCHAR (4000) NOT NULL,
+    [CRE_DATE]           DATETIME        NOT NULL,
+    [CRE_BY]             NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]           DATETIME        NOT NULL,
+    [MOD_BY]             NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [NEW_BILLING_TYPE]   NVARCHAR (50)   NULL,
+    [MATURITY_DATE]      DATETIME        NULL,
+    CONSTRAINT [PK_MATURITY] PRIMARY KEY CLUSTERED ([CODE] ASC)
+);
+

@@ -1,0 +1,126 @@
+﻿CREATE PROCEDURE [dbo].[xsp_master_fintech_slik_client_getrow]
+(
+	@p_fintech_code nvarchar(50)
+)
+as
+begin
+	select	mfsc.fintech_code
+			,slik_status_pendidikan_code
+			,slik_status_pendidikan_ojk_code
+			,slik_status_pendidikan_name
+			,slik_bid_ush_tmpt_kerja_code
+			,slik_bid_ush_tmpt_kerja_ojk_code
+			,slik_bid_ush_tmpt_kerja_name
+			,slik_pekerjaan_code
+			,slik_pekerjaan_ojk_code
+			,slik_pekerjaan_name
+			,slik_pnghslan_per_thn_amount
+			,slik_sumber_penghasilan_code
+			,slik_sumber_penghasilan_ojk_code
+			,slik_sumber_penghasilan_name
+			,slik_hub_pelapor_code
+			,slik_hub_pelapor_ojk_code
+			,slik_hub_pelapor_name
+			,slik_golongan_debitur_code
+			,slik_golongan_debitur_ojk_code
+			,slik_golongan_debitur_name
+			,slik_perj_pisah_harta
+			,slik_mlnggar_bts_maks_krdit
+			,slik_mlmpui_bts_maks_krdit
+			,slik_dati_ii_code
+			,slik_dati_ii_ojk_code
+			,slik_dati_ii_name
+			--
+			,slik_sifat_kredit_code
+			,slik_sifat_kredit_ojk_code
+			,slik_sifat_kredit_name
+			,slik_jenis_kredit_code
+			,slik_jenis_kredit_ojk_code
+			,slik_jenis_kredit_name
+			,slik_skim_akad_pembiayaan_code
+			,slik_skim_akad_pembiayaan_ojk_code
+			,slik_skim_akad_pembiayaan_name
+			,slik_kategori_debitur_code
+			,slik_kategori_debitur_ojk_code
+			,slik_kategori_debitur_name
+			,slik_jenis_penggunaan_code
+			,slik_jenis_penggunaan_ojk_code
+			,slik_jenis_penggunaan_name
+			,slik_orientasi_penggunaan_code
+			,slik_orientasi_penggunaan_ojk_code
+			,slik_orientasi_penggunaan_name
+			,slik_sektor_ekonomi_code
+			,slik_sektor_ekonomi_ojk_code
+			,slik_sektor_ekonomi_name
+			,slik_jenis_bunga_code
+			,slik_jenis_bunga_ojk_code
+			,slik_jenis_bunga_name
+			,slik_kredit_pembiayaan_prog_pemerintah_code
+			,slik_kredit_pembiayaan_prog_pemerintah_ojk_code
+			,slik_kredit_pembiayaan_prog_pemerintah_name
+			,slik_take_over_dari_code
+			,slik_take_over_dari_ojk_code
+			,slik_take_over_dari_name
+			,slik_sumber_dana_code
+			,slik_sumber_dana_ojk_code
+			,slik_sumber_dana_name
+			,slik_cara_restrukturasi_code
+			,slik_cara_restrukturasi_ojk_code
+			,slik_cara_restrukturasi_name
+			,slik_kondisi_code
+			,slik_kondisi_ojk_code
+			,slik_kondisi_name
+			--
+			,sipp_kelompok_debtor_code
+			,sipp_kelompok_debtor_ojk_code
+			,sipp_kelompok_debtor_name
+			,sipp_kategori_debtor_code
+			,sipp_kategori_debtor_ojk_code
+			,sipp_kategori_debtor_name
+			,sipp_golongan_debtor_code
+			,sipp_golongan_debtor_ojk_code
+			,sipp_golongan_debtor_name
+			,sipp_hub_debtor_dg_pp_code
+			,sipp_hub_debtor_dg_pp_ojk_code
+			,sipp_hub_debtor_dg_pp_name
+			,sipp_sektor_ekonomi_debtor_code
+			,sipp_sektor_ekonomi_debtor_ojk_code
+			,sipp_sektor_ekonomi_debtor_name
+			--
+			,sipp_jenis_pembiayaan_code
+			,sipp_jenis_pembiayaan_ojk_code
+			,sipp_jenis_pembiayaan_name
+			,sipp_skema_pembiayaan_code
+			,sipp_skema_pembiayaan_ojk_code
+			,sipp_skema_pembiayaan_name
+			,sipp_tujuan_pembiayaan_code
+			,sipp_tujuan_pembiayaan_ojk_code
+			,sipp_tujuan_pembiayaan_name
+			,sipp_jenis_barang_atau_jasa_code
+			,sipp_jenis_barang_atau_jasa_ojk_code
+			,sipp_jenis_barang_atau_jasa_name
+			,sipp_jenis_suku_bunga_code
+			,sipp_jenis_suku_bunga_ojk_code
+			,sipp_jenis_suku_bunga_name
+			,sipp_mata_uang_code
+			,sipp_mata_uang_ojk_code
+			,sipp_mata_uang_name
+			,sipp_lokasi_project_code
+			,sipp_lokasi_project_ojk_code
+			,sipp_lokasi_project_name
+			,sipp_kategori_usaha_keuangan_berkelanjutan_code
+			,sipp_kategori_usaha_keuangan_berkelanjutan_ojk_code
+			,sipp_kategori_usaha_keuangan_berkelanjutan_name
+			,sipp_kategori_piutang_code
+			,sipp_kategori_piutang_ojk_code
+			,sipp_kategori_piutang_name
+			,sipp_metode_cadangan_kerugian_penurunan_nilai_code
+			,sipp_metode_cadangan_kerugian_penurunan_nilai_ojk_code
+			,sipp_metode_cadangan_kerugian_penurunan_nilai_name
+	from	master_fintech_slik_client mfsc
+	inner join dbo.master_fintech_slik_contract mfsct on mfsct.fintech_code = mfsc.fintech_code
+	inner join dbo.master_fintech_silaras_client mfslc on mfslc.fintech_code = mfsc.fintech_code
+	inner join dbo.master_fintech_silaras_contract mfslct on mfslct.fintech_code = mfsc.fintech_code
+	where	mfsc.fintech_code = @p_fintech_code ;
+end ;
+

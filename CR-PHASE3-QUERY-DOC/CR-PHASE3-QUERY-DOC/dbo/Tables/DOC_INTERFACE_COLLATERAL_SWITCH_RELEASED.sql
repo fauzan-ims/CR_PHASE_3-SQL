@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[DOC_INTERFACE_COLLATERAL_SWITCH_RELEASED] (
+    [ID]                               BIGINT        IDENTITY (1, 1) NOT NULL,
+    [INTERFACE_COLLATERAL_SWITCH_CODE] NVARCHAR (50) NOT NULL,
+    [COLLATERAL_NO]                    NVARCHAR (50) NOT NULL,
+    [CRE_DATE]                         DATETIME      NOT NULL,
+    [CRE_BY]                           NVARCHAR (15) NOT NULL,
+    [CRE_IP_ADDRESS]                   NVARCHAR (15) NOT NULL,
+    [MOD_DATE]                         DATETIME      NOT NULL,
+    [MOD_BY]                           NVARCHAR (15) NOT NULL,
+    [MOD_IP_ADDRESS]                   NVARCHAR (15) NOT NULL,
+    CONSTRAINT [PK_DOC_INTERFACE_COLLATERAL_SWITCH_RELEASED] PRIMARY KEY CLUSTERED ([INTERFACE_COLLATERAL_SWITCH_CODE] ASC, [COLLATERAL_NO] ASC)
+);
+

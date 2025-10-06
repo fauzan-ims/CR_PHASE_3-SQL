@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[RPT_TANDA_TERIMA_DELIVERY] (
+    [USER_ID]            NVARCHAR (50)  NOT NULL,
+    [REGISTER_NO]        NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (250) NULL,
+    [REPORT_TITLE]       NVARCHAR (250) NULL,
+    [REPORT_IMAGE]       NVARCHAR (250) NULL,
+    [DOKUMEN_NAME]       NVARCHAR (250) NULL,
+    [OBJECT_LEASE]       NVARCHAR (250) NULL,
+    [YEAR]               NVARCHAR (4)   NULL,
+    [CHASSIS_NO]         NVARCHAR (50)  NULL,
+    [ENGINE_NO]          NVARCHAR (50)  NULL,
+    [POLICE_NO]          NVARCHAR (20)  NULL,
+    [CUSTOMER_NAME]      NVARCHAR (250) NULL,
+    [KOTA]               NVARCHAR (50)  NULL,
+    [DATE]               DATETIME       NULL,
+    [ADMIN_RENEWAL_NAME] NVARCHAR (250) NULL,
+    [SPV_NAME]           NVARCHAR (250) NULL,
+    [CRE_DATE]           DATETIME       NOT NULL,
+    [CRE_BY]             NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]           DATETIME       NOT NULL,
+    [MOD_BY]             NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [KONTAK_PHONE_NO]    NVARCHAR (250) NULL,
+    [NAMA_KET]           NVARCHAR (50)  NULL
+);
+

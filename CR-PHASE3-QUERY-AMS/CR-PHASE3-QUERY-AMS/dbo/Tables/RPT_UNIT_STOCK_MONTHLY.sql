@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[RPT_UNIT_STOCK_MONTHLY] (
+    [USER_ID]           NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]    NVARCHAR (250) NOT NULL,
+    [REPORT_TITLE]      NVARCHAR (250) NOT NULL,
+    [REPORT_IMAGE]      NVARCHAR (50)  NULL,
+    [IN_OR_OUT]         NVARCHAR (50)  NULL,
+    [TOTAL_W4]          INT            NULL,
+    [TOTAL_W3]          INT            NULL,
+    [TOTAL_W2]          INT            NULL,
+    [TOTAL_W1]          INT            NULL,
+    [W1]                INT            NULL,
+    [W2]                INT            NULL,
+    [W3]                INT            NULL,
+    [W4]                INT            NULL,
+    [STATUS_UNIT_STOCK] NVARCHAR (50)  NULL,
+    [PARAMETER_MONTH]   INT            NULL,
+    [TOTAL_W4_ON_HAND]  INT            NULL,
+    [TOTAL_W3_ON_HAND]  INT            NULL,
+    [TOTAL_W2_ON_HAND]  INT            NULL,
+    [TOTAL_W1_ON_HAND]  INT            NULL,
+    [MONTH_DESC]        NVARCHAR (20)  NULL,
+    [IS_CONDITION]      NVARCHAR (1)   NULL,
+    [YEAR]              NVARCHAR (4)   NULL
+);
+

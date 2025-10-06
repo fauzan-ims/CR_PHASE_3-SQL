@@ -1,0 +1,24 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_MASTER_WAREHOUSE] (
+    [CODE]           NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [COMPANY_CODE]   NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [BRANCH_CODE]    NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [BRANCH_NAME]    NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [DESCRIPTION]    NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CITY_CODE]      NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CITY_NAME]      NVARCHAR (250)  COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [ADDRESS]        NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [PIC]            NVARCHAR (50)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [IS_ACTIVE]      NVARCHAR (1)    COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CRE_DATE]       DATETIME        NOT NULL,
+    [CRE_BY]         NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CRE_IP_ADDRESS] NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_DATE]       DATETIME        NOT NULL,
+    [MOD_BY]         NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_IP_ADDRESS] NVARCHAR (15)   COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [AuditDataState] VARCHAR (10)    NULL,
+    [AuditDMLAction] VARCHAR (10)    NULL,
+    [AuditUser]      [sysname]       NULL,
+    [AuditDateTime]  DATETIME        NULL,
+    [UpdateColumns]  VARCHAR (MAX)   NULL
+);
+

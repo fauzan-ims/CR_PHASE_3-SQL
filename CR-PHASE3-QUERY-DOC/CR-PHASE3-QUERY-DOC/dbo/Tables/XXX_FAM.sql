@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[XXX_FAM] (
+    [code]                     NVARCHAR (255) NULL,
+    [TYPE_CODE]                NVARCHAR (255) NULL,
+    [ITEM_NAME]                NVARCHAR (255) NULL,
+    [CONDITION]                NVARCHAR (255) NULL,
+    [MARKET_VALUE]             NVARCHAR (255) NULL,
+    [ASSET_VALUE]              NVARCHAR (255) NULL,
+    [DOC_ASSET_NO]             NVARCHAR (255) NULL,
+    [BUILT_YEAR]               NVARCHAR (255) NULL,
+    [PLAT_NO]                  NVARCHAR (255) NULL,
+    [CHASSIS_NO]               NVARCHAR (255) NULL,
+    [ENGINE_NO]                NVARCHAR (255) NULL,
+    [VENDOR_CODE]              REAL           NULL,
+    [VENDOR_NAME]              NVARCHAR (255) NULL,
+    [VENDOR_ADDRESS]           NVARCHAR (255) NULL,
+    [VENDOR_PIC_NAME]          NVARCHAR (255) NULL,
+    [VENDOR_PIC_AREA_PHONE_NO] NVARCHAR (255) NULL,
+    [VENDOR_PIC_PHONE_NO]      NVARCHAR (255) NULL,
+    [CRE_DATE]                 NVARCHAR (255) NULL,
+    [CRE_BY]                   NVARCHAR (255) NULL,
+    [CRE_IP_ADDRESS]           NVARCHAR (255) NULL,
+    [MOD_DATE]                 NVARCHAR (255) NULL,
+    [MOD_BY]                   NVARCHAR (255) NULL,
+    [MOD_IP_ADDRESS]           NVARCHAR (255) NULL
+);
+

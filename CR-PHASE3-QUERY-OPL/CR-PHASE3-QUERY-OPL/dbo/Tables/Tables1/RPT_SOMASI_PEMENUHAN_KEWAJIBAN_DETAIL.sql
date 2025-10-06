@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[RPT_SOMASI_PEMENUHAN_KEWAJIBAN_DETAIL] (
+    [USER_ID]           NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_NO]      NVARCHAR (50)   NULL,
+    [NO_INVOICE]        NVARCHAR (50)   NULL,
+    [PERIODE_PEMAKAIAN] NVARCHAR (4000) NULL,
+    [NILAI_SEWA]        DECIMAL (18, 2) NULL,
+    [DENDA]             DECIMAL (18, 2) NULL,
+    [TANGGAL_JT]        DATETIME        NULL,
+    [NO_PERIOD]         INT             NULL
+);
+

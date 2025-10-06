@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RPT_RECEIVED_BPKB] (
+    [USER_ID]            NVARCHAR (50)  NOT NULL,
+    [FILTER_BRANCH_CODE] NVARCHAR (50)  NOT NULL,
+    [FILTER_BRANCH_NAME] NVARCHAR (250) NOT NULL,
+    [FILTER_FROM_DATE]   DATETIME       NOT NULL,
+    [FILTER_TO_DATE]     DATETIME       NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (250) NULL,
+    [REPORT_TITLE]       NVARCHAR (250) NULL,
+    [REPORT_IMAGE]       NVARCHAR (250) NULL,
+    [BRANCH]             NVARCHAR (250) NULL,
+    [AGREEMENT_NO]       NVARCHAR (50)  NULL,
+    [CLIENT_NAME]        NVARCHAR (250) NULL,
+    [SEQ]                INT            NULL,
+    [BPKB_NO]            NVARCHAR (50)  NULL,
+    [CHASIS_NO]          NVARCHAR (50)  NULL,
+    [ENGINE_NO]          NVARCHAR (50)  NULL,
+    [PLAT_NO]            NVARCHAR (50)  NULL,
+    [RETURN_DATE]        DATETIME       NULL,
+    [UPDATE_BY]          NVARCHAR (50)  NULL,
+    [CRE_DATE]           DATETIME       NOT NULL,
+    [CRE_BY]             NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]           DATETIME       NOT NULL,
+    [MOD_BY]             NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)  NOT NULL,
+    [IS_CONDITION]       NVARCHAR (1)   NULL
+);
+

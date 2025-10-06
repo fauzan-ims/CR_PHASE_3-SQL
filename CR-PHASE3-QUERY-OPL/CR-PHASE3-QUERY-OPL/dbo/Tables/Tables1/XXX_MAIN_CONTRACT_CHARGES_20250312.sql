@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[XXX_MAIN_CONTRACT_CHARGES_20250312] (
+    [ID]                     BIGINT          IDENTITY (1, 1) NOT NULL,
+    [MAIN_CONTRACT_NO]       NVARCHAR (50)   NOT NULL,
+    [CHARGES_CODE]           NVARCHAR (50)   NOT NULL,
+    [DAFAULT_CHARGES_RATE]   DECIMAL (9, 6)  NOT NULL,
+    [DAFAULT_CHARGES_AMOUNT] DECIMAL (18, 2) NOT NULL,
+    [CALCULATE_BY]           NVARCHAR (10)   NOT NULL,
+    [CHARGES_RATE]           DECIMAL (9, 6)  NOT NULL,
+    [CHARGES_AMOUNT]         DECIMAL (18, 2) NOT NULL,
+    [NEW_CALCULATE_BY]       NVARCHAR (10)   NOT NULL,
+    [NEW_CHARGES_RATE]       DECIMAL (9, 6)  NOT NULL,
+    [NEW_CHARGES_AMOUNT]     DECIMAL (18, 2) NOT NULL,
+    [CRE_DATE]               DATETIME        NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]               DATETIME        NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)   NOT NULL
+);
+

@@ -1,0 +1,24 @@
+﻿CREATE TABLE [dbo].[APPLICATION_ASSET_DETAIL_BACKUP_20250909] (
+    [ID]                     BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CODE]                   NVARCHAR (50)   NULL,
+    [ASSET_NO]               NVARCHAR (50)   NOT NULL,
+    [TYPE]                   NVARCHAR (15)   NULL,
+    [DESCRIPTION]            NVARCHAR (250)  NULL,
+    [AMOUNT]                 DECIMAL (18, 2) NULL,
+    [MERK_CODE]              NVARCHAR (50)   NULL,
+    [MERK_DESCRIPTION]       NVARCHAR (250)  NULL,
+    [MODEL_CODE]             NVARCHAR (50)   NULL,
+    [MODEL_DESCRIPTION]      NVARCHAR (250)  NULL,
+    [TYPE_CODE]              NVARCHAR (50)   NULL,
+    [TYPE_DESCRIPTION]       NVARCHAR (250)  NULL,
+    [PURCHASE_CODE]          NVARCHAR (50)   NULL,
+    [PURCHASE_STATUS]        NVARCHAR (50)   NULL,
+    [CRE_DATE]               DATETIME        NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]               DATETIME        NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [IS_SUBJECT_TO_PURCHASE] NVARCHAR (1)    NULL
+);
+

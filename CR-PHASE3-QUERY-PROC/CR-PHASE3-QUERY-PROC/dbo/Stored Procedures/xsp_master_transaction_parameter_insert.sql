@@ -1,0 +1,175 @@
+﻿CREATE PROCEDURE [dbo].[xsp_master_transaction_parameter_insert]
+(
+	@p_id					   bigint = 0 output
+	,@p_company_code		   nvarchar(50)		= 'DSF'
+	,@p_transaction_code	   nvarchar(50)
+	,@p_process_code		   nvarchar(50)
+	,@p_order_key			   int				= 0
+	,@p_parameter_amount	   decimal(18, 2)	= 0
+	,@p_is_calculate_by_system nvarchar(1)		
+	,@p_is_transaction		   nvarchar(1)		
+	,@p_is_amount_editable	   nvarchar(1)		= 'F'	
+	,@p_is_discount_editable   nvarchar(1)
+	,@p_gl_link_code		   nvarchar(50)		= null
+	,@p_gl_link_name		   nvarchar(50)		= null
+	,@p_discount_gl_link_code  nvarchar(50)		= null
+	,@p_discount_gl_link_name  nvarchar(50)		= null
+	,@p_maximum_disc_pct	   decimal(9, 6)	= 0
+	,@p_maximum_disc_amount	   decimal(18, 2)	= 0
+	,@p_is_journal			   nvarchar(1)		= 'F'
+	,@p_debet_or_credit		   nvarchar(10)		= ''
+	,@p_is_discount_jurnal	   nvarchar(1)		= 'F'
+	,@p_is_reduce_transaction  nvarchar(1)		= 'F'
+	,@p_is_psak				   nvarchar(1)		= 'F'
+	,@p_psak_gl_link_code	   nvarchar(50)		= null
+	,@p_psak_gl_link_name	   nvarchar(50)		= null
+	--											
+	,@p_cre_date			   datetime
+	,@p_cre_by				   nvarchar(15)
+	,@p_cre_ip_address		   nvarchar(15)
+	,@p_mod_date			   datetime
+	,@p_mod_by				   nvarchar(15)
+	,@p_mod_ip_address		   nvarchar(15)
+)
+as
+begin
+	declare @msg nvarchar(max) ;
+
+	if @p_is_calculate_by_system = 'T'
+		set @p_is_calculate_by_system = '1' ;
+	else
+		set @p_is_calculate_by_system = '0' ;
+
+	if @p_is_transaction = 'T'
+		set @p_is_transaction = '1' ;
+	else
+		set @p_is_transaction = '0' ;
+
+	if @p_is_amount_editable = 'T'
+		set @p_is_amount_editable = '1' ;
+	else
+		set @p_is_amount_editable = '0' ;
+
+	if @p_is_discount_editable = 'T'
+		set @p_is_discount_editable = '1' ;
+	else
+		set @p_is_discount_editable = '0' ;
+
+	if @p_is_journal = 'T'
+		set @p_is_journal = '1' ;
+	else
+		set @p_is_journal = '0' ;
+
+	if @p_is_discount_jurnal = 'T'
+		set @p_is_discount_jurnal = '1' ;
+	else
+		set @p_is_discount_jurnal = '0' ;
+
+	if @p_is_reduce_transaction = 'T'
+		set @p_is_reduce_transaction = '1' ;
+	else
+		set @p_is_reduce_transaction = '0' ;
+
+	if @p_is_psak = 'T'
+		set @p_is_psak = '1' ;
+	else
+		set @p_is_psak = '0' ;
+
+	begin try
+		insert into master_transaction_parameter
+		(
+			transaction_code
+			,company_code
+			,process_code
+			,order_key
+			,parameter_amount
+			,is_calculate_by_system
+			,is_transaction
+			,is_amount_editable
+			,is_discount_editable
+			,gl_link_code
+			,gl_link_name
+			,discount_gl_link_code
+			,discount_gl_link_name
+			,maximum_disc_pct
+			,maximum_disc_amount
+			,is_journal
+			,debet_or_credit
+			,is_discount_jurnal
+			,is_reduce_transaction
+			,is_psak
+			,psak_gl_link_code
+			,psak_gl_link_name
+			--
+			,cre_date
+			,cre_by
+			,cre_ip_address
+			,mod_date
+			,mod_by
+			,mod_ip_address
+		)
+		values
+		(	@p_transaction_code
+			,@p_company_code
+			,@p_process_code
+			,@p_order_key
+			,@p_parameter_amount
+			,@p_is_calculate_by_system
+			,@p_is_transaction
+			,@p_is_amount_editable
+			,@p_is_discount_editable
+			,@p_gl_link_code
+			,@p_gl_link_name
+			,@p_discount_gl_link_code
+			,@p_discount_gl_link_name
+			,@p_maximum_disc_pct
+			,@p_maximum_disc_amount
+			,@p_is_journal
+			,@p_debet_or_credit
+			,@p_is_discount_jurnal
+			,@p_is_reduce_transaction
+			,@p_is_psak
+			,@p_psak_gl_link_code
+			,@p_psak_gl_link_name
+			--
+			,@p_cre_date
+			,@p_cre_by
+			,@p_cre_ip_address
+			,@p_mod_date
+			,@p_mod_by
+			,@p_mod_ip_address
+		) ;
+
+		set @p_id = @@identity ;
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ; 
+end ;

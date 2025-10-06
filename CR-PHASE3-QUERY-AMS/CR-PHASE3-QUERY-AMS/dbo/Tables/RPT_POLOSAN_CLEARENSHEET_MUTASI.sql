@@ -1,0 +1,24 @@
+﻿CREATE TABLE [dbo].[RPT_POLOSAN_CLEARENSHEET_MUTASI] (
+    [USER_ID]                NVARCHAR (50)  NOT NULL,
+    [FILTER_MUTASI_CODE]     NVARCHAR (50)  NOT NULL,
+    [REPORT_TITLE]           NVARCHAR (250) NOT NULL,
+    [NAME]                   NVARCHAR (50)  NOT NULL,
+    [JABATAN]                NVARCHAR (50)  NOT NULL,
+    [BAGIAN]                 NVARCHAR (50)  NOT NULL,
+    [TANGGAL_LAHIR]          DATETIME       NOT NULL,
+    [PUSAT]                  NVARCHAR (50)  NOT NULL,
+    [CABANG]                 NVARCHAR (50)  NOT NULL,
+    [NIK]                    NVARCHAR (50)  NOT NULL,
+    [TANGGAL_MASUK]          DATETIME       NOT NULL,
+    [NO_TELP]                NVARCHAR (20)  NOT NULL,
+    [NO_HP]                  NVARCHAR (20)  NOT NULL,
+    [TANGGAL_TERAKHIR_KERJA] DATETIME       NOT NULL,
+    [APPROVAL_STATUS]        NVARCHAR (50)  NOT NULL,
+    [CRE_DATE]               DATETIME       NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]               DATETIME       NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)  NOT NULL
+);
+

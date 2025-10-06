@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [ims-imam]
+    WITH PASSWORD = N'bPhBwqcCoxmtvza7vuu~tYhvmsFT7_&#$!~<a4dslNbgfqzo', SID = 0xAEE3896693A44D499ADEFAD134FBA449, DEFAULT_LANGUAGE = [us_english], CHECK_EXPIRATION = ON;
+

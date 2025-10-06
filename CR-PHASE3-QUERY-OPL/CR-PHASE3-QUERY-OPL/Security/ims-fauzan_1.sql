@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [ims-fauzan]
+    WITH PASSWORD = N'x,i}nxkjoB^ny7Jas6{Ct9wumsFT7_&#$!~<BbxwobJgmV#l', SID = 0xFF6DE18B6C3702418C6CA42B1FA0EDDA, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

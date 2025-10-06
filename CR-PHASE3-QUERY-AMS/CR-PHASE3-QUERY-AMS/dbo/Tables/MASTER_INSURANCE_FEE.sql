@@ -1,0 +1,99 @@
+﻿CREATE TABLE [dbo].[MASTER_INSURANCE_FEE] (
+    [ID]                    BIGINT          IDENTITY (1, 1) NOT NULL,
+    [INSURANCE_CODE]        NVARCHAR (50)   NOT NULL,
+    [EFF_DATE]              DATETIME        NOT NULL,
+    [CURRENCY_CODE]         NVARCHAR (50)   CONSTRAINT [DF_MASTER_INSURANCE_FEE_CURRENCY_CODE] DEFAULT (N'IDR') NOT NULL,
+    [ADMIN_FEE_BUY_AMOUNT]  DECIMAL (18, 2) CONSTRAINT [DF_MASTER_INSURANCE_FEE_ADMIN_FEE_AMOUNT] DEFAULT ((0)) NOT NULL,
+    [ADMIN_FEE_SELL_AMOUNT] DECIMAL (18, 2) CONSTRAINT [DF_MASTER_INSURANCE_FEE_ADMIN_FEE_AMOUNT1] DEFAULT ((0)) NOT NULL,
+    [STAMP_FEE_AMOUNT]      DECIMAL (18, 2) CONSTRAINT [DF_MASTER_INSURANCE_FEE_STAMP_FEE_AMOUNT] DEFAULT ((0)) NOT NULL,
+    [CRE_DATE]              DATETIME        NOT NULL,
+    [CRE_BY]                NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]              DATETIME        NOT NULL,
+    [MOD_BY]                NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (15)   NOT NULL,
+    CONSTRAINT [PK_MASTER_INSURANCE_FEE] PRIMARY KEY CLUSTERED ([ID] ASC),
+    CONSTRAINT [FK_SYS_INSURANCE_FEE_MASTER_INSURANCE] FOREIGN KEY ([INSURANCE_CODE]) REFERENCES [dbo].[MASTER_INSURANCE] ([CODE]) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_INSURANCE_FEE_Insert_Audit] 
+			ON [dbo].[MASTER_INSURANCE_FEE]    
+			FOR INSERT    
+			AS    
+			
+ INSERT INTO [dbo].[Z_AUDIT_MASTER_INSURANCE_FEE]
+([ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'New','Insert',SUSER_SNAME(),getdate(),''  FROM INSERTED 
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_INSURANCE_FEE_Delete_Audit]    
+			ON [dbo].[MASTER_INSURANCE_FEE]    
+			FOR DELETE    
+			AS   
+  INSERT INTO [dbo].[Z_AUDIT_MASTER_INSURANCE_FEE]
+([ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'Old','Delete',SUSER_SNAME(),getdate(),''  FROM DELETED
+GO
+    
+			CREATE TRIGGER [dbo].[MASTER_INSURANCE_FEE_Update_Audit]      
+			ON [dbo].[MASTER_INSURANCE_FEE]    
+			FOR UPDATE    
+			AS 
+   
+			 
+			    DECLARE @UpdatedCols varchar(max) 
+			 
+			   SELECT @UpdatedCols =  CASE WHEN UPDATE([ID]) THEN '[ID]-' ELSE '' END + 
+CASE WHEN UPDATE([INSURANCE_CODE]) THEN '[INSURANCE_CODE]-' ELSE '' END + 
+CASE WHEN UPDATE([EFF_DATE]) THEN '[EFF_DATE]-' ELSE '' END + 
+CASE WHEN UPDATE([CURRENCY_CODE]) THEN '[CURRENCY_CODE]-' ELSE '' END + 
+CASE WHEN UPDATE([ADMIN_FEE_BUY_AMOUNT]) THEN '[ADMIN_FEE_BUY_AMOUNT]-' ELSE '' END + 
+CASE WHEN UPDATE([ADMIN_FEE_SELL_AMOUNT]) THEN '[ADMIN_FEE_SELL_AMOUNT]-' ELSE '' END + 
+CASE WHEN UPDATE([STAMP_FEE_AMOUNT]) THEN '[STAMP_FEE_AMOUNT]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_DATE]) THEN '[CRE_DATE]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_BY]) THEN '[CRE_BY]-' ELSE '' END + 
+CASE WHEN UPDATE([CRE_IP_ADDRESS]) THEN '[CRE_IP_ADDRESS]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_DATE]) THEN '[MOD_DATE]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_BY]) THEN '[MOD_BY]-' ELSE '' END + 
+CASE WHEN UPDATE([MOD_IP_ADDRESS]) THEN '[MOD_IP_ADDRESS]-' ELSE '' END  
+			    
+			   IF LTRIM(RTRIM(@UpdatedCols)) <> '' 
+			   BEGIN 
+			          INSERT INTO [dbo].[Z_AUDIT_MASTER_INSURANCE_FEE]
+([ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'New','Update',SUSER_SNAME(),getdate(),@UpdatedCols  FROM INSERTED     
+			    
+			          INSERT INTO [dbo].[Z_AUDIT_MASTER_INSURANCE_FEE]
+([ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],AuditDataState,AuditDMLAction,AuditUser,AuditDateTime,UpdateColumns)
+SELECT CONVERT(bigint,[ID]) as [ID],[INSURANCE_CODE],[EFF_DATE],[CURRENCY_CODE],[ADMIN_FEE_BUY_AMOUNT],[ADMIN_FEE_SELL_AMOUNT],[STAMP_FEE_AMOUNT],[CRE_DATE],[CRE_BY],[CRE_IP_ADDRESS],[MOD_DATE],[MOD_BY],[MOD_IP_ADDRESS],'Old','Update',SUSER_SNAME(),getdate(),@UpdatedCols  FROM DELETED  
+			   END
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Auto generate', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'ID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Kode maskapai asuransi atas data master insurance fee tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'INSURANCE_CODE';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Tanggal mulai berlakunay biaya fee atas data master insurance fee tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'EFF_DATE';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KODE CURRENCY (''IDR'')', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'CURRENCY_CODE';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nilai biaya admin saat proses beli asuransi dari maskapai', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'ADMIN_FEE_BUY_AMOUNT';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nilai biaya admin saat proses jual asuransi ke client', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'ADMIN_FEE_SELL_AMOUNT';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nilai biaya materai atas data master insurance fee tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MASTER_INSURANCE_FEE', @level2type = N'COLUMN', @level2name = N'STAMP_FEE_AMOUNT';
+

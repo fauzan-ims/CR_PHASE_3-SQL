@@ -1,0 +1,72 @@
+﻿
+-- Stored Procedure
+
+CREATE PROCEDURE [dbo].[xsp_daily_overdue_insert]
+(
+	@p_user_id NVARCHAR(50)
+)
+AS
+BEGIN
+    SELECT BUCKET,
+           CLIENT_NO,
+           CLIENT_NAME,
+           AGREEMENT_NO,
+           TYPE_UNIT,
+           JUMLAH_UNIT,
+           TENOR,
+           INVOICE_TYPE,
+           BILLING_NO,
+           INVOICE_DATE,
+           NEW_INVOICE_DATE,
+           INVOICE_POSTING_DATE,
+           INVOICE_NO,
+           PREVIOUS_INVOICE_NO,
+           PERIODE_SEWA,
+           TOP_DAYS,
+           INVOICE_DUE_DATE,
+           LEASE_AMOUNT,
+           BILLING_AMOUNT,
+           CREDIT_AMOUNT,
+           NEW_BILLING_AMOUNT,
+           VAT_AMOUNT,
+           BILLING_AMOUNT_INC_VAT,
+           PPH_AMOUNT,
+           NETT_AMOUNT,
+           OVERDUE_AMOUNT_INC_VAT,
+           OVERDUE_AMOUNT_EXC_VAT,
+           OD_DAYS,
+           PENALTY,
+           INVOICE_DELIVERY_DATE,
+           INVOICE_RECEIVED_DATE,
+           RESULT_DESKCOLL,
+           REMARK_DESKCOLL,
+           PROMISE_DATE,
+           AGREEMENT_STATUS,
+           --GO_LIVE_AGREEMENT_DATE,
+           TERMINATION_STATUS,
+           TERMINATION_DATE,
+           DESK_COLLECTOR,
+           MARKETING_NAME,
+           MARKETING_LEADER,
+           CLIENT_ADRESS,
+           BILLING_ADRESS,
+           CLIENT_EMAIL,
+           CLIENT_PHONE_NUMBER,
+           JUMLAH_INVOICE_PAID,
+           JUMLAH_INVOICE_NOTDUE,
+           report_company,
+           report_image,
+           report_title,
+           branch_code,
+           as_of_date,
+           branch_name,
+           IS_CONDITION,
+          @p_user_id 'USER_ID',
+           --PLAT_NO,
+           --ITEM_NAME,
+           BILLING_DATE,
+           REMARK,
+           CONTACT_PERSON_NAME
+    FROM dbo.RPT_DAILY_OVERDUE
+    --WHERE USER_ID = @p_user_id;
+END;

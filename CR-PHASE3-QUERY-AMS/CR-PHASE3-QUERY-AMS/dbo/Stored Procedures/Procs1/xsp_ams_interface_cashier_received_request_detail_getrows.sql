@@ -1,0 +1,80 @@
+﻿create PROCEDURE dbo.xsp_ams_interface_cashier_received_request_detail_getrows
+(
+	@p_keywords						   nvarchar(50)
+	,@p_pagenumber					   int
+	,@p_rowspage					   int
+	,@p_order_by					   int
+	,@p_sort_by						   nvarchar(5)
+	,@p_cashier_received_request_code  nvarchar(50)
+)
+as
+begin
+	declare @rows_count int = 0 ;
+
+	select	@rows_count = count(1)
+	from	dbo.ams_interface_cashier_received_request_detail prd
+	left join dbo.asset ass on ass.code = prd.fa_code
+	where	prd.cashier_received_request_code = @p_cashier_received_request_code
+			and	(
+					prd.branch_name					like '%' + @p_keywords + '%'
+					or	prd.gl_link_code			like '%' + @p_keywords + '%'
+					or	prd.fa_code					like '%' + @p_keywords + '%'
+					or	ass.item_name				like '%' + @p_keywords + '%'
+					or	prd.orig_currency_code			like '%' + @p_keywords + '%'
+					or	prd.orig_amount					like '%' + @p_keywords + '%'
+					or	prd.division_name				like '%' + @p_keywords + '%'
+					or	prd.department_name				like '%' + @p_keywords + '%'
+					or	prd.remarks						like '%' + @p_keywords + '%'
+				) ;
+
+	select		id
+				,cashier_received_request_code
+				,prd.branch_name
+				--,jgl.gl_link_name
+				,prd.gl_link_code 'gl_link_name'
+				,prd.fa_code
+				,ass.item_name
+				,prd.facility_name
+				,prd.orig_currency_code
+				,prd.orig_amount
+				,prd.division_name
+				,prd.department_name
+				,prd.remarks
+				,@rows_count 'rowcount'
+	from		ams_interface_cashier_received_request_detail prd
+	left join dbo.asset ass on ass.code = prd.fa_code
+	where		prd.cashier_received_request_code = @p_cashier_received_request_code
+				and	(
+						prd.branch_name					like '%' + @p_keywords + '%'
+						or	prd.gl_link_code			like '%' + @p_keywords + '%'
+						or	prd.fa_code					like '%' + @p_keywords + '%'
+						or	ass.item_name				like '%' + @p_keywords + '%'
+						or	prd.orig_currency_code			like '%' + @p_keywords + '%'
+						or	prd.orig_amount					like '%' + @p_keywords + '%'
+						or	prd.division_name				like '%' + @p_keywords + '%'
+						or	prd.department_name				like '%' + @p_keywords + '%'
+						or	prd.remarks						like '%' + @p_keywords + '%'
+					)
+	order by	case
+					when @p_sort_by = 'asc' then case @p_order_by
+													 when 1 then gl_link_code
+													 when 2 then prd.branch_name
+													 when 3 then prd.fa_code + ass.item_name
+													 when 4 then prd.orig_currency_code + cast(prd.orig_amount as nvarchar(50))
+													 when 5 then prd.division_name
+													 when 6 then prd.department_name
+													 when 7 then prd.remarks
+												 end
+				end asc
+				,case
+					 when @p_sort_by = 'desc' then case @p_order_by
+													 when 1 then gl_link_code
+													 when 2 then prd.branch_name
+													 when 3 then prd.fa_code + ass.item_name
+													 when 4 then prd.orig_currency_code + cast(prd.orig_amount as nvarchar(50))
+													 when 5 then prd.division_name
+													 when 6 then prd.department_name
+													 when 7 then prd.remarks
+												   end
+				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
+end ;

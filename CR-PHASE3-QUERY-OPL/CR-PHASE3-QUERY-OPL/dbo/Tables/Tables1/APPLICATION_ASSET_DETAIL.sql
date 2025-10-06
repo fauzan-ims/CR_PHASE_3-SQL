@@ -1,0 +1,31 @@
+﻿CREATE TABLE [dbo].[APPLICATION_ASSET_DETAIL] (
+    [ID]                     BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CODE]                   NVARCHAR (50)   NULL,
+    [ASSET_NO]               NVARCHAR (50)   NOT NULL,
+    [TYPE]                   NVARCHAR (15)   NULL,
+    [DESCRIPTION]            NVARCHAR (250)  NULL,
+    [AMOUNT]                 DECIMAL (18, 2) NULL,
+    [MERK_CODE]              NVARCHAR (50)   NULL,
+    [MERK_DESCRIPTION]       NVARCHAR (250)  NULL,
+    [MODEL_CODE]             NVARCHAR (50)   NULL,
+    [MODEL_DESCRIPTION]      NVARCHAR (250)  NULL,
+    [TYPE_CODE]              NVARCHAR (50)   NULL,
+    [TYPE_DESCRIPTION]       NVARCHAR (250)  NULL,
+    [PURCHASE_CODE]          NVARCHAR (50)   NULL,
+    [PURCHASE_STATUS]        NVARCHAR (50)   NULL,
+    [CRE_DATE]               DATETIME        NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]               DATETIME        NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [IS_SUBJECT_TO_PURCHASE] NVARCHAR (1)    NULL,
+    CONSTRAINT [PK_APPLICATION_ASSET_DETAIL] PRIMARY KEY CLUSTERED ([ID] ASC),
+    CONSTRAINT [FK_APPLICATION_ASSET_DETAIL_APPLICATION_ASSET] FOREIGN KEY ([ASSET_NO]) REFERENCES [dbo].[APPLICATION_ASSET] ([ASSET_NO])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
+    ON [dbo].[APPLICATION_ASSET_DETAIL]([ASSET_NO] ASC, [TYPE] ASC);
+

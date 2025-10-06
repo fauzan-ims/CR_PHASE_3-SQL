@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[RPT_UNKNOWN_MONITORING] (
+    [USER_ID]                NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]         NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]           NVARCHAR (250)  NOT NULL,
+    [REPORT_IMAGE]           NVARCHAR (250)  NOT NULL,
+    [FILTER_FROM_PERIOD]     DATETIME        NOT NULL,
+    [FILTER_TO_PERIOD]       DATETIME        NOT NULL,
+    [FILTER_BANK_CODE]       NVARCHAR (50)   NOT NULL,
+    [FILTER_BANK_ACCOUNT_NO] NVARCHAR (50)   NOT NULL,
+    [TYPE_TRANSACTION]       NVARCHAR (250)  NULL,
+    [OPENING_BALANCE]        DECIMAL (18, 2) NULL,
+    [TRANSACTION_DATE]       DATETIME        NULL,
+    [TRANSACTION_NO]         NVARCHAR (50)   NULL,
+    [BANK_NAME]              NVARCHAR (50)   NULL,
+    [ACCOUNT_NO]             NVARCHAR (50)   NULL,
+    [CURRENCY]               NVARCHAR (3)    NULL,
+    [TRANSACTION_AMOUNT]     DECIMAL (18, 2) NULL,
+    [NOTE]                   NVARCHAR (4000) NULL,
+    [IS_CONDITION]           NVARCHAR (1)    NULL,
+    [CRE_BY]                 NVARCHAR (15)   NOT NULL,
+    [CRE_DATE]               DATETIME        NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)   NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]               DATETIME        NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)   NOT NULL
+);
+

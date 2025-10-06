@@ -1,0 +1,84 @@
+﻿CREATE PROCEDURE dbo.xsp_task_main_for_past_due_getrows
+(
+	@p_keywords		   nvarchar(50)
+	,@p_pagenumber	   int
+	,@p_rowspage	   int
+	,@p_order_by	   int
+	,@p_sort_by		   nvarchar(5)
+	,@p_collector_code nvarchar(50) = ''
+	,@p_desk_status	   nvarchar(50) = ''
+)
+as
+begin
+	declare @rows_count int = 0 ;
+
+	select	@rows_count = count(1)
+	from		task_main								 tmn
+				left join dbo.deskcoll_main				 dmn on (dmn.id = tmn.deskcoll_main_id)
+	where		tmn.desk_status		 = case @p_desk_status
+										   when 'ALL' then tmn.desk_status
+										   else @p_desk_status
+									   end
+			and isnull(tmn.promise_date,'') = ''
+			and
+			(
+				tmn.client_name										like '%' + @p_keywords + '%'
+				or	convert(varchar(30), tmn.task_date, 103)		like '%' + @p_keywords + '%'
+				or	tmn.deskcoll_staff_name							like '%' + @p_keywords + '%'
+				or	dmn.posting_by_name								like '%' + @p_keywords + '%'
+				or	convert(varchar(30), dmn.posting_date, 103)		like '%' + @p_keywords + '%'
+				or	convert(varchar(30), dmn.result_promise_date, 103)		like '%' + @p_keywords + '%'
+				or	tmn.desk_status									like '%' + @p_keywords + '%'
+			) ;
+
+	select		tmn.id
+				,tmn.client_name
+				,convert(varchar(30), tmn.task_date, 103)			 'task_date'
+				,tmn.deskcoll_staff_name							'marketing_name'
+				,dmn.posting_by_name								'posting_by'
+				,convert(varchar(30), dmn.posting_date, 103)		'posting_date'
+				,convert(varchar(30), dmn.result_promise_date, 103)	'promise_date'
+				--,tmn.promise_date
+				,tmn.desk_status
+				,convert(varchar(30), dmn.posting_date, 103)		 'posting_date'
+				,@rows_count										 'rowcount'
+	from		task_main								 tmn
+				left join dbo.deskcoll_main				 dmn on (dmn.id = tmn.deskcoll_main_id)
+	where		tmn.desk_status		 = case @p_desk_status
+										   when 'ALL' then tmn.desk_status
+										   else @p_desk_status
+									   end
+				and isnull(tmn.promise_date,'') = ''
+				and
+				(
+					tmn.client_name										like '%' + @p_keywords + '%'
+					or	convert(varchar(30), tmn.task_date, 103)		like '%' + @p_keywords + '%'
+					or	tmn.deskcoll_staff_name							like '%' + @p_keywords + '%'
+					or	dmn.posting_by_name								like '%' + @p_keywords + '%'
+					or	convert(varchar(30), dmn.posting_date, 103)		like '%' + @p_keywords + '%'
+					or	convert(varchar(30), dmn.result_promise_date, 103)		like '%' + @p_keywords + '%'
+					or	tmn.desk_status									like '%' + @p_keywords + '%'
+				) 
+	order by	case
+					when @p_sort_by = 'asc' then case @p_order_by
+													 when 1 then tmn.client_name
+													 when 2 then cast(tmn.task_date as sql_variant)
+													 when 3 then tmn.deskcoll_staff_name		
+													 when 4 then dmn.posting_by_name		
+													 when 5 then cast(dmn.posting_date as sql_variant)
+													 when 6 then cast(dmn.result_promise_date as sql_variant)
+													 when 7 then tmn.desk_status
+												 end
+				end asc
+				,case
+					 when @p_sort_by = 'desc' then case @p_order_by
+													 when 1 then tmn.client_name
+													 when 2 then cast(tmn.task_date as sql_variant)
+													 when 3 then tmn.deskcoll_staff_name		
+													 when 4 then dmn.posting_by_name		
+													 when 5 then cast(dmn.posting_date as sql_variant)
+													 when 6 then cast(dmn.result_promise_date as sql_variant)
+													 when 7 then tmn.desk_status
+												   end
+				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
+end ;

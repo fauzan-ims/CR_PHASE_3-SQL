@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[DOC_INTERFACE_COLLATERAL_SWITCH_REPLACED_DOC] (
+    [ID]                     BIGINT         IDENTITY (1, 1) NOT NULL,
+    [REPLACED_COLLATERAL_NO] NVARCHAR (50)  NOT NULL,
+    [DOCUMENT_CODE]          NVARCHAR (50)  NOT NULL,
+    [FILENAME]               NVARCHAR (250) NOT NULL,
+    [PATHS]                  NVARCHAR (250) NOT NULL,
+    [EXPIRED_DATE]           DATETIME       NULL,
+    [PROMISE_DATE]           DATETIME       NULL,
+    [IS_REQUIRED]            NVARCHAR (1)   NOT NULL,
+    [STATUS]                 NVARCHAR (50)  NULL,
+    [CRE_DATE]               DATETIME       NOT NULL,
+    [CRE_BY]                 NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]         NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]               DATETIME       NOT NULL,
+    [MOD_BY]                 NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]         NVARCHAR (15)  NOT NULL,
+    CONSTRAINT [PK_DOC_INTERFACE_COLLATERAL_SWITCH_REPLACED_DOC] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+

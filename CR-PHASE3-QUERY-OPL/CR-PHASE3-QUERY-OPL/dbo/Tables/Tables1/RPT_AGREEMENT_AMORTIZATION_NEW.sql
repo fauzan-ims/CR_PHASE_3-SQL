@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[RPT_AGREEMENT_AMORTIZATION_NEW] (
+    [USER_ID]            NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_NO]       NVARCHAR (50)   NOT NULL,
+    [ASSET_NO]           NVARCHAR (50)   NOT NULL,
+    [CLIENT_NAME]        NVARCHAR (50)   NOT NULL,
+    [BRANCH]             NVARCHAR (50)   NOT NULL,
+    [AGREEMENT_DATE]     DATETIME        NULL,
+    [ASSET_NAME]         NVARCHAR (250)  NOT NULL,
+    [BILLING_NO]         NVARCHAR (50)   NOT NULL,
+    [DUE_DATE]           DATETIME        NULL,
+    [BILLING_DATE]       DATETIME        NULL,
+    [BILLING_AMOUNT]     DECIMAL (18, 2) NOT NULL,
+    [REPORT_IMAGE]       NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]       NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (50)   NOT NULL,
+    [INVOICE_NO]         NVARCHAR (50)   NULL,
+    [BILLING_STATUS]     NVARCHAR (50)   NULL,
+    [PAID_DATE]          DATETIME        NULL,
+    [VOUCHER_NO]         NVARCHAR (50)   NULL,
+    [INVOICE_DUE_DATE]   DATETIME        NULL,
+    [PAYMENT_AMOUNT]     DECIMAL (18, 2) NULL,
+    [PLAT_NO]            NVARCHAR (50)   NULL,
+    [OVD_DAYS]           INT             NULL,
+    [OVD_BILLING_AMOUNT] DECIMAL (18, 2) NULL,
+    [PERIOD]             INT             NULL
+);
+

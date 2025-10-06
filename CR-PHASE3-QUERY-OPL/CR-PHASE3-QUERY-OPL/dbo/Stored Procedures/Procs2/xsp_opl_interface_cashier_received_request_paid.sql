@@ -1,0 +1,96 @@
+﻿-- Louis Selasa, 13 Desember 2022 18.16.46 -- 
+CREATE PROCEDURE dbo.xsp_opl_interface_cashier_received_request_paid
+(
+	@p_code					 nvarchar(50)
+	,@p_process_date		 datetime	    = null
+	,@p_process_reff_no		 nvarchar(50)   = 'default'
+	,@p_process_reff_name	 nvarchar(250)  = 'default'
+	,@p_doc_reff_code		 nvarchar(50)
+	,@p_voucher_no			 nvarchar(50)
+	--
+	,@p_mod_date			 datetime
+	,@p_mod_by				 nvarchar(15)
+	,@p_mod_ip_address		 nvarchar(15)
+)
+as
+begin
+	declare @msg				nvarchar(max)
+			,@agreement_no		nvarchar(50)
+			,@process_date		datetime
+			,@doc_reff_code		nvarchar(50)
+			,@doc_reff_name		nvarchar(250)
+			,@doc_reff_fee_code nvarchar(50) ;
+
+	begin try 
+		select	@doc_reff_code		= doc_reff_code
+				,@doc_reff_name		= doc_reff_name
+				,@doc_reff_fee_code = doc_reff_fee_code
+				,@agreement_no		= agreement_no
+				,@process_date		= process_date
+		from	opl_interface_cashier_received_request
+		where	code				= @p_code ;
+
+		if (@doc_reff_name = 'WO RECOVERY')
+		begin
+			exec dbo.xsp_write_off_recovery_paid @p_code				= @doc_reff_code
+												 ,@p_agreement_no		= @agreement_no
+												 ,@p_process_reff_no	= null
+												 ,@p_process_reff_name	= null
+												 ,@p_process_date		= @process_date
+												 ,@p_mod_date			= @p_mod_date		
+												 ,@p_mod_by				= @p_mod_by			
+												 ,@p_mod_ip_address		= @p_mod_ip_address	
+		end
+		else
+		begin
+			exec dbo.xsp_invoice_paid @p_invoice_no			= @p_doc_reff_code
+									  ,@p_payment_date		= @p_process_date
+									  ,@p_transaction_no	= @p_process_reff_no
+									  ,@p_voucher_no		= @p_voucher_no
+									  ,@p_process_reff_name	= @p_process_reff_name
+									  --					
+									  ,@p_mod_date			= @p_mod_date
+									  ,@p_mod_by			= @p_mod_by
+									  ,@p_mod_ip_address	= @p_mod_ip_address
+		end
+
+		update	dbo.opl_interface_cashier_received_request
+		set		process_date		= @p_process_date
+				,process_reff_no	= @p_process_reff_no
+				,process_reff_name	= @p_process_reff_name
+				,request_status		= 'PAID'
+		where	code				= @p_code ;
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ; 
+end ;
+
+

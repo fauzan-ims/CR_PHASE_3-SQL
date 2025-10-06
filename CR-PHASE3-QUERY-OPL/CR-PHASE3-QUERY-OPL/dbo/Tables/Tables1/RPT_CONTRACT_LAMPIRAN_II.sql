@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[RPT_CONTRACT_LAMPIRAN_II] (
+    [USER_ID]                       NVARCHAR (50)   NULL,
+    [REPORT_COMPANY_NAME]           NVARCHAR (250)  NULL,
+    [REPORT_COMPANY_ADDRESS]        NVARCHAR (4000) NULL,
+    [REPORT_TITLE_LAMPIRAN_II]      NVARCHAR (250)  NULL,
+    [DAY]                           NVARCHAR (50)   NULL,
+    [DATE]                          INT             NULL,
+    [MONTH]                         NVARCHAR (50)   NULL,
+    [YEAR]                          INT             NULL,
+    [CONTRACT_DATE]                 DATETIME        NULL,
+    [EMPLOYEE_NAME]                 NVARCHAR (250)  NULL,
+    [CLIENT_NAME]                   NVARCHAR (50)   NULL,
+    [CLIENT_EMPLOYEE_NAME]          NVARCHAR (250)  NULL,
+    [CLIENT_ADDRESS]                NVARCHAR (250)  NULL,
+    [INDUK_SEWA_OPERASI_NO]         NVARCHAR (50)   NULL,
+    [INDUK_SEWA_OPERASI_DATE]       DATETIME        NULL,
+    [PELAKSANAAN_SEWA_OPERASI_NO]   NVARCHAR (50)   NULL,
+    [PELAKSANAAN_SEWA_OPERASI_DATE] DATETIME        NULL,
+    [CRE_DATE]                      DATETIME        NULL,
+    [CRE_BY]                        NVARCHAR (15)   NULL,
+    [CRE_IP_ADDRESS]                NVARCHAR (15)   NULL,
+    [MOD_DATE]                      DATETIME        NULL,
+    [MOD_BY]                        NVARCHAR (15)   NULL,
+    [MOD_IP_ADDRESS]                NVARCHAR (15)   NULL
+);
+

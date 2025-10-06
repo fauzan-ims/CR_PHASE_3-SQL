@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_MASTER_INSURANCE_RATE_NON_LIFE_DETAIL] (
+    [ID]                 BIGINT          NULL,
+    [RATE_NON_LIFE_CODE] NVARCHAR (50)   NOT NULL,
+    [SUM_INSURED_FROM]   DECIMAL (18, 2) NOT NULL,
+    [SUM_INSURED_TO]     DECIMAL (18, 2) NOT NULL,
+    [IS_COMMERCIAL]      NVARCHAR (1)    NOT NULL,
+    [IS_AUTHORIZED]      NVARCHAR (1)    NOT NULL,
+    [CALCULATE_BY]       NVARCHAR (10)   NOT NULL,
+    [BUY_RATE]           DECIMAL (9, 6)  NOT NULL,
+    [SELL_RATE]          DECIMAL (9, 6)  NOT NULL,
+    [BUY_AMOUNT]         DECIMAL (18, 2) NOT NULL,
+    [SELL_AMOUNT]        DECIMAL (18, 2) NOT NULL,
+    [DISCOUNT_PCT]       DECIMAL (9, 6)  NOT NULL,
+    [CRE_DATE]           DATETIME        NOT NULL,
+    [CRE_BY]             NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]           DATETIME        NOT NULL,
+    [MOD_BY]             NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]     NVARCHAR (15)   NOT NULL,
+    [AuditDataState]     VARCHAR (10)    NULL,
+    [AuditDMLAction]     VARCHAR (10)    NULL,
+    [AuditUser]          [sysname]       NULL,
+    [AuditDateTime]      DATETIME        NULL,
+    [UpdateColumns]      VARCHAR (MAX)   NULL
+);
+

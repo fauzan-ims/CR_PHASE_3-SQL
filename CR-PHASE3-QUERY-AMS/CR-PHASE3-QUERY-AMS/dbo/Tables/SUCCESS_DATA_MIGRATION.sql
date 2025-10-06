@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[SUCCESS_DATA_MIGRATION] (
+    [ID]        BIGINT          NOT NULL,
+    [TYPE_CODE] NVARCHAR (4000) NULL
+);
+

@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[REPLACEMENT] (
+    [CODE]                    NVARCHAR (50)   NOT NULL,
+    [BRANCH_CODE]             NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]             NVARCHAR (250)  NOT NULL,
+    [REPLACEMENT_DATE]        DATETIME        NULL,
+    [STATUS]                  NVARCHAR (20)   NOT NULL,
+    [TYPE]                    NVARCHAR (10)   NULL,
+    [COVER_NOTE_NO]           NVARCHAR (50)   NULL,
+    [COVER_NOTE_DATE]         DATETIME        NULL,
+    [COVER_NOTE_EXP_DATE]     DATETIME        NULL,
+    [NEW_COVER_NOTE_NO]       NVARCHAR (50)   NULL,
+    [NEW_COVER_NOTE_DATE]     DATETIME        NULL,
+    [NEW_COVER_NOTE_EXP_DATE] DATETIME        NULL,
+    [FILE_NAME]               NVARCHAR (250)  NULL,
+    [PATHS]                   NVARCHAR (250)  NULL,
+    [REMARKS]                 NVARCHAR (4000) NULL,
+    [CRE_DATE]                DATETIME        NOT NULL,
+    [CRE_BY]                  NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]          NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                DATETIME        NOT NULL,
+    [MOD_BY]                  NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]          NVARCHAR (15)   NOT NULL,
+    [REPLACEMENT_REQUEST_ID]  BIGINT          NULL,
+    CONSTRAINT [PK_REPLACEMENT] PRIMARY KEY CLUSTERED ([CODE] ASC)
+);
+

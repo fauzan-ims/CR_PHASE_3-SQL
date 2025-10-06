@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[RPT_MATURITY] (
+    [USER_ID]               NVARCHAR (50)  NULL,
+    [REPORT_COMPANY]        NVARCHAR (250) NULL,
+    [REPORT_TITLE]          NVARCHAR (250) NULL,
+    [REPORT_IMAGE]          NVARCHAR (250) NULL,
+    [AGREEMENT_NO]          NVARCHAR (50)  NULL,
+    [FA_CODE]               NVARCHAR (50)  NOT NULL,
+    [FA_NAME]               NVARCHAR (250) NULL,
+    [CLIENT_NAME]           NVARCHAR (50)  NULL,
+    [FROM_DATE]             DATETIME       NULL,
+    [TO_DATE]               DATETIME       NULL,
+    [COLOR]                 NVARCHAR (50)  NULL,
+    [ENGINE_NO]             NVARCHAR (250) NULL,
+    [CHASIS_NO]             NVARCHAR (250) NULL,
+    [PLAT_NO]               NVARCHAR (50)  NULL,
+    [PICKUP_DATE]           DATETIME       NULL,
+    [COUNT_ASSET]           INT            NULL,
+    [TERBILANG_COUNT_ASSET] NVARCHAR (250) NULL,
+    [CRE_DATE]              DATETIME       NULL,
+    [CRE_BY]                NVARCHAR (15)  NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (15)  NULL,
+    [MOD_DATE]              DATETIME       NULL,
+    [MOD_BY]                NVARCHAR (15)  NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (15)  NULL
+);
+

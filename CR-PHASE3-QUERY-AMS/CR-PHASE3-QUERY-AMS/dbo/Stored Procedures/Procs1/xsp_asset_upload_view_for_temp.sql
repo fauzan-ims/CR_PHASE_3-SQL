@@ -1,0 +1,575 @@
+﻿CREATE PROCEDURE dbo.xsp_asset_upload_view_for_temp
+(
+	@p_upload_no		nvarchar(50)
+	,@p_asset_type		nvarchar(25)
+)
+as
+begin
+	declare @msg		nvarchar(max);
+
+	begin try
+		if(@p_asset_type = 'ELCT')
+		begin	
+			select	
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   	--							
+				   ,ase.merk_code	
+				   ,ase.model_code	
+				   ,ase.type_code	
+				   ,ase.serial_no	
+				   ,ase.dimension	
+				   ,ase.hdd		
+				   ,ase.processor	
+				   ,ase.ram_size	
+				   ,ase.domain		
+				   ,ase.imei	
+				   ,ase.purchase
+				   ,ase.remark	
+			from	dbo.asset_electronic_upload	ase
+					inner join dbo.asset_upload au on (au.upload_no= ase.upload_no) 	 	
+			where	ase.upload_no = @p_upload_no
+			and		au.status_upload = 'NEW' ;
+		end	
+		else if (@p_asset_type = 'FNTR')
+		begin
+			select
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   --		
+				   ,afu.merk_code	 
+				   ,afu.type_code	 
+				   ,afu.model_code	 
+				   ,afu.purchase	 
+				   ,afu.remark
+			from	dbo.asset_furniture_upload afu
+			inner join dbo.asset_upload au on (au.upload_no = afu.upload_no) 	
+			where	afu.upload_no = @p_upload_no
+			and		au.status_upload = 'NEW' ;
+		end
+		else if (@p_asset_type = 'MCHN')
+		begin
+			select	
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   --				
+				   ,amu.merk_code	 
+				   ,amu.model_code	
+				   ,amu.type_item_code  
+				   ,amu.built_year	 
+				   ,amu.chassis_no	 
+				   ,amu.engine_no	 
+				   ,amu.colour		 
+				   ,amu.serial_no	 
+				   ,amu.purchase	 
+				   ,amu.remark		 
+			from	dbo.asset_machine_upload amu
+			inner join dbo.asset_upload au on (au.upload_no = amu.upload_no) 
+			where	amu.upload_no = @p_upload_no
+			and		au.status_upload = 'NEW' ;
+		end
+		else if (@p_asset_type = 'OTHR')
+		begin			
+			select	
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   	--			
+					,aou.license_no
+					,aou.start_date_license
+					,aou.end_date_license
+					,aou.nominal
+					,aou.remark
+			from	dbo.asset_other_upload aou
+			inner join dbo.asset_upload au on (au.upload_no= aou.upload_no)
+			where	aou.upload_no = @p_upload_no
+			and		au.status_upload = 'NEW' ;
+		end
+		else if (@p_asset_type = 'PRTY')
+		begin		
+			select	
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   	--		
+					,apu.imb_no
+					,apu.certificate_no
+					,apu.status_of_ruko
+					,apu.land_size
+					,apu.building_size
+					,apu.number_of_ruko_and_floor
+					,apu.total_square
+					,apu.land_and_building_tax
+					,apu.vat
+					,apu.owner
+					,apu.purchase
+					,apu.remark					
+			from	dbo.asset_property_upload apu
+			inner join dbo.asset_upload au on (au.upload_no = apu.upload_no)
+			where	apu.upload_no = @p_upload_no	
+			and		au.status_upload = 'NEW' ;	
+		end
+		else if (@p_asset_type = 'VHCL')
+		begin
+			select 
+					au.item_code
+					--,au.item_name					
+					,au.condition
+					,au.cost_center_code
+					--,au.cost_center_name				
+					,au.requestor_code
+					--,au.requestor_name			
+					,au.vendor_code
+					--,au.vendor_name	
+					,au.category_code
+					--,au.category_name					
+					,au.type_code
+					,au.po_no
+					,au.po_date
+					,au.purchase_date				
+					,au.purchase_price					
+					,au.invoice_no				
+					,au.invoice_date					
+					,au.original_price			
+					,au.branch_code
+					--,au.branch_name		
+					,au.location_code
+					--,au.location_name					
+					,au.division_code
+					--,au.division_name			
+					,au.department_code
+					--,au.department_name				
+					,au.sub_department_code
+					--,au.sub_department_name				
+					,au.units_code
+					--,au.units_name				
+					,au.pic_code					
+					,au.residual_value		
+					,au.is_depre
+					,au.depre_category_comm_code	
+					,au.depre_category_fiscal_code		
+					,au.use_life								
+					,au.last_location_code	
+					,au.last_service_date		
+					,au.pph							
+					,au.ppn		
+					,au.contractor_name				
+					,au.contractor_address		
+					,au.contractor_email				
+					,au.contractor_pic				
+					,au.contractor_pic_phone				
+					,au.contractor_start_date		
+					,au.contractor_end_date			
+					,au.warranty						
+					,au.warranty_start_date			
+					,au.warranty_end_date			
+					,au.remarks_warranty			
+					,au.is_rental					
+					,au.is_maintenance			
+					,au.maintenance_time				
+					,au.maintenance_type			
+					,au.maintenance_start_date	
+					,au.maintenance_cycle_time				
+					,au.last_meter	
+					,au.remarks							
+					,au.sale_amount							
+					,au.sale_date					
+					,au.disposal_date				
+					,au.total_depre_comm			
+					,au.depre_period_comm			
+					,au.net_book_value_comm			
+					,au.total_depre_fiscal			
+					,au.depre_period_fiscal		
+					,au.net_book_value_fiscal	
+				   	--	
+					,avu.merk_code		
+					,avu.merk_name	
+					,avu.type_code	
+					,avu.type_name	
+					,avu.model_code	
+					,avu.plat_no		
+					,avu.chassis_no	
+					,avu.engine_no	
+					,avu.bpkb_no		
+					,avu.colour		
+					,avu.cylinder		
+					,avu.stnk_no		
+					,avu.stnk_expired_date	
+					,avu.stnk_tax_date		
+					,avu.stnk_renewal			
+					,avu.built_year			
+					,avu.last_miles			
+					,avu.last_maintenance_date
+					,avu.purchase				
+					,avu.remark				
+			from	dbo.asset_vehicle_upload avu
+			inner join dbo.asset_upload_for_temp au on (au.upload_no = avu.upload_no)
+			where avu.upload_no = @p_upload_no
+			and		au.status_upload = 'NEW' ;
+		end
+		
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ;	
+end ;

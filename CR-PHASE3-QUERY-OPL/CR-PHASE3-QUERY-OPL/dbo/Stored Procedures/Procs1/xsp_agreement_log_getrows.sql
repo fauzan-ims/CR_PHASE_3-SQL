@@ -1,0 +1,51 @@
+﻿CREATE PROCEDURE dbo.xsp_agreement_log_getrows
+(
+	@p_keywords	     nvarchar(50)
+	,@p_pagenumber   int
+	,@p_rowspage     int
+	,@p_order_by     int
+	,@p_sort_by	     nvarchar(5)
+	,@p_agreement_no nvarchar(50)
+)
+as
+begin
+	declare @rows_count int = 0 ;
+
+	select	@rows_count = count(1)
+	from	dbo.agreement_log
+	where	agreement_no = @p_agreement_no
+			and(
+				id																			like '%' + @p_keywords + '%'
+				or	log_source_no															like '%' + @p_keywords + '%'
+				or	Format(cast(log_date as datetime),'dd/MM/yyyy HH:mm:ss','en-us')		like '%' + @p_keywords + '%'
+				or	log_remarks																like '%' + @p_keywords + '%'
+			) ;
+
+		select		id
+					,log_source_no
+					,Format(cast(log_date as datetime),'dd/MM/yyyy HH:mm:ss','en-us') 'log_date'
+					,log_remarks
+					,@rows_count 'rowcount'
+		from		dbo.agreement_log
+		where	agreement_no = @p_agreement_no 
+				and(
+					id																			like '%' + @p_keywords + '%'
+					or	log_source_no															like '%' + @p_keywords + '%'
+					or	Format(cast(log_date as datetime),'dd/MM/yyyy HH:mm:ss','en-us')		like '%' + @p_keywords + '%'
+					or	log_remarks																like '%' + @p_keywords + '%'
+				)
+			
+	order by case  
+					when @p_sort_by = 'asc' then case @p_order_by
+													when 1 then cast(log_date as sql_variant)
+													when 2 then log_source_no	                    
+													when 3 then log_remarks	
+												 end
+				end asc 
+				,case when @p_sort_by = 'desc' then case @p_order_by
+													when 1 then cast(log_date as sql_variant)
+													when 2 then log_source_no	                    
+													when 3 then log_remarks	
+													end
+		end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;	
+end ;

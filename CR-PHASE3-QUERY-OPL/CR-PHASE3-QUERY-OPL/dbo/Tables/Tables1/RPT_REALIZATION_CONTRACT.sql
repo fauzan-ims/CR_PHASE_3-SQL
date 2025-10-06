@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[RPT_REALIZATION_CONTRACT] (
+    [USER_ID]                     NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]              NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]                NVARCHAR (250)  NOT NULL,
+    [REPORT_IMAGE]                NVARCHAR (250)  NOT NULL,
+    [PERJANJIAN_PELAKSANAAN_NO]   NVARCHAR (50)   NULL,
+    [PERJANJIAN_PELAKSANAAN_DATE] DATETIME        NULL,
+    [NAMA_CLIENT]                 NVARCHAR (250)  NULL,
+    [ALAMAT_1]                    NVARCHAR (4000) NULL,
+    [ALAMAT_2]                    NVARCHAR (4000) NULL,
+    [ALAMAT_3]                    NVARCHAR (4000) NULL,
+    [SEWA_BULAN]                  INT             NULL,
+    [SEWA_DATE]                   DATETIME        NULL,
+    [SEWA_EXP_DATE]               DATETIME        NULL,
+    [JENIS_KENDARAAN]             NVARCHAR (25)   NULL,
+    [JUMLAH_KENDARAAN]            INT             NULL,
+    [TOTAL_HARGA_SEWA]            DECIMAL (18, 2) NULL,
+    [HARGA_SEWA]                  DECIMAL (18, 2) NULL,
+    [JADWAL_PEMBAYARAN]           DATETIME        NULL,
+    [JARAK_TEMPUH]                BIGINT          NULL,
+    [BIAYA_TAMBAHAN]              DECIMAL (18, 2) NULL,
+    [THIRD_PARTY_LIABILITY]       DECIMAL (18, 2) NULL,
+    [PERSONAL_ACCIDENT_DRIVER]    DECIMAL (18, 2) NULL,
+    [PERSONAL_ACCIDENT_PASSENGER] DECIMAL (18, 2) NULL
+);
+

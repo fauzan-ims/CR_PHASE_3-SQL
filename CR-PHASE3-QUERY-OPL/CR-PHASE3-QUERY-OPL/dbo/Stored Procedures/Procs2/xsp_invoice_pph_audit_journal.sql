@@ -1,0 +1,290 @@
+﻿/*
+exec xsp_invoice_pph_audit_journal
+*/
+-- Louis Senin, 06 Maret 2023 13.53.59 -- 
+CREATE PROCEDURE dbo.xsp_invoice_pph_audit_journal
+(
+	@p_code			    nvarchar(50)
+	--
+	,@p_mod_date	    datetime
+	,@p_mod_by		    nvarchar(15)
+	,@p_mod_ip_address  nvarchar(15)
+)
+as
+begin
+	declare @msg				  nvarchar(max)
+			,@gllink_trx_code	  nvarchar(50)
+			,@journal_branch_code nvarchar(50)
+			,@journal_branch_name nvarchar(250)
+			,@branch_code		  nvarchar(50)
+			,@branch_name		  nvarchar(250)
+			,@detail_branch_code  nvarchar(50)
+			,@detail_branch_name  nvarchar(250)
+			,@gl_link_code		  nvarchar(50)
+			,@debet_or_credit	  nvarchar(10)
+			,@currency			  nvarchar(3)
+			,@agreement_no		  nvarchar(50)
+			,@orig_amount_db	  decimal(18, 2)
+			,@orig_amount_cr	  decimal(18, 2)
+			,@transaction_name	  nvarchar(250)
+			,@sp_name			  nvarchar(250)
+			,@return_value		  decimal(18, 2)
+			,@invoice_detail_id	  bigint
+			,@invoice_external_no nvarchar(50)
+			,@client_name		  nvarchar(250)
+			,@periode			  nvarchar(6)
+			,@asset_no			  nvarchar(50)
+			,@description		  nvarchar(4000)
+			,@invoice_no		  nvarchar(50)
+			,@reff_name			  nvarchar(50)	= N'WITHHOLDING SETTLEMENT AUDIT'
+			,@reff_code			  nvarchar(50)
+			,@invoice_date		  datetime 
+			,@payment_reff_date	  datetime 
+			,@audit_year		  nvarchar(50)
+			,@trx_date			datetime = dbo.xfn_get_system_date()
+
+	begin try
+		begin   
+			select	@payment_reff_date = date
+					,@audit_year = year
+			from	dbo.withholding_settlement_audit
+			where	code = @p_code ;
+			
+			declare curr_branch cursor fast_forward read_only for
+			select		branch_code
+						,branch_name
+			from		dbo.invoice_pph invp
+						inner join dbo.invoice inv on (inv.invoice_no = invp.invoice_no)
+			where		audit_code			  = @p_code
+						and settlement_status = 'HOLD'
+			group by	branch_code
+						,branch_name ;
+
+			open curr_branch ;
+
+			fetch next from curr_branch
+			into @journal_branch_code
+				 ,@journal_branch_name ;
+
+			while @@fetch_status = 0
+			begin
+				set @transaction_name = @reff_name + N' For : ' + @journal_branch_name + N' - ' + N'. Periode : ' + cast(@audit_year as nvarchar(4)) ;
+
+				exec dbo.xsp_opl_interface_journal_gl_link_transaction_insert @p_code = @gllink_trx_code output
+																			  ,@p_branch_code = @journal_branch_code
+																			  ,@p_branch_name = @journal_branch_name
+																			  ,@p_transaction_status = 'HOLD'
+																			  ,@p_transaction_date = @trx_date --(sepria 01/07/2024: ambil tanggal system, biar masuk ke sap dan jurnal tidak backdate) @payment_reff_date
+																			  ,@p_transaction_value_date = @payment_reff_date
+																			  ,@p_transaction_code = @p_code
+																			  ,@p_transaction_name = @reff_name
+																			  ,@p_reff_module_code = 'IFINOPL'
+																			  ,@p_reff_source_no = @p_code
+																			  ,@p_reff_source_name = @transaction_name
+																			  ,@p_cre_date = @p_mod_date
+																			  ,@p_cre_by = @p_mod_by
+																			  ,@p_cre_ip_address = @p_mod_ip_address
+																			  ,@p_mod_date = @p_mod_date
+																			  ,@p_mod_by = @p_mod_by
+																			  ,@p_mod_ip_address = @p_mod_ip_address ;
+																			   
+
+				declare c_jurnal cursor local fast_forward read_only for
+				select	inv.branch_code
+						,inv.branch_name
+						,inv.currency_code
+						,inv.invoice_external_no
+						,inv.client_name
+						,cast(year(inv.invoice_due_date) as nvarchar(4)) + cast(month(inv.invoice_due_date) as nvarchar(4))
+						,inv.invoice_date
+						,inv.invoice_no
+			from		dbo.invoice_pph invp
+						inner join dbo.invoice inv on (inv.invoice_no = invp.invoice_no)
+			where		invp.audit_code			  = @p_code
+						and invp.settlement_status = 'HOLD'
+						and inv.branch_code		  = @journal_branch_code ;
+
+				open c_jurnal ;
+
+				fetch c_jurnal
+				into @branch_code
+					 ,@branch_name
+					 ,@currency
+					 ,@invoice_external_no
+					 ,@client_name
+					 ,@periode
+					 ,@invoice_date
+					 ,@invoice_no ;
+
+				while @@fetch_status = 0
+				begin
+					begin 
+						declare c_detail_jurnal cursor local fast_forward read_only for
+						select  mt.sp_name
+								,mtp.debet_or_credit
+								,mtp.gl_link_code
+								,mt.transaction_name
+								,ind.id
+								,ind.agreement_no
+								,ind.asset_no
+								,ind.description
+						from	dbo.master_transaction_parameter mtp 
+								left join dbo.sys_general_subcode sgs on (sgs.code = mtp.process_code)
+								left join dbo.master_transaction mt on (mt.code = mtp.transaction_code)
+								inner join dbo.invoice_detail ind on (ind.invoice_no = @invoice_no)
+						where	mtp.process_code = 'INVPPHAUD' 
+
+						open c_detail_jurnal ;
+
+						fetch c_detail_jurnal
+						into @sp_name
+							 ,@debet_or_credit
+							 ,@gl_link_code
+							 ,@transaction_name
+							 ,@invoice_detail_id
+							 ,@agreement_no
+							 ,@asset_no
+							 ,@description ;
+
+						while @@fetch_status = 0
+						begin
+
+							-- nilainya exec dari MASTER_TRANSACTION.sp_name
+							exec @return_value = @sp_name @invoice_detail_id ; -- sp ini mereturn value angka 
+
+							if (isnull(@gl_link_code, '') = '')
+							begin
+								set @msg = N'Please Setting GL Link For ' + @transaction_name ;
+
+								raiserror(@msg, 16, -1) ;
+							end ;
+
+							if (@debet_or_credit = 'DEBIT')
+							begin
+								set @orig_amount_db = @return_value ;
+								set @orig_amount_cr = 0 ;
+							end ;
+							else
+							begin
+								set @orig_amount_db = 0 ;
+								set @orig_amount_cr = @return_value ;
+							end ;
+
+							set @transaction_name = @reff_name + N' For Asset : ' + @asset_no + N', Invoice No : ' + @invoice_external_no + ' ' + @description ;
+
+							select	@detail_branch_code = branch_code
+									,@detail_branch_name = branch_name
+							from	dbo.agreement_main
+							where	agreement_no = @agreement_no ;
+
+							exec dbo.xsp_opl_interface_journal_gl_link_transaction_detail_insert @p_gl_link_transaction_code = @gllink_trx_code
+																								 ,@p_branch_code = @detail_branch_code
+																								 ,@p_branch_name = @detail_branch_name
+																								 ,@p_gl_link_code = @gl_link_code
+																								 ,@p_agreement_no = @agreement_no
+																								 ,@p_facility_code = null
+																								 ,@p_facility_name = null
+																								 ,@p_purpose_loan_code = null
+																								 ,@p_purpose_loan_name = null
+																								 ,@p_purpose_loan_detail_code = null
+																								 ,@p_purpose_loan_detail_name = null
+																								 ,@p_orig_currency_code = @currency
+																								 ,@p_orig_amount_db = @orig_amount_db
+																								 ,@p_orig_amount_cr = @orig_amount_cr
+																								 ,@p_exch_rate = 1
+																								 ,@p_base_amount_db = @orig_amount_db
+																								 ,@p_base_amount_cr = @orig_amount_cr
+																								 ,@p_division_code = ''
+																								 ,@p_division_name = ''
+																								 ,@p_department_code = ''
+																								 ,@p_department_name = ''
+																								 ,@p_remarks = @transaction_name
+																								 ,@p_add_reff_01	= @invoice_no
+																								 ,@p_add_reff_02	= ''
+																								 ,@p_add_reff_03	= ''
+																								 ,@p_cre_date = @p_mod_date
+																								 ,@p_cre_by = @p_mod_by
+																								 ,@p_cre_ip_address = @p_mod_ip_address
+																								 ,@p_mod_date = @p_mod_date
+																								 ,@p_mod_by = @p_mod_by
+																								 ,@p_mod_ip_address = @p_mod_ip_address ;
+
+							fetch c_detail_jurnal
+							into @sp_name
+								 ,@debet_or_credit
+								 ,@gl_link_code
+								 ,@transaction_name
+								 ,@invoice_detail_id
+								 ,@agreement_no
+								 ,@asset_no
+								 ,@description ;
+						end ;
+
+						close c_detail_jurnal ;
+						deallocate c_detail_jurnal ;
+					end ;
+
+					update	dbo.invoice_pph
+					set		settlement_status	= 'POST'
+							,payment_reff_no	= @p_code
+							,payment_reff_date	= @payment_reff_date
+							--
+							,mod_date			= @p_mod_date
+							,mod_by				= @p_mod_by
+							,mod_ip_address		= @p_mod_ip_address
+					where	invoice_no			= @invoice_no
+							and audit_code	    = @p_code
+
+					fetch c_jurnal
+					into @branch_code
+						 ,@branch_name
+						 ,@currency
+						 ,@invoice_external_no
+						 ,@client_name
+						 ,@periode
+						 ,@invoice_date
+						 ,@invoice_no ;
+				end ;
+
+				close c_jurnal ;
+				deallocate c_jurnal ;
+
+				fetch next from curr_branch
+				into @journal_branch_code
+					 ,@journal_branch_name ;
+			end ;
+
+			close curr_branch ;
+			deallocate curr_branch ;
+
+			-- balancing
+			begin
+				if ((
+						select	sum(orig_amount_db) - sum(orig_amount_cr)
+						from	dbo.opl_interface_journal_gl_link_transaction_detail
+						where	gl_link_transaction_code = @gllink_trx_code
+					) <> 0
+				   )
+				begin
+					set @msg = N'Journal is not balance' ;
+
+					raiserror(@msg, 16, -1) ;
+				end ;
+			end ;
+		end ;
+	end try
+	begin catch
+		if (len(@msg) <> 0)
+		begin
+			set @msg = N'V' + N';' + @msg ;
+		end ;
+		else
+		begin
+			set @msg = N'E;There is an error.' + N';' + error_message() ;
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ;
+end ;

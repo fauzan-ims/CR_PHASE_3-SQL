@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[OPL_INTERFACE_SELL_REQUEST_FROM_ET] (
+    [ID]                    BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CODE]                  NVARCHAR (50)   NOT NULL,
+    [STATUS]                NVARCHAR (15)   NOT NULL,
+    [TRANSACTION_DATE]      DATETIME        NOT NULL,
+    [TYPE]                  NVARCHAR (15)   NOT NULL,
+    [REMARK]                NVARCHAR (4000) NOT NULL,
+    [AGREEMENT_EXTERNAL_NO] NVARCHAR (50)   NULL,
+    [AGREEMENT_NO]          NVARCHAR (50)   NULL,
+    [CLIENT_NO]             NVARCHAR (50)   NULL,
+    [CLIENT_NAME]           NVARCHAR (250)  NULL,
+    [SETTLE_DATE]           DATETIME        NULL,
+    [JOB_STATUS]            NVARCHAR (10)   NULL,
+    [FAILED_REMARKS]        NVARCHAR (4000) NULL,
+    [CRE_DATE]              DATETIME        NOT NULL,
+    [CRE_BY]                NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]        NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]              DATETIME        NOT NULL,
+    [MOD_BY]                NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]        NVARCHAR (15)   NOT NULL,
+    [BRANCH_CODE]           NVARCHAR (50)   NULL,
+    [BRANCH_NAME]           NVARCHAR (250)  NULL,
+    CONSTRAINT [PK_OPL_INTERFACE_SELL_REQUEST_FROM_ET] PRIMARY KEY CLUSTERED ([ID] ASC, [CODE] ASC)
+);
+

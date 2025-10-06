@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Z_AUDIT_MASTER_BUDGET_MAINTENANCE_GROUP_SERVICE] (
+    [ID]                            BIGINT          NULL,
+    [BUDGET_MAINTENANCE_CODE]       NVARCHAR (50)   NOT NULL,
+    [BUDGET_MAINTENANCE_GROUP_CODE] NVARCHAR (50)   NULL,
+    [GROUP_CODE]                    NVARCHAR (50)   NOT NULL,
+    [SERVICE_CODE]                  NVARCHAR (50)   NULL,
+    [SERVICE_DESCRIPTION]           NVARCHAR (250)  NULL,
+    [UNIT_QTY]                      INT             NOT NULL,
+    [UNIT_COST]                     DECIMAL (18, 2) NOT NULL,
+    [LABOR_COST]                    DECIMAL (18, 2) NOT NULL,
+    [REPLACEMENT_CYCLE]             INT             NOT NULL,
+    [REPLACEMENT_TYPE]              NVARCHAR (10)   NOT NULL,
+    [TOTAL_COST]                    DECIMAL (18, 2) NOT NULL,
+    [CRE_DATE]                      DATETIME        NOT NULL,
+    [CRE_BY]                        NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]                NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                      DATETIME        NOT NULL,
+    [MOD_BY]                        NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]                NVARCHAR (15)   NOT NULL,
+    [AuditDataState]                VARCHAR (10)    NULL,
+    [AuditDMLAction]                VARCHAR (10)    NULL,
+    [AuditUser]                     [sysname]       NULL,
+    [AuditDateTime]                 DATETIME        NULL,
+    [UpdateColumns]                 VARCHAR (MAX)   NULL
+);
+

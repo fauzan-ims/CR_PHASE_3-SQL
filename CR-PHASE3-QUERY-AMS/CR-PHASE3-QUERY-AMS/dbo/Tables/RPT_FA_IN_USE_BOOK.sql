@@ -1,0 +1,42 @@
+﻿CREATE TABLE [dbo].[RPT_FA_IN_USE_BOOK] (
+    [USER_ID]            NVARCHAR (50)   NOT NULL,
+    [REPORT_COMPANY]     NVARCHAR (250)  NOT NULL,
+    [REPORT_TITLE]       NVARCHAR (250)  NOT NULL,
+    [REPORT_IMAGE]       NVARCHAR (250)  NOT NULL,
+    [AS_OF_DATE]         DATETIME        NULL,
+    [TYPE]               NVARCHAR (50)   NULL,
+    [BRANCH_CODE]        NVARCHAR (50)   NULL,
+    [BRANCH_NAME]        NVARCHAR (50)   NULL,
+    [OFFICE_NAME]        NVARCHAR (50)   NULL,
+    [ASSET_NO]           NVARCHAR (50)   NULL,
+    [DESCRIPTION]        NVARCHAR (250)  NULL,
+    [BRAND]              NVARCHAR (250)  NULL,
+    [MODEL]              NVARCHAR (250)  NULL,
+    [SERIAL_NO]          NVARCHAR (50)   NULL,
+    [CUSTOMER_NAME]      NVARCHAR (250)  NULL,
+    [PLAT_NO]            NVARCHAR (50)   NULL,
+    [CHASSIS_NO]         NVARCHAR (50)   NULL,
+    [ENGINE_NO]          NVARCHAR (50)   NULL,
+    [RENTAL_INCOME]      DECIMAL (18, 2) NULL,
+    [BILLING]            DECIMAL (18, 2) NULL,
+    [OVERDUE_BALANCE]    DECIMAL (18, 2) NULL,
+    [POSISI_OD]          DECIMAL (18, 2) NULL,
+    [STATUS_BPKB]        NVARCHAR (50)   NULL,
+    [PURCHASE_DATE]      DATETIME        NULL,
+    [SUPPLIER]           NVARCHAR (250)  NULL,
+    [USER_DEPT]          NVARCHAR (250)  NULL,
+    [COST]               DECIMAL (18, 2) NULL,
+    [DEPRECIATION_MONTH] DECIMAL (18, 2) NULL,
+    [BOOK_VALUE]         DECIMAL (18, 2) NULL,
+    [ACCUMULATE_DEPRE]   DECIMAL (18, 2) NULL,
+    [STATUS]             NVARCHAR (50)   NULL,
+    [REMARK]             NVARCHAR (4000) NULL,
+    [AGREEMENT_STATUS]   NVARCHAR (50)   NULL,
+    [IS_CONDITION]       NVARCHAR (1)    NULL
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [RPT_FA_IN_USE_BOOK_USER_ID_20250615]
+    ON [dbo].[RPT_FA_IN_USE_BOOK]([USER_ID] ASC);
+

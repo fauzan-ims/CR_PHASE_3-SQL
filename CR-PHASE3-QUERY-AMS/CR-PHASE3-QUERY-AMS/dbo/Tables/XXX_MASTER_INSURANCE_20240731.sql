@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[XXX_MASTER_INSURANCE_20240731] (
+    [CODE]                         NVARCHAR (50)  NOT NULL,
+    [INSURANCE_NO]                 NVARCHAR (50)  NOT NULL,
+    [INSURANCE_NAME]               NVARCHAR (250) NOT NULL,
+    [CONTACT_PERSON_NAME]          NVARCHAR (250) NOT NULL,
+    [CONTACT_PERSON_AREA_PHONE_NO] NVARCHAR (4)   NOT NULL,
+    [CONTACT_PERSON_PHONE_NO]      NVARCHAR (15)  NOT NULL,
+    [INSURANCE_TYPE]               NVARCHAR (10)  NULL,
+    [TAX_FILE_TYPE]                NVARCHAR (10)  NOT NULL,
+    [TAX_FILE_NO]                  NVARCHAR (50)  NULL,
+    [TAX_FILE_NAME]                NVARCHAR (250) NULL,
+    [TAX_FILE_ADDRESS]             NVARCHAR (250) NULL,
+    [INSURANCE_BUSINESS_UNIT]      NVARCHAR (12)  NOT NULL,
+    [AREA_PHONE_NO]                NVARCHAR (4)   NOT NULL,
+    [PHONE_NO]                     NVARCHAR (25)  NOT NULL,
+    [AREA_FAX_NO]                  NVARCHAR (4)   NOT NULL,
+    [FAX_NO]                       NVARCHAR (25)  NOT NULL,
+    [EMAIL]                        NVARCHAR (100) NULL,
+    [WEBSITE]                      NVARCHAR (100) NULL,
+    [IS_VALIDATE]                  NVARCHAR (1)   NOT NULL,
+    [CRE_DATE]                     DATETIME       NOT NULL,
+    [CRE_BY]                       NVARCHAR (15)  COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [CRE_IP_ADDRESS]               NVARCHAR (15)  COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_DATE]                     DATETIME       NOT NULL,
+    [MOD_BY]                       NVARCHAR (15)  COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+    [MOD_IP_ADDRESS]               NVARCHAR (15)  COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+);
+

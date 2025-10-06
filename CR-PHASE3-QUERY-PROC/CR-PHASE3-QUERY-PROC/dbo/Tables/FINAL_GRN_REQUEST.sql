@@ -1,0 +1,22 @@
+﻿CREATE TABLE [dbo].[FINAL_GRN_REQUEST] (
+    [FINAL_GRN_REQUEST_NO]     NVARCHAR (50)  NOT NULL,
+    [APPLICATION_NO]           NVARCHAR (50)  NULL,
+    [PROCUREMENT_REQUEST_CODE] NVARCHAR (50)  NULL,
+    [CLIENT_NAME]              NVARCHAR (250) NULL,
+    [BRANCH_CODE]              NVARCHAR (50)  NULL,
+    [BRANCH_NAME]              NVARCHAR (250) NULL,
+    [REQUESTOR_NAME]           NVARCHAR (250) NULL,
+    [APPLICATION_DATE]         DATETIME       NULL,
+    [PROCUREMENT_REQUEST_DATE] DATETIME       NULL,
+    [TOTAL_PURCHASE_DATA]      INT            NULL,
+    [STATUS]                   NVARCHAR (50)  NULL,
+    [IS_MANUAL]                NVARCHAR (1)   NULL,
+    [CRE_DATE]                 DATETIME       NOT NULL,
+    [CRE_BY]                   NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]           NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]                 DATETIME       NOT NULL,
+    [MOD_BY]                   NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]           NVARCHAR (15)  NOT NULL,
+    CONSTRAINT [PK_FINAL_GRN_REQUEST] PRIMARY KEY CLUSTERED ([FINAL_GRN_REQUEST_NO] ASC)
+);
+

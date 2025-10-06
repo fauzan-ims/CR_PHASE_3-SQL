@@ -1,0 +1,219 @@
+﻿--Created, Aliv at 29-05-2023
+CREATE PROCEDURE [dbo].[xsp_rpt_bast_unit_report]
+(
+	@p_user_id			nvarchar(50)
+	,@p_branch_code		nvarchar(50)
+	,@p_branch_name		nvarchar(50)
+	,@p_from_date		datetime	
+    ,@p_to_date			datetime	
+	,@p_is_condition    nvarchar(1)
+)
+as
+BEGIN
+
+	delete dbo.rpt_bast_unit_report
+	where	user_id = @p_user_id;
+
+	declare @msg							nvarchar(max)
+			,@report_company				nvarchar(250)
+			,@report_title					nvarchar(250)
+			,@report_image					nvarchar(250)
+			,@branch_code					nvarchar(50)	
+			,@branch_name					nvarchar(50)	
+			,@delivery_or_collect			nvarchar(50)	
+			,@unit_condition				nvarchar(50)	
+			,@status_pengiriman				nvarchar(50)	
+			,@agreement_no					nvarchar(50)	
+			,@lessee						nvarchar(50)	
+			,@lessee_address				nvarchar(50)	
+			,@pic_lesse						nvarchar(150)	
+			,@lessee_contact_number			nvarchar(50)	
+			,@description_unit_utama		nvarchar(50)	
+			,@year							int
+			,@plat_no						nvarchar(50)	
+			,@chassis_no					nvarchar(50)	
+			,@engine_no						nvarchar(50)	
+			,@color							nvarchar(50)	
+			,@delivery_date					datetime		
+			,@bast_date						datetime		
+			,@upload_bast_date				datetime		
+
+	begin try
+	
+		select	@report_company = value
+		from	dbo.SYS_GLOBAL_PARAM
+		where	CODE = 'COMP2' ;
+
+		set	@report_title = 'Report BAST Released Unit';
+
+		select	@report_image = value
+		from	dbo.SYS_GLOBAL_PARAM
+		where	CODE = 'IMGDSF' ;
+
+	BEGIN
+
+			insert into rpt_bast_unit_report
+			(
+				user_id
+				,report_company
+				,report_title
+				,report_image
+				,branch_code
+				,branch_name
+				,FROM_DATE
+				,TO_DATE
+				,delivery_or_collect
+				,unit_condition
+				,status_pengiriman
+				,agreement_no
+				,lessee
+				,lessee_address
+				,pic_lesse
+				,lessee_contact_number
+				,description_unit_utama
+				,year
+				,plat_no
+				,chassis_no
+				,engine_no
+				,color
+				,delivery_date
+				,bast_date
+				,upload_bast_date
+				,is_condition
+			)
+			select	distinct @p_user_id
+					,@report_company
+					,@report_title
+					,@report_image
+					,@p_branch_code
+					,@p_branch_name
+					,@p_from_date
+					,@p_to_date
+					,hast.type
+					,hast.unit_condition
+					,hast.status
+					,ast.agreement_external_no
+					,ast.client_name
+					,hast.handover_address
+					,hast.handover_to
+					,isnull(hast.handover_phone_area,'')+isnull(hast.handover_phone_no, '') 'handover_phone'
+					,ast.item_name
+					,year(avi.built_year)
+					,avi.plat_no
+					,avi.chassis_no
+					,avi.engine_no
+					,avi.colour
+					,hrq.ETA_DATE
+					,hast.handover_date
+					,had.upload_bast_date	
+					,@p_is_condition
+			from	ifinams.dbo.handover_asset hast
+					outer apply (	
+									select	had.mod_date 'upload_bast_date'
+									from	dbo.handover_asset_doc had
+									where  had.handover_code = hast.code
+									and		had.document_code = 'SGD02305000001'
+									and		isnull(had.file_name,'') <> ''
+								) had
+					left join ifinams.dbo.asset ast on ast.code = hast.fa_code
+					left join ifinams.dbo.asset_vehicle avi on avi.asset_code = ast.code
+					left join ifinams.dbo.HANDOVER_REQUEST hrq on hrq.HANDOVER_CODE = hast.code
+					left join ifinams.dbo.register_main rmain on rmain.fa_code = ast.code
+			where	hast.type = 'SELL OUT'
+					and hast.branch_code = case @p_branch_code
+														when 'ALL' then hast.branch_code
+														else @p_branch_code
+													end	
+					and  cast(hast.transaction_date as date)between cast(@p_from_date as date) and cast(@p_to_date as date) ;
+
+
+			if not exists (select * from dbo.rpt_bast_unit_report where user_id = @p_user_id)
+			begin
+					
+					insert into dbo.rpt_bast_unit_report
+					(
+					    user_id
+					    ,report_company
+					    ,report_title
+					    ,report_image
+					    ,branch_code
+					    ,branch_name
+					    ,from_date
+					    ,to_date
+					    ,delivery_or_collect
+					    ,unit_condition
+					    ,status_pengiriman
+					    ,agreement_no
+					    ,lessee
+					    ,lessee_address
+					    ,pic_lesse
+					    ,lessee_contact_number
+					    ,description_unit_utama
+					    ,year
+					    ,plat_no
+					    ,chassis_no
+					    ,engine_no
+					    ,color
+					    ,delivery_date
+					    ,bast_date
+					    ,upload_bast_date
+					    ,is_condition
+					)
+					values
+					(   
+						@p_user_id
+					    ,@report_company
+					    ,@report_title
+					    ,@report_image
+					    ,@p_branch_code
+					    ,@p_branch_name
+					    ,@p_from_date
+					    ,@p_to_date
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,null
+					    ,@p_is_condition
+					 )
+		
+			end
+	end
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ;
+end ;
+

@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[INVOICE_PPH_UPLOAD_DATA] (
+    [P_USER_ID]           NVARCHAR (50) NULL,
+    [INVOICE_EXTERNAL_NO] NVARCHAR (50) NOT NULL,
+    [PAYMENT_REFF_NO]     NVARCHAR (50) NULL,
+    [PAYMENT_REFF_DATE]   DATETIME      NULL,
+    [CRE_DATE]            DATETIME      NULL,
+    [CRE_BY]              NVARCHAR (15) NULL,
+    [CRE_IP_ADDRESS]      NVARCHAR (15) NULL,
+    [MOD_DATE]            DATETIME      NULL,
+    [MOD_BY]              NVARCHAR (15) NULL,
+    [MOD_IP_ADDRESS]      NVARCHAR (15) NULL
+);
+

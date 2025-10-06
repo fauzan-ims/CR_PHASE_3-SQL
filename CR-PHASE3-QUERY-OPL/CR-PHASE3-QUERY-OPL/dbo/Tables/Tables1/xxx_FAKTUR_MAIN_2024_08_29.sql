@@ -1,0 +1,14 @@
+﻿CREATE TABLE [dbo].[xxx_FAKTUR_MAIN_2024_08_29] (
+    [FAKTUR_NO]         NVARCHAR (50)  NOT NULL,
+    [YEAR]              NVARCHAR (4)   NOT NULL,
+    [STATUS]            NVARCHAR (10)  NOT NULL,
+    [REGISTRATION_CODE] NVARCHAR (50)  NULL,
+    [INVOICE_NO]        NVARCHAR (250) NULL,
+    [CRE_DATE]          DATETIME       NOT NULL,
+    [CRE_BY]            NVARCHAR (15)  NOT NULL,
+    [CRE_IP_ADDRESS]    NVARCHAR (15)  NOT NULL,
+    [MOD_DATE]          DATETIME       NOT NULL,
+    [MOD_BY]            NVARCHAR (15)  NOT NULL,
+    [MOD_IP_ADDRESS]    NVARCHAR (15)  NOT NULL
+);
+

@@ -1,0 +1,181 @@
+﻿/*
+	Created : Nia, 28 Sep 2020
+*/
+CREATE PROCEDURE dbo.xsp_payment_request_cancel 
+(
+	@p_code				nvarchar(50)
+	,@p_payment_remarks	nvarchar(4000)
+	--
+	,@p_cre_date		datetime
+	,@p_cre_by			nvarchar(15)
+	,@p_cre_ip_address	nvarchar(15)
+	,@p_mod_date		datetime
+	,@p_mod_by			nvarchar(15)
+	,@p_mod_ip_address	nvarchar(15)
+)
+as
+begin
+	declare @msg			    nvarchar(max)
+			,@payment_source    nvarchar(50)
+			,@payment_source_no	nvarchar(50);
+
+	begin try
+	select @payment_source		= payment_source 
+			,@payment_source_no = payment_source_no
+	from  dbo.payment_request 
+	where code = @p_code
+
+	if @payment_source in ('POLICY','ENDORSE','RENEWAL','SETTLEMENT LEGAL NOTARY','DP NOTARY','DP ORDER PUBLIC SERVICE','REALIZATION FOR PUBLIC SERVICE',
+					 'APPRAISAL RESULT','SURVEY RESULT','OPEX INITIATION','OPEX ADJUSTMENT','OPEX TOPUP','MAK ALLOCATION','RELEASE DEPOSIT','RELEASE SUSPEND',
+					 'BANK ACCOUNT LOAN PAYMENT APPROVED','FUNDING BATCH PAYMENT DISBURSEMENT','FUNDING BATCH PAYMENT INSTALLMENT','BATCH TERMINATION APPROVED',
+					 'FUNDING PLAFOND FEE','BATCH RESTRUCTURE APPROVED','SOLD REVER','REFINANCING')
+	begin
+		
+		if exists (select 1 from dbo.payment_request where code = @p_code and payment_status = 'HOLD')
+		begin
+			--double transaction
+			if @payment_source in ('SETTLEMENT LEGAL NOTARY','REALIZATION FOR PUBLIC SERVICE','OPEX ADJUSTMENT')
+			begin
+				if exists (select 1 from cashier_received_request where doc_ref_code = @payment_source_no and request_status <> 'HOLD')
+				begin
+					set @msg = 'This data already process';
+					raiserror(@msg, 16, -1) ;
+				end
+				else
+				begin
+					--cancel crr
+					update	dbo.cashier_received_request 
+					set		request_status	= 'CANCEL'
+							,request_remarks = @p_payment_remarks
+							--
+							,mod_date		= @p_mod_date		
+							,mod_by			= @p_mod_by			
+							,mod_ip_address	= @p_mod_ip_address
+					where	doc_ref_code	= @payment_source_no
+
+					update	dbo.fin_interface_cashier_received_request
+					set		request_status	   = 'CANCEL'
+							,process_reff_name = @p_payment_remarks
+							,process_reff_no   = 'CANCEL'
+							--
+							,mod_date		= @p_mod_date		
+							,mod_by			= @p_mod_by			
+							,mod_ip_address	= @p_mod_ip_address
+					where	doc_ref_code	= @payment_source_no
+				end				
+				if exists (select 1 from received_request where received_source = @payment_source_no and received_status <> 'HOLD')
+				begin
+					set @msg = 'This data already process';
+					raiserror(@msg, 16, -1) ;
+				end
+				else
+				begin
+					--cancel rr
+					update	dbo.received_request 
+					set		received_status		= 'CANCEL'
+							,received_remarks	= @p_payment_remarks
+							--
+							,mod_date		    = @p_mod_date		
+							,mod_by			    = @p_mod_by			
+							,mod_ip_address	    = @p_mod_ip_address
+					where	received_source_no	= @payment_source_no
+
+					update	dbo.fin_interface_received_request
+					set		received_status	   = 'CANCEL'
+							,process_reff_name = @p_payment_remarks
+							,process_reff_no   = 'CANCEL'
+							--
+							,mod_date		   = @p_mod_date		
+							,mod_by			   = @p_mod_by			
+							,mod_ip_address	   = @p_mod_ip_address
+					where	received_source_no = @payment_source_no
+				end
+				
+			end
+			--internal transaction
+			else if @payment_source in ('RELEASE DEPOSIT','RELEASE SUSPEND')
+			begin
+				update deposit_release
+				set release_status   = 'HOLD'
+				    ,release_remarks = release_remarks + ' ' + @p_payment_remarks
+					--
+					,mod_date		= @p_mod_date		
+					,mod_by			= @p_mod_by			
+					,mod_ip_address	= @p_mod_ip_address
+				where	code			= @payment_source_no
+
+				update suspend_release
+				set release_status = 'HOLD'
+					,release_remarks = release_remarks + ' ' + @p_payment_remarks
+					--
+					,mod_date		= @p_mod_date		
+					,mod_by			= @p_mod_by			
+					,mod_ip_address	= @p_mod_ip_address
+				where	code			= @payment_source_no
+			end
+
+		    update	dbo.payment_request 
+			set		payment_status	 = 'CANCEL'
+					,payment_remarks = @p_payment_remarks
+					--
+					,mod_date		= @p_mod_date		
+					,mod_by			= @p_mod_by			
+					,mod_ip_address	= @p_mod_ip_address
+			where	code			= @p_code
+
+			update	dbo.fin_interface_payment_request 
+			set		payment_status	   = 'CANCEL'
+					,process_reff_name = @p_payment_remarks
+					,process_reff_no   = 'CANCEL'
+					--
+					,mod_date		= @p_mod_date		
+					,mod_by			= @p_mod_by			
+					,mod_ip_address	= @p_mod_ip_address
+			where	code			= @p_code
+		end
+        else
+		begin
+		    set @msg = 'Error data already proceed';
+			raiserror(@msg, 16, -1) ;
+		end	
+	end
+	else
+	begin
+		set @msg = 'This transaction cant be cancel ';
+		raiserror(@msg, 16, -1) ;
+	end
+		
+	end try
+	begin catch
+		declare @error int ;
+
+		set @error = @@error ;
+
+		if (@error = 2627)
+		begin
+			set @msg = dbo.xfn_get_msg_err_code_already_exist() ;
+		end ;
+
+		if (len(@msg) <> 0)
+		begin
+			set @msg = 'V' + ';' + @msg ;
+		end ;
+		else
+		begin
+			if (error_message() like '%V;%' or error_message() like '%E;%')
+			begin
+				set @msg = error_message() ;
+			end
+			else 
+			begin
+				set @msg = 'E;' + dbo.xfn_get_msg_err_generic() + ';' + error_message() ;
+			end
+		end ;
+
+		raiserror(@msg, 16, -1) ;
+
+		return ;
+	end catch ;
+end ;
+
+

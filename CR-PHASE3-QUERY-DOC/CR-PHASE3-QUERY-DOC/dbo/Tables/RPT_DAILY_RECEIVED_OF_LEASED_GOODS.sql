@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[RPT_DAILY_RECEIVED_OF_LEASED_GOODS] (
+    [USER_ID]             NVARCHAR (50)  NOT NULL,
+    [REPORT_COMPANY]      NVARCHAR (50)  NULL,
+    [REPORT_IMAGE]        NVARCHAR (50)  NULL,
+    [REPORT_TITLE]        NVARCHAR (50)  NULL,
+    [DOC_CODE]            NVARCHAR (50)  NULL,
+    [DOC_TYPE]            NVARCHAR (50)  NULL,
+    [PERIOD_START]        DATETIME       NULL,
+    [PERIOD_END]          DATETIME       NULL,
+    [PRODUCT]             NVARCHAR (250) NULL,
+    [PRODUCT_TYPE]        NVARCHAR (50)  NULL,
+    [BRANCH_NAME]         NVARCHAR (50)  NULL,
+    [INPUT_BY]            NVARCHAR (50)  NULL,
+    [CHECKED_BY]          NVARCHAR (50)  NULL,
+    [ACKNOWLEDGE_BY]      NVARCHAR (50)  NULL,
+    [JABATAN_ACKNOWLEDGE] NVARCHAR (50)  NULL,
+    [NAMA_USER]           NVARCHAR (50)  NULL,
+    [CRE_BY]              NVARCHAR (50)  NULL,
+    [CRE_DATE]            DATETIME       NULL,
+    [CRE_IP_ADDRESS]      NVARCHAR (15)  NULL,
+    [MOD_BY]              NVARCHAR (50)  NULL,
+    [MOD_DATE]            DATETIME       NULL,
+    [MOD_IP_ADDRESS]      NVARCHAR (15)  NULL
+);
+

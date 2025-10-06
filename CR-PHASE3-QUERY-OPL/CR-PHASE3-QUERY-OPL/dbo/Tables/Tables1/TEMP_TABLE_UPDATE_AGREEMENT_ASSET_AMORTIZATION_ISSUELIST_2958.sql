@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[TEMP_TABLE_UPDATE_AGREEMENT_ASSET_AMORTIZATION_ISSUELIST_2958] (
+    [BILLING_NO]           INT             NOT NULL,
+    [ASSET_NO]             NVARCHAR (50)   NOT NULL,
+    [DUE_DATE]             DATETIME        NOT NULL,
+    [BILLING_DATE]         DATETIME        NOT NULL,
+    [BILLING_AMOUNT]       DECIMAL (18, 2) NOT NULL,
+    [START_BILL_NO_CHANGE] INT             NOT NULL
+);
+

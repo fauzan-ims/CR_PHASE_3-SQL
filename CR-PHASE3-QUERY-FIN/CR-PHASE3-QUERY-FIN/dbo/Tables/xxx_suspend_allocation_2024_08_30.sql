@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[xxx_suspend_allocation_2024_08_30] (
+    [CODE]                     NVARCHAR (50)   NOT NULL,
+    [BRANCH_CODE]              NVARCHAR (50)   NOT NULL,
+    [BRANCH_NAME]              NVARCHAR (250)  NOT NULL,
+    [ALLOCATION_STATUS]        NVARCHAR (10)   NOT NULL,
+    [ALLOCATION_TRX_DATE]      DATETIME        NOT NULL,
+    [ALLOCATION_VALUE_DATE]    DATETIME        NOT NULL,
+    [ALLOCATION_ORIG_AMOUNT]   DECIMAL (18, 2) NOT NULL,
+    [ALLOCATION_CURRENCY_CODE] NVARCHAR (3)    NOT NULL,
+    [ALLOCATION_EXCH_RATE]     DECIMAL (18, 6) NOT NULL,
+    [ALLOCATION_BASE_AMOUNT]   DECIMAL (18, 2) NOT NULL,
+    [ALLOCATIONT_REMARKS]      NVARCHAR (4000) NOT NULL,
+    [SUSPEND_CODE]             NVARCHAR (50)   NULL,
+    [SUSPEND_GL_LINK_CODE]     NVARCHAR (50)   NOT NULL,
+    [SUSPEND_AMOUNT]           DECIMAL (18, 2) NOT NULL,
+    [AGREEMENT_NO]             NVARCHAR (50)   NULL,
+    [IS_RECEIVED_REQUEST]      NVARCHAR (1)    NOT NULL,
+    [VOUCHER_NO]               NVARCHAR (50)   NULL,
+    [CRE_DATE]                 DATETIME        NOT NULL,
+    [CRE_BY]                   NVARCHAR (15)   NOT NULL,
+    [CRE_IP_ADDRESS]           NVARCHAR (15)   NOT NULL,
+    [MOD_DATE]                 DATETIME        NOT NULL,
+    [MOD_BY]                   NVARCHAR (15)   NOT NULL,
+    [MOD_IP_ADDRESS]           NVARCHAR (15)   NOT NULL
+);
+

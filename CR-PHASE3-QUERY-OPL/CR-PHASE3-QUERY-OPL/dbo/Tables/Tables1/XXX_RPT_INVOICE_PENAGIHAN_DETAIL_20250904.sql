@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[XXX_RPT_INVOICE_PENAGIHAN_DETAIL_20250904] (
+    [USER_ID]           NVARCHAR (50)   NOT NULL,
+    [NO_INVOICE]        NVARCHAR (50)   NULL,
+    [AGREEMENT_NO]      NVARCHAR (50)   NULL,
+    [AGREEMENT_DATE]    DATETIME        NULL,
+    [JENIS]             NVARCHAR (50)   NULL,
+    [TYPE]              NVARCHAR (50)   NULL,
+    [UNIT]              INT             NULL,
+    [PERIODE_STAR]      DATETIME        NULL,
+    [PERIODE_END]       DATETIME        NULL,
+    [POLICE_NO]         NVARCHAR (50)   NULL,
+    [CONTRACT_STAR]     DATETIME        NULL,
+    [CONTRACT_END]      DATETIME        NULL,
+    [HARGA_PERUNIT]     DECIMAL (18, 2) NULL,
+    [JUMLAH_HARGA]      DECIMAL (18, 2) NULL,
+    [SUB_TOTAL]         DECIMAL (18, 2) NULL,
+    [PPN_PCT]           DECIMAL (9, 6)  NULL,
+    [PPN]               DECIMAL (18, 2) NULL,
+    [TOTAL]             DECIMAL (18, 2) NULL,
+    [SUM_AGREEMENT]     INT             NULL,
+    [SUM_JENIS_OR_TYPE] INT             NULL,
+    [SUM_UNIT]          INT             NULL,
+    [PERIODE_SEWA]      NVARCHAR (4000) NULL,
+    [REMARKS]           NVARCHAR (4000) NULL,
+    [DPP_NILAI_LAIN]    DECIMAL (18, 2) NULL
+);
+
