@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_ams_interface_approval_request_reject]
+﻿CREATE PROCEDURE dbo.xsp_ams_interface_approval_request_reject
 (
 	@p_code				nvarchar(50)
 	,@p_approval_status nvarchar(10) = 'REJECT'
@@ -77,7 +77,32 @@ BEGIN
 													,@p_mod_by			= @p_mod_by
 													,@p_mod_ip_address	= @p_mod_ip_address
 			
+		END
+        else if	(@reff_name = 'WORK ORDER APPROVAL')
+		begin
+			exec dbo.xsp_work_order_reject_from_approval @p_code			= @reff_no
+										 ,@p_mod_date		= @p_mod_date
+										 ,@p_mod_by			= @p_mod_by
+										 ,@p_mod_ip_address = @p_mod_ip_address
+			
+			
 		end
+		else if (@reff_name = 'INSURANCE APPROVAL')
+		begin
+			exec dbo.xsp_insurance_reject_from_approval @p_code				= @reff_no
+													   ,@p_mod_date			= @p_mod_date
+													   ,@p_mod_by			= @p_mod_by
+													   ,@p_mod_ip_address	= @p_mod_ip_address
+			
+		end
+		else if (@reff_name = 'MAINTENANCE APPROVAL')
+		begin
+			exec dbo.xsp_maintenance_approval_reject @p_code				= @reff_no
+											 ,@p_mod_date			= @p_mod_date
+											 ,@p_mod_by				= @p_mod_by
+											 ,@p_mod_ip_address		= @p_mod_ip_address
+			
+		END
 	end try
 	begin catch
 		declare @error int ;
@@ -110,4 +135,3 @@ BEGIN
 		return ;
 	end catch ;	
 end ;
-

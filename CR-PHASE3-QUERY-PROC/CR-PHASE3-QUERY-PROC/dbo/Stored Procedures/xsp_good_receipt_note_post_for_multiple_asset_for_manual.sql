@@ -412,7 +412,7 @@ BEGIN
 				-- nilainya exec dari MASTER_TRANSACTION.sp_name
 				exec @return_value = @sp_name @grn_id, @podoi_id ; -- sp ini mereturn value angka 
 
-				SELECT @gl_link_code'@gl_link_code',@transaction_code'@transaction_code',@debet_or_credit'@debet_or_credit',@transaction_name'@transaction_name',@sp_name'@sp_name',@return_value'@return_value',@grn_id'@grn_id',@podoi_id'@podoi_id'
+				--SELECT @gl_link_code'@gl_link_code',@transaction_code'@transaction_code',@debet_or_credit'@debet_or_credit',@transaction_name'@transaction_name',@sp_name'@sp_name',@return_value'@return_value',@grn_id'@grn_id',@podoi_id'@podoi_id'
 
 				if (@return_value <> 0)
 				begin

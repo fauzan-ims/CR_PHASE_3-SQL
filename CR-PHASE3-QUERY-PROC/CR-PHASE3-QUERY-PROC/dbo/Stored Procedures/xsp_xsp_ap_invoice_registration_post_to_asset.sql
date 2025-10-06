@@ -3,7 +3,7 @@
 -- Stored Procedure
 
 
-CREATE PROCEDURE [dbo].[xsp_xsp_ap_invoice_registration_post_to_asset]
+CREATE PROCEDURE dbo.xsp_xsp_ap_invoice_registration_post_to_asset
 (
 	@p_code				nvarchar(50) -- jika dari final grn maka grn code, jika dari invoice maka invoice code
 	,@p_final_grn_code	nvarchar(50)
@@ -662,7 +662,7 @@ begin
 											left join dbo.proc_interface_purchase_request pirr on (pirr.code									= pr.reff_no)
 											left join dbo.proc_interface_purchase_request pirr2 on (pirr2.code									= pr2.reff_no)
 									where	grnd.id = @good_receipt_note_detail_id ;
-
+									
 									update	dbo.proc_interface_purchase_request
 									set		result_fa_code = @code
 											,result_fa_name = @item_name
@@ -688,9 +688,16 @@ begin
 										,mod_ip_address = @p_mod_ip_address
 								where	asset_no = @interface_purchase_request_code ;
 
+								update dbo.final_grn_request_detail
+								set		asset_code = @code
+								where	id = @fgrn_detail_id
+
 								-- update asset code di object info
 								update	dbo.purchase_order_detail_object_info
 								set		asset_code		= @code
+										,plat_no		= @plat_no
+										,chassis_no		= @chassis_no
+										,engine_no		= @engine_no
 										,mod_by			= @p_mod_by
 										,mod_date		= @p_mod_date
 										,mod_ip_address = @p_mod_ip_address
@@ -781,15 +788,18 @@ begin
 									,@final_grn_request_detail_id_unit	= eia.final_grn_request_detail_id
 							from 	dbo.eproc_interface_asset eia
 							where	eia.final_grn_request_detail_id = @fgrn_detail_id;
-
+							
 							if (isnull(@fa_code_adjust,'') = '')
 							begin
 							    select	@fa_code_adjust = asset_code
 										,@item_name		= asset_name
-								from	dbo.final_grn_request_detail 
+										,@plat_no		= a.plat_no
+										,@chassis_no	= a.chasis_no
+										,@engine_no		= a.engine_no
+								from	dbo.final_grn_request_detail a
 								where	id = @fgrn_detail_id
 							end
-
+							
 							--select @fa_code_adjust = code from dbo.eproc_interface_asset where grn_detail_id = @grn_detail_id_asset
 
 							update	dbo.proc_interface_purchase_request
@@ -806,19 +816,21 @@ begin
 									,mod_ip_address = @p_mod_ip_address
 							where	asset_no		= @interface_purchase_request_code
 									and unit_from	= @unit_from ;
-
-
+									
 							set @code_asset_for_adjustment = isnull(@fa_code_adjust, @code) ;
 							set @name_asset_for_adjustment = isnull(@fa_name_adjust, @item_name) ;
 
 							-- update asset code di object info
 							update	dbo.purchase_order_detail_object_info
 							set		asset_code		= @code_asset_for_adjustment
+									,plat_no		= @plat_no
+									,chassis_no		= @chassis_no
+									,engine_no		= @engine_no
 									,mod_by			= @p_mod_by
 									,mod_date		= @p_mod_date
 									,mod_ip_address = @p_mod_ip_address
 							where	id = @object_info_id ;
-								SELECT @cat_type_proc_request'@procurement_type',@code_asset_for_adjustment'@code_asset_for_adjustment'
+								
 							if isnull(@code_asset_for_adjustment,'') <> ''
 							begin
 

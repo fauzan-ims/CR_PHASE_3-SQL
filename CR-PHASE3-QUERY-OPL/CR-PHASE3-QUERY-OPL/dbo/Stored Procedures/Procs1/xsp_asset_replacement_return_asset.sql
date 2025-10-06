@@ -61,10 +61,11 @@ begin
 		)
 		begin
 			set @msg = 'Data already Proceed.' ;
-
 			raiserror(@msg, 16, -1) ;
 		end ;
 
+		
+	
 		--Update to table agreement asset
 		update	dbo.agreement_asset
 		set		replacement_fa_code		= null
@@ -130,6 +131,17 @@ begin
 				set @msg = 'Delivery ' + @new_fa_name + ' Not Finish Yet.'
 				raiserror(@msg, 16, -1)
 			end
+
+			if exists	(	select	1 
+						from	dbo.asset_replacement_detail asd
+								inner join ifinams.dbo.maintenance mtn on mtn.code = asd.reff_no
+						where	mtn.status <> 'DONE'
+						and		asd.replacement_code = @p_code
+					)
+			begin
+				set @msg = 'Please Done transaction Maintenance First For Return Asset' ;
+				raiserror(@msg, 16, -1) ;
+			end ;
 
 			--insert old asset to opl_interface_handover_asset
 			set @remark_old = 'Pengembalian pengantian Unit Sewa Untuk Application : ' + @agreement_external_no + ' - ' + @client_name + '. dari Asset ' + @new_fa_code + ' - ' + @new_fa_name + ' menjadi ' + @old_fa_code + ' - ' + @old_fa_name ;

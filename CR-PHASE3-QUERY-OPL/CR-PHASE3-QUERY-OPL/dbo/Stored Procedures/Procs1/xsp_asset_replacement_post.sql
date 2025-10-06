@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_asset_replacement_post]
+﻿CREATE PROCEDURE dbo.xsp_asset_replacement_post
 (
 	@p_code			   nvarchar(50)
 	--
@@ -126,7 +126,7 @@ begin
 										or isnull(new_fa_name, '') = ''
 										or isnull(reason_code, '') = ''
 										or isnull(replacement_type, '') = ''
-										or (replacement_type = 'TEMPORARY' and estimate_return_date is null)
+										or (replacement_type IN ('TEMPORARY','MAINTENANCE') and estimate_return_date is null)
 										or isnull(remark, '') = ''
 									)
 					)

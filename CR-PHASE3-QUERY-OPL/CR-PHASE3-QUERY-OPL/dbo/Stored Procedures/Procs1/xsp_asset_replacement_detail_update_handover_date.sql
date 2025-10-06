@@ -1,6 +1,6 @@
 ﻿--created by, Rian at 03/03/2023 
 
-CREATE PROCEDURE [dbo].[xsp_asset_replacement_detail_update_handover_date]
+CREATE PROCEDURE dbo.xsp_asset_replacement_detail_update_handover_date
 (
 	@p_code				nvarchar(50)
 	,@p_asset_no		nvarchar(50)
@@ -32,7 +32,7 @@ begin
 				,@new_fa_reff_no_03	= new_fa_ref_no_03
 		from	dbo.asset_replacement_detail
 		where	replacement_code	= @p_code ;
-		
+	
 		if	(@p_type = 'REPLACE IN') --jika type nya replace in maka update old handover date pada asset old
 		begin
 			update	dbo.asset_replacement_detail
@@ -104,9 +104,9 @@ begin
 			where	replacement_code		= @p_code
 			and		new_fa_code				= @p_asset_no
 		end
-
+		
 		--logic untuk update status replacement
-		if (@replacemet_type = 'TEMPORARY')
+		if (@replacemet_type IN ('TEMPORARY','MAINTENANCE'))
 		begin
 			if exists
 			(
@@ -171,6 +171,12 @@ begin
 		end
 		else
 		begin
+		select	1
+				from	dbo.asset_replacement_detail
+				where	replacement_code = @p_code
+						and old_handover_in_date is not null
+						and new_handover_out_date is not null
+		
 			if exists
 			(
 				select	1
@@ -265,11 +271,3 @@ begin
 		return ;
 	end catch ; 
 end
-
-
-
-
-
-
-
-

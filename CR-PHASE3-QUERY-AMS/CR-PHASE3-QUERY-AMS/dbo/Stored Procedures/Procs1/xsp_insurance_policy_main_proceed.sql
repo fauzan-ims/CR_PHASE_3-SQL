@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_insurance_policy_main_proceed]
+﻿CREATE PROCEDURE dbo.xsp_insurance_policy_main_proceed
 (
 	@p_code			   nvarchar(50)
 	--
@@ -22,13 +22,13 @@ begin
 
 		if (@status = 'ON PROCESS')
 		begin
-			update	dbo.insurance_policy_main
-			set		policy_payment_status	= 'APPROVE'
-					--
-					,mod_date				= @p_mod_date
-					,mod_by					= @p_mod_by
-					,mod_ip_address			= @p_mod_ip_address
-			where	code					= @p_code
+			--update	dbo.insurance_policy_main
+			--set		policy_payment_status	= 'APPROVE'
+			--		--
+			--		,mod_date				= @p_mod_date
+			--		,mod_by					= @p_mod_by
+			--		,mod_ip_address			= @p_mod_ip_address
+			--where	code					= @p_code
 
 			exec dbo.xsp_insurance_policy_main_post_payment @p_code				= @p_code
 															,@p_cre_date		= @p_mod_date

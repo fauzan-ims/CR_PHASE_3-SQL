@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_rpt_invoice_delivery]
+﻿CREATE PROCEDURE dbo.xsp_rpt_invoice_delivery
 (
 	@p_user_id			NVARCHAR(MAX)
 	,@p_delivery_code	NVARCHAR(50)
@@ -17,6 +17,8 @@ begin
 	--(untuk data looping)
 	delete dbo.rpt_invoice_delivery_detail
 	where	user_id = @p_user_id ;
+	delete dbo.rpt_invoice_delivery
+	where	user_id = @p_user_id ;
 
 	declare @msg					nvarchar(max)
 			,@report_company		nvarchar(250)
@@ -33,7 +35,8 @@ begin
 		    ,@billing_to_address	NVARCHAR(250)
 		    ,@tanggal_kirim			DATETIME
 		    ,@no_tanda_terima		NVARCHAR(50)
-			,@topovdp				INT;
+			,@topovdp				INT
+			,@messanger				NVARCHAR(50);
 
 	begin try
 		select	@report_image = value
@@ -50,6 +53,8 @@ begin
 		
 		set @report_title = 'INVOICE TANDA TERIMA' ;
 
+		SELECT @messanger = NAME FROM IFINSYS.dbo.SYS_EMPLOYEE_MAIN WHERE code = @p_mod_by
+
 
 		INSERT INTO dbo.RPT_INVOICE_DELIVERY
 		(
@@ -63,6 +68,11 @@ begin
 		    ,BILLING_TO_ADDRESS
 		    ,TANGGAL_KIRIM
 		    ,NO_TANDA_TERIMA
+			--
+			,DISIAPKAN_OLEH
+			,MESSANGER
+			,DITERIMA_OLEH
+			--
 		    ,CRE_DATE
 		    ,CRE_BY
 		    ,CRE_IP_ADDRESS
@@ -75,13 +85,17 @@ begin
 		    ,@report_company
 		    ,@report_title
 		    ,@report_image
-		    ,inv.CLIENT_NAME
+		    ,a.CLIENT_NAME
 		    ,ind.CLIENT_NO
-		    ,inv.CLIENT_NPWP
+		    ,a.CLIENT_NPWP
 		    ,ind.CLIENT_ADDRESS
-		    ,idd.DELIVERY_DATE
-		    ,idd.DELIVERY_CODE
-		    --
+		    ,a.DELIVERY_DATE
+		    ,a.DELIVERY_CODE
+			--
+			,a.POSTING_BY
+			,@messanger
+			,a.CLIENT_NAME
+			--
 			,@p_cre_date
 			,@p_cre_by
 			,@p_cre_ip_address
@@ -89,9 +103,19 @@ begin
 			,@p_mod_by
 			,@p_mod_ip_address
 		FROM dbo.INVOICE_DELIVERY ind
-			INNER JOIN dbo.INVOICE_DELIVERY_DETAIL idd ON idd.DELIVERY_CODE = ind.CODE
-			INNER JOIN dbo.CLIENT_MAIN cm ON cm.CLIENT_NO = ind.CLIENT_NO
-			INNER JOIN dbo.INVOICE inv ON inv.INVOICE_NO = idd.INVOICE_NO
+			
+			OUTER APPLY(
+						SELECT		 MAX(idd.DELIVERY_DATE) DELIVERY_DATE
+									,MAX(idd.DELIVERY_CODE) DELIVERY_CODE
+									,MAX(inv.CLIENT_NAME) CLIENT_NAME
+									,MAX(inv.CLIENT_NPWP) CLIENT_NPWP
+									,MAX(inv.POSTING_BY) POSTING_BY
+									--,MAX(cm.CLIENT_NAME) CLIENT_NAME
+						FROM		dbo.INVOICE_DELIVERY_DETAIL idd 
+						INNER JOIN	dbo.CLIENT_MAIN cm ON cm.CLIENT_NO = ind.CLIENT_NO 
+						INNER JOIN	dbo.INVOICE inv ON inv.INVOICE_NO = idd.INVOICE_NO 
+						WHERE		idd.DELIVERY_CODE = ind.CODE
+						)a
 		WHERE ind.CODE = @p_delivery_code;
 
 		INSERT INTO dbo.RPT_INVOICE_DELIVERY_DETAIL
@@ -113,7 +137,7 @@ begin
 			,idd.invoice_no
 			,inv.total_billing_amount
 			,inv.total_ppn_amount
-			,inv.total_amount
+			,inv.total_billing_amount + inv.total_ppn_amount
 			,inv.invoice_due_date
 			,ind.remark
 		FROM	dbo.INVOICE_DELIVERY_DETAIL idd

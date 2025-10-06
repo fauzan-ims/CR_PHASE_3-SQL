@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_prepaid_insurance]
+﻿CREATE PROCEDURE dbo.xsp_prepaid_insurance
 (		
 	@p_code					nvarchar(50)
 	--
@@ -46,15 +46,14 @@ begin
 				and invoice_code = @invoice_code
 		group by ipa.code
 
-		
-		if exists (select 1 from dbo.insurance_policy_main where code = @p_code and policy_payment_status = 'ON PROCESS')
+		if exists (select 1 from dbo.insurance_policy_main where code = @p_code and policy_payment_status = 'APPROVE')
 		begin		
 			
 			declare curr_prepaid cursor fast_forward read_only for
 			select	coverage.initial_buy_amount
 					,datediff(month, ipm.policy_eff_date, ipm.policy_exp_date)
 					,ipa.fa_code
-					,ipa.CODE
+					,ipa.code
 					,ipm.policy_eff_date
 			from	dbo.insurance_policy_main			  ipm
 					inner join dbo.insurance_policy_asset ipa on (ipa.policy_code = ipm.code)
@@ -180,5 +179,3 @@ begin
 	end catch ;	
 
 end ;
-
-

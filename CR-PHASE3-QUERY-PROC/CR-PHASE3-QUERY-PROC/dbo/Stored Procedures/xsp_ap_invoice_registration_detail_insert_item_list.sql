@@ -168,28 +168,31 @@ begin
 		    		,@p_mod_ip_address							= @p_mod_ip_address
 		
 			select	@info_detail = stuff((
-								 select distinct
-										case case when isnull(podoi.plat_no,'') = '' then isnull(asv.plat_no,'') else isnull(podoi.plat_no,'') end
-											when '' then ', ' + a.faktur_no
-											else ',' + case when isnull(podoi.plat_no,'') = '' then isnull(asv.plat_no,'') else isnull(podoi.plat_no,'') end
-											+ ' - ' + case when isnull(podoi.engine_no,'') = '' then isnull(asv.engine_no,'') else isnull(podoi.engine_no,'') end 
-											+ ' - ' + case when isnull(podoi.chassis_no,'') = '' then isnull(asv.chassis_no,'') else isnull(podoi.chassis_no,'') end
-											+ case when isnull(a.faktur_no,'') <> '' then  ' - ' + isnull(a.faktur_no,'') else '' end
-										end
-								 from	dbo.ap_invoice_registration_detail_faktur		a
-										left join dbo.purchase_order_detail_object_info podoi on a.purchase_order_detail_object_info_id = podoi.id
-										left join dbo.purchase_order_detail pod on pod.id = podoi.purchase_order_detail_id
-										outer apply ( 
-											select asv.engine_no, asv.chassis_no, asv.plat_no from 
-											dbo.supplier_selection_detail		ssd 
-											left join dbo.quotation_review_detail			qrd on (qrd.id								  = ssd.quotation_detail_id)
-											left join dbo.procurement						prc on (prc.code collate latin1_general_ci_as = isnull(qrd.reff_no, ssd.reff_no))
-											left join dbo.procurement_request				pr on (prc.procurement_request_code			  = pr.code)
-											left join dbo.procurement_request_item			pri on (pri.procurement_request_code = pr.code)
-											left join ifinams.dbo.asset_vehicle				asv on asv.asset_code = isnull(podoi.asset_code,pri.fa_code)
-											where ssd.id								  = pod.supplier_selection_detail_id
-										)asv
-								 where	invoice_registration_detail_id = @invd_id
+										select		distinct
+													case case when isnull(podoi.plat_no,'') = '' then isnull(asv.plat_no,'') else isnull(podoi.plat_no,'') end
+														when '' then ', ' + invf.faktur_no
+														else ',' + case when isnull(podoi.plat_no,'') = '' then isnull(asv.plat_no,'') else isnull(podoi.plat_no,'') end
+														+ ' - ' + case when isnull(podoi.engine_no,'') = '' then isnull(asv.engine_no,'') else isnull(podoi.engine_no,'') end 
+														+ ' - ' + case when isnull(podoi.chassis_no,'') = '' then isnull(asv.chassis_no,'') else isnull(podoi.chassis_no,'') end
+														+ case when isnull(invf.faktur_no,'') <> '' then  ' - ' + isnull(invf.faktur_no,'') else '' end
+													end
+										from		dbo.ap_invoice_registration_detail_faktur invf
+													inner join dbo.ap_invoice_registration_detail invd on invd.id = invf.invoice_registration_detail_id
+													inner join dbo.good_receipt_note_detail grnd on grnd.id = invd.grn_detail_id
+													inner join dbo.purchase_order_detail_object_info podoi on (podoi.id = invf.purchase_order_detail_object_info_id and podoi.good_receipt_note_detail_id = grnd.id)
+													inner join dbo.purchase_order_detail pod on pod.id = podoi.purchase_order_detail_id
+													----
+													outer apply ( 
+															select asv.engine_no, asv.chassis_no, asv.plat_no 
+															from 	dbo.supplier_selection_detail		ssd 
+															left join dbo.quotation_review_detail			qrd on (qrd.id								  = ssd.quotation_detail_id)
+															left join dbo.procurement						prc on (prc.code collate latin1_general_ci_as = isnull(qrd.reff_no, ssd.reff_no))
+															left join dbo.procurement_request				pr on (prc.procurement_request_code			  = pr.code)
+															left join dbo.procurement_request_item			pri on (pri.procurement_request_code = pr.code and prc.procurement_request_item_id = pri.id)
+															left join ifinams.dbo.asset_vehicle				asv on asv.asset_code = isnull(podoi.asset_code,pri.fa_code)
+															where ssd.id = pod.supplier_selection_detail_id
+													)asv
+										where		invf.invoice_registration_detail_id = @invd_id
 								 for xml path('')
 							 ), 1, 1, ''
 							) ;

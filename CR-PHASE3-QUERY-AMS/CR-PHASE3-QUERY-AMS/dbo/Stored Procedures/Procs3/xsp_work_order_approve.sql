@@ -211,6 +211,7 @@ begin
 				,@claim_type				= mnt.service_type
 				,@is_claim_approve			= wo.is_claim_approve
 				,@claim_date				= wo.claim_approve_claim_date
+				,@faktur_no					= wo.faktur_no
 		from	dbo.work_order						wo
 				left join dbo.maintenance			mnt on (mnt.code	   = wo.maintenance_code)
 				left join ifinbam.dbo.master_vendor mv on (mnt.vendor_code = mv.code)
@@ -218,58 +219,7 @@ begin
 				left join dbo.asset_vehicle			avh on (avh.asset_code = ass.code)
 		where	wo.code = @p_code ;
 
-		--(+) sepria 28-05-2025: validasi jika di reimburse tp status asset tidak di rental
-		if(@is_reimburse = '1' and isnull(@agreement_no,'') = '')
-		begin
-		    set @msg = N'Work Order Cannot Be Reimburse Because Asset Is Not Leased' ;
-			raiserror(@msg, 16, -1) ;
-		end
-        
-		select	@faktur_no			= faktur_no
-				,@faktur_no_invoice = invoice_no	-- (+) Ari 2023-12-18 ket : get invoice
-		from	dbo.work_order
-		where	code = @p_code ;
-
-		select	@value1 = value
-		from	dbo.sys_global_param
-		where	code = 'WOINV' ;
-
-		select	@value2 = value
-		from	dbo.sys_global_param
-		where	code = 'WOFKT' ;
-
-		if(@invoice_date < dateadd(month, -@value1, dbo.xfn_get_system_date()))
-		begin
-			if(@value1 <> 0)
-			begin
-				set @msg = N'Invoice date cannot be back dated for more than ' + convert(varchar(1), @value1) + ' months.' ;
-
-				raiserror(@msg, 16, -1) ;
-			end
-			else if (@value1 = 0)
-			begin
-				set @msg = N'Invoice date must be equal than system date.' ;
-
-				raiserror(@msg, 16, -1) ;
-			end
-		end
-
-		if(@faktur_date < dateadd(month, -@value2, dbo.xfn_get_system_date()))
-		begin
-			if(@value2 <> 0)
-			begin
-				set @msg = N'Faktur date cannot be back dated for more than ' + convert(varchar(1), @value2) + ' months.' ;
-
-				raiserror(@msg, 16, -1) ;
-			end
-			else if (@value2 = 0)
-			begin
-				set @msg = N'Faktur date must be equal than system date.' ;
-
-				raiserror(@msg, 16, -1) ;
-			end
-		end
-
+		
 		if(@invoice_date = '')
 		begin
 			set @msg = N'Please input invoice date.' ;
@@ -378,6 +328,60 @@ begin
 		begin
 			set @msg = N'Please Input Service Amount in work order detail.' ;
 			raiserror(@msg, 16, -1) ;
+		end
+
+		
+
+		--(+) sepria 28-05-2025: validasi jika di reimburse tp status asset tidak di rental
+		if(@is_reimburse = '1' and isnull(@agreement_no,'') = '')
+		begin
+		    set @msg = N'Work Order Cannot Be Reimburse Because Asset Is Not Leased' ;
+			raiserror(@msg, 16, -1) ;
+		end
+        
+		select	@faktur_no			= faktur_no
+				,@faktur_no_invoice = invoice_no	-- (+) Ari 2023-12-18 ket : get invoice
+		from	dbo.work_order
+		where	code = @p_code ;
+
+		select	@value1 = value
+		from	dbo.sys_global_param
+		where	code = 'WOINV' ;
+
+		select	@value2 = value
+		from	dbo.sys_global_param
+		where	code = 'WOFKT' ;
+
+		if(@invoice_date < dateadd(month, -@value1, dbo.xfn_get_system_date()))
+		begin
+			if(@value1 <> 0)
+			begin
+				set @msg = N'Invoice date cannot be back dated for more than ' + convert(varchar(1), @value1) + ' months.' ;
+
+				raiserror(@msg, 16, -1) ;
+			end
+			else if (@value1 = 0)
+			begin
+				set @msg = N'Invoice date must be equal than system date.' ;
+
+				raiserror(@msg, 16, -1) ;
+			end
+		end
+
+		if(@faktur_date < dateadd(month, -@value2, dbo.xfn_get_system_date()))
+		begin
+			if(@value2 <> 0)
+			begin
+				set @msg = N'Faktur date cannot be back dated for more than ' + convert(varchar(1), @value2) + ' months.' ;
+
+				raiserror(@msg, 16, -1) ;
+			end
+			else if (@value2 = 0)
+			begin
+				set @msg = N'Faktur date must be equal than system date.' ;
+
+				raiserror(@msg, 16, -1) ;
+			end
 		end
 
 		select	@requestor_code		= code

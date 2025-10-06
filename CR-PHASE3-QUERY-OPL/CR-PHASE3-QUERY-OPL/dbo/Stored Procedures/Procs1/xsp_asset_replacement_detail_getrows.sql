@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_asset_replacement_detail_getrows]
+﻿CREATE PROCEDURE dbo.xsp_asset_replacement_detail_getrows
 (
 	@p_keywords				nvarchar(50)
 	,@p_pagenumber			int
@@ -13,8 +13,6 @@ as
 begin
 
 	declare 	@rows_count int = 0 ;
-
-
 
 	select 	@rows_count = count(1)
 	from	asset_replacement_detail ard
@@ -75,7 +73,7 @@ begin
 				or	ard.new_fa_code										like 	'%'+@p_keywords+'%'
 				or	ard.new_fa_name										like 	'%'+@p_keywords+'%'
 				--or	astb.asset_name									like 	'%'+@p_keywords+'%'
-				or	ard.replacement_type								like 	'%'+@p_keywords+'%'
+				or	case ard.replacement_type when 'PERMANENT' then 'PERMANENT - GTS' else 'TEMPORARY' end 								like 	'%'+@p_keywords+'%'
 				or	sgs.description										like 	'%'+@p_keywords+'%'
 				or	convert(varchar(20),ard.estimate_return_date,103)	like 	'%'+@p_keywords+'%'
 				or	ard.remark											like 	'%'+@p_keywords+'%'
@@ -87,7 +85,7 @@ begin
 						when @p_sort_by = 'asc' then case @p_order_by
 								when 1	then ard.old_asset_no
 								when 2	then ard.new_fa_code
-								when 3	then ard.replacement_type
+								when 3	then case ard.replacement_type when 'PERMANENT' then 'PERMANENT - GTS' else 'TEMPORARY'	end 
 								when 4	then sgs.description
 								when 5	then cast(ard.estimate_return_date as sql_variant)
 								when 6	then ard.delivery_address
@@ -100,7 +98,7 @@ begin
 						when @p_sort_by = 'desc' then case @p_order_by
 								when 1	then ard.old_asset_no
 								when 2	then ard.new_fa_code
-								when 3	then ard.replacement_type
+								when 3	then case ard.replacement_type when 'PERMANENT' then 'PERMANENT - GTS' else 'TEMPORARY'	end 
 								when 4	then sgs.description
 								when 5	then cast(ard.estimate_return_date as sql_variant)
 								when 6	then ard.delivery_address

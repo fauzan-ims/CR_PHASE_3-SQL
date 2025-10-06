@@ -10,7 +10,7 @@ begin
 		select	@replacement = count(replacement_type)
 		from	dbo.asset_replacement_detail
 		where	replacement_code	 = @p_code
-				and replacement_type = 'TEMPORARY' 
+				and replacement_type IN ('TEMPORARY','MAINTENANCE')
 
 		select	arm.code
 				,arm.agreement_no

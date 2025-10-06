@@ -1,4 +1,4 @@
-﻿CREATE procedure [dbo].[xsp_asset_replacement_detail_insert]
+﻿CREATE PROCEDURE dbo.xsp_asset_replacement_detail_insert
 (
 	@p_id				  bigint		 = 0 output
 	,@p_replacement_code  nvarchar(50)
@@ -32,7 +32,7 @@ begin
 			,@contact_phone_no nvarchar(50) ;
 
 	begin try
-		if (@p_replacement_type = 'TEMPORARY')
+		if (@p_replacement_type IN ('TEMPORARY','MAINTENANCE'))
 		begin
 			if exists
 			(
