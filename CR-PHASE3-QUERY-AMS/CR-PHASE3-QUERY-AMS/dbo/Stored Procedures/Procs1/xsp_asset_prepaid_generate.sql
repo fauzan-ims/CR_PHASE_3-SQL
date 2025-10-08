@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE dbo.xsp_asset_prepaid_generate
 (
-	@p_year			   nvarchar(4) = '2025'
-	,@p_month		   nvarchar(2) = '06'
+	@p_year			   nvarchar(4) = ''
+	,@p_month		   nvarchar(2) = ''
 	--
 	,@p_cre_by		   nvarchar(15)
 	,@p_cre_date	   datetime

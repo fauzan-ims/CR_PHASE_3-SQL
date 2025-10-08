@@ -1,4 +1,4 @@
-﻿CREATE procedure dbo.xsp_stock_on_customer_active_getrows
+﻿CREATE PROCEDURE dbo.xsp_stock_on_customer_active_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -25,16 +25,16 @@ begin
 
 	select	@rows_count = count(1)
 	from	dbo.asset ast with(nolock)
-		inner join dbo.asset_vehicle			av with(nolock)	on av.asset_code	= ast.code
-		inner join ifinopl.dbo.agreement_asset	aa with(nolock)	on aa.asset_no		= ast.asset_no
+			inner join dbo.asset_vehicle			av with(nolock)	on av.asset_code	= ast.code
+			inner join ifinopl.dbo.agreement_asset	aa with(nolock)	on aa.asset_no		= ast.asset_no
 	where		ast.branch_code = case @p_branch_code
 										when 'all' then ast.branch_code
 										else @p_branch_code
 									end
-	and			ast.status			= 'stock'
-	and			ast.fisical_status	= 'on customer'
-	and			ast.rental_status	= 'in use'
-	and			(ast.monitoring_status	= '' or ast.monitoring_status	is null)
+	and			ast.status			= 'STOCK'
+	and			ast.fisical_status	= 'ON CUSTOMER'
+	and			ast.rental_status	= 'IN USE'
+	and			aa.asset_status		= 'RENTED'
 	and		(
 				   ast.code										like '%' + @p_keywords + '%'
 				or ast.branch_code								like '%' + @p_keywords + '%'
@@ -55,7 +55,7 @@ begin
 				or ast.status_remark							like '%' + @p_keywords + '%'
 				or ast.status_last_update_by					like '%' + @p_keywords + '%'
 				or aa.is_purchase_requirement_after_lease		like '%' + @p_keywords + '%'
-				or aa.maturity_date								like '%' + @p_keywords + '%'
+				or convert(varchar(30), aa.maturity_date, 103)	like '%' + @p_keywords + '%'
 				or (
 					case 
 						when aa.is_purchase_requirement_after_lease = 1 then 'yes'
@@ -85,20 +85,20 @@ begin
 				,ast.status_remark
 				,ast.status_last_update_by				'last_update_by'
 				,aa.is_purchase_requirement_after_lease 'pral'
-				,aa.maturity_date 'end_contract_date'
+				,convert(varchar(30), aa.maturity_date, 103) 'end_contract_date'
 				,@rows_count 'rowcount'
 	from	dbo.asset ast
-		inner join dbo.asset_vehicle			av	on av.asset_code	= ast.code
-		inner join ifinopl.dbo.agreement_asset	aa	on aa.asset_no		= ast.asset_no
+			inner join dbo.asset_vehicle			av	on av.asset_code	= ast.code
+			inner join ifinopl.dbo.agreement_asset	aa	on aa.asset_no		= ast.asset_no
 	where		ast.branch_code = case @p_branch_code
 										when 'all' then ast.branch_code
 										else @p_branch_code
 									end
 
-	and			ast.status			= 'stock'
-	and			ast.fisical_status	= 'on customer'
-	and			ast.rental_status	= 'in use'
-	and			(ast.monitoring_status	= '' or ast.monitoring_status	is null)
+	and			ast.status			= 'STOCK'
+	and			ast.fisical_status	= 'ON CUSTOMER'
+	and			ast.rental_status	= 'IN USE'
+	and			aa.asset_status		= 'RENTED'
 	and		(
 				   ast.code										like '%' + @p_keywords + '%'
 				or ast.branch_code								like '%' + @p_keywords + '%'
@@ -119,7 +119,7 @@ begin
 				or ast.status_remark							like '%' + @p_keywords + '%'
 				or ast.status_last_update_by					like '%' + @p_keywords + '%'
 				or aa.is_purchase_requirement_after_lease		like '%' + @p_keywords + '%'
-				or aa.maturity_date								like '%' + @p_keywords + '%'
+				or convert(varchar(30), maturity_date, 103)		like '%' + @p_keywords + '%'
 				or (
 					case 
 						when aa.is_purchase_requirement_after_lease = 1 then 'yes'
@@ -133,30 +133,30 @@ begin
 					when @p_sort_by = 'asc' then case @p_order_by
 													when 1 then ast.code
 													when 2 then ast.item_name
-													when 3 then case when av.plat_no is null then '~' else av.plat_no end
-													when 4 then case when ast.agreement_external_no is null then '~' else ast.agreement_external_no end
+													when 3 then av.plat_no 
+													when 4 then ast.agreement_external_no 
 													when 5 then aa.is_purchase_requirement_after_lease
-													when 6 then aa.maturity_date
-													when 7 then case when ast.unit_province_name is null then '~' else ast.unit_province_name end
-													when 8 then case when ast.status_condition is null then '~' else ast.status_condition end
-													when 9 then case when ast.status_progress is null then '~' else ast.status_progress end
-													when 10 then case when ast.status_remark is null then '~' else ast.status_remark end
-													when 11 then case when ast.status_last_update_by is null then '~' else ast.status_last_update_by end
+													when 6 then convert(varchar(30), maturity_date, 120)
+													when 7 then ast.unit_province_name
+													when 8 then ast.status_condition
+													when 9 then ast.status_progress
+													when 10 then ast.status_remark
+													when 11 then ast.status_last_update_by
 												 end
 				end asc
 				,case
 					 when @p_sort_by = 'desc' then case @p_order_by
 													when 1 then ast.code
 													when 2 then ast.item_name
-													when 3 then case when av.plat_no is null then '~' else av.plat_no end
-													when 4 then case when ast.agreement_external_no is null then '~' else ast.agreement_external_no end
+													when 3 then av.plat_no 
+													when 4 then ast.agreement_external_no 
 													when 5 then aa.is_purchase_requirement_after_lease
-													when 6 then aa.maturity_date
-													when 7 then case when ast.unit_province_name is null then '~' else ast.unit_province_name end
-													when 8 then case when ast.status_condition is null then '~' else ast.status_condition end
-													when 9 then case when ast.status_progress is null then '~' else ast.status_progress end
-													when 10 then case when ast.status_remark is null then '~' else ast.status_remark end
-													when 11 then case when ast.status_last_update_by is null then '~' else ast.status_last_update_by end
+													when 6 then convert(varchar(30), maturity_date, 120)
+													when 7 then ast.unit_province_name
+													when 8 then ast.status_condition
+													when 9 then ast.status_progress
+													when 10 then ast.status_remark
+													when 11 then ast.status_last_update_by
 												   end
 				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
 end ;

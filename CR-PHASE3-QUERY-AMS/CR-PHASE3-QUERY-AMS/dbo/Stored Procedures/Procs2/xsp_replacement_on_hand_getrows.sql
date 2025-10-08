@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_replacement_on_hand_getrows]
+﻿CREATE PROCEDURE dbo.xsp_replacement_on_hand_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -34,7 +34,7 @@ begin
 	and		(ast.code not in (select hr.fa_code from dbo.handover_request hr
 							inner join ifinopl.dbo.asset_replacement_detail ard on ard.new_fa_code = hr.fa_code
 							where hr.type in ('return in','replace out') and hr.status = 'hold')
-			and ast.code not in (select hr.fa_code from dbo.handover_asset hr
+			or ast.code not in (select hr.fa_code from dbo.handover_asset hr
 							inner join ifinopl.dbo.asset_replacement_detail ard on ard.new_fa_code = hr.fa_code
 							where hr.type in ('return in','replace out') and hr.status = 'hold'))
 	and		(
@@ -83,12 +83,12 @@ begin
 								end
 	and		ast.status			= 'replacement'
 	and		ast.fisical_status	= 'on hand'
-	and		ast.code not in (select hr.fa_code from dbo.handover_request hr
+	and		(ast.code not in (select hr.fa_code from dbo.handover_request hr
 							inner join ifinopl.dbo.asset_replacement_detail ard on ard.new_fa_code = hr.fa_code
 							where hr.type in ('return in','replace out') and hr.status = 'hold')
-	and		ast.code not in (select hr.fa_code from dbo.handover_asset hr
-							inner join ifinopl.dbo.asset_replacement_detail ard on ard.new_fa_code = hr.fa_code
-							where hr.type in ('return in','replace out') and hr.status = 'hold')
+				or	ast.code not in (select hr.fa_code from dbo.handover_asset hr
+									inner join ifinopl.dbo.asset_replacement_detail ard on ard.new_fa_code = hr.fa_code
+									where hr.type in ('return in','replace out') and hr.status = 'hold'))
 	and		(
 				ast.code											like '%' + @p_keywords + '%'
 				or ast.branch_code									like '%' + @p_keywords + '%'

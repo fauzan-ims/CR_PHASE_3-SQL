@@ -69,15 +69,13 @@ begin
 		end ;
 
 		select	@installment_amount = sum(inv.total_billing_amount)
-				,@overdue_days = datediff(day, min(inv.invoice_due_date), dbo.xfn_get_system_date())
+				,@overdue_days		= datediff(day, min(inv.invoice_due_date), dbo.xfn_get_system_date())
+				,@client_name		= inv.client_name
 		from	dbo.invoice inv
 		where	client_no			= @p_client_no
 		and		inv.invoice_status	= 'POST'
 		and		cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date)
-
-		select	@client_name = client_name
-		from	dbo.client_main
-		where	client_no = @p_client_no
+		group by inv.client_name
 
 		set @overdue_penalty_amount = dbo.xfn_client_get_ovd_penalty(@p_client_no, dbo.xfn_get_system_date()) ; --overdue_penalty_amount
 		set @overdue_installment_amount = dbo.xfn_client_get_ol_ar(@p_client_no, dbo.xfn_get_system_date()) ; -- overdue_installment_amount
@@ -172,5 +170,3 @@ begin
 		return ;
 	end catch ;
 end ;
-
-

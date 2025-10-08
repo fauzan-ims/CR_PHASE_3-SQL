@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_stock_on_hand_reserved_getrows]
+﻿CREATE PROCEDURE dbo.xsp_stock_on_hand_reserved_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -29,14 +29,13 @@ begin
 			inner join ifinopl.dbo.application_asset aa		on aa.fa_code			= ast.code  and ast.rental_reff_no = aa.asset_no
 			inner join ifinopl.dbo.application_main am		on am.application_no	= aa.application_no
 	where		ast.branch_code = case @p_branch_code
-										when 'all' then ast.branch_code
+										when 'ALL' then ast.branch_code
 										else @p_branch_code
 									end
-	and			ast.status					= 'stock'
-	and			ast.fisical_status			= 'on hand'
-	and			ast.rental_status			= 'reserved'
-	and			am.application_status not in ('reject','cancel')
-	--and			ast.monitoring_status	= 'reserved'
+	and			ast.status					= 'STOCK'
+	and			ast.fisical_status			= 'ON HAND'
+	and			isnull(ast.rental_status,'')= 'RESERVED'
+	and			am.application_status not in ('REJECT','CANCEL')
 	and		(
 				ast.code										    LIKE '%' + @p_keywords + '%'
 				or ast.branch_code								    LIKE '%' + @p_keywords + '%'
@@ -47,7 +46,7 @@ begin
 				or av.engine_no									    LIKE '%' + @p_keywords + '%'
 				or av.chassis_no								    LIKE '%' + @p_keywords + '%'
 				or am.application_no							    LIKE '%' + @p_keywords + '%'
-				or ast.client_name								    LIKE '%' + @p_keywords + '%'
+				or am.client_name								    LIKE '%' + @p_keywords + '%'
 				or am.marketing_name							    LIKE '%' + @p_keywords + '%'
 				or convert(varchar(30), am.application_date, 103)	LIKE '%' + @p_keywords + '%'
 				or replace(am.application_no, '.', '/')	            LIKE '%' + @p_keywords + '%'
@@ -69,9 +68,8 @@ begin
 				,av.engine_no
 				,av.chassis_no
 				,replace(am.application_no, '.', '/') 'application_no'
-				,ast.client_name
+				,am.client_name
 				,am.marketing_name
-				--,convert(varchar(30), ast.reserved_date, 103) as reserved_date
 				,convert(varchar(30), am.application_date, 103) as reserved_date
 				,ast.parking_location
 				,ast.unit_province_name
@@ -81,19 +79,18 @@ begin
 				,ast.status_remark
 				,ast.status_last_update_by	'last_update_by'
 				,@rows_count 'rowcount'
-	from	dbo.asset	ast
-			inner join	dbo.asset_vehicle	av				on av.asset_code		= ast.code
-			inner join ifinopl.dbo.application_asset aa		on aa.fa_code			= ast.code and ast.rental_reff_no = aa.asset_no
-			inner join ifinopl.dbo.application_main am		on am.application_no	= aa.application_no
+	from		dbo.asset	ast
+				inner join	dbo.asset_vehicle	av				on av.asset_code		= ast.code
+				inner join ifinopl.dbo.application_asset aa		on aa.fa_code			= ast.code and ast.rental_reff_no = aa.asset_no
+				inner join ifinopl.dbo.application_main am		on am.application_no	= aa.application_no
 	where		ast.branch_code = case @p_branch_code
 										when 'all' then ast.branch_code
 										else @p_branch_code
 									end
-	and			ast.status					= 'stock'
-	and			ast.fisical_status			= 'on hand'
-	and			ast.rental_status			= 'reserved'
-	and			am.application_status not in ('reject','cancel')
-	--and			ast.monitoring_status	= 'reserved'
+	and			ast.status					= 'STOCK'
+	and			ast.fisical_status			= 'ON HAND'
+	and			isnull(ast.rental_status,'')= 'RESERVED'
+	and			am.application_status not in ('REJECT','CANCEL')
 	and		(
 				ast.code										    LIKE '%' + @p_keywords + '%'
 				or ast.branch_code								    LIKE '%' + @p_keywords + '%'
@@ -104,7 +101,7 @@ begin
 				or av.engine_no									    LIKE '%' + @p_keywords + '%'
 				or av.chassis_no								    LIKE '%' + @p_keywords + '%'
 				or am.application_no							    LIKE '%' + @p_keywords + '%'
-				or ast.client_name								    LIKE '%' + @p_keywords + '%'
+				or am.client_name								    LIKE '%' + @p_keywords + '%'
 				or am.marketing_name							    LIKE '%' + @p_keywords + '%'
 				or convert(varchar(30), am.application_date, 103)	LIKE '%' + @p_keywords + '%'
 				or replace(am.application_no, '.', '/')	            LIKE '%' + @p_keywords + '%'

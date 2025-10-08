@@ -108,7 +108,7 @@ begin
 		begin
 			if(@payment_promise_date = dbo.xfn_get_system_date())
 			begin
-				SELECT @deskcoll_staff_name
+				
 				exec dbo.xsp_task_main_insert @p_id								= 0
 												,@p_task_date					= @system_date
 												,@p_desk_collector_code			= @deskcoll_staff_code
@@ -168,4 +168,4 @@ begin
 
 		return ;
 	end catch ; 
-end  
+end

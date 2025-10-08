@@ -38,6 +38,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IDX_WARNING_LETTER_20240320]
     ON [dbo].[WARNING_LETTER]([LETTER_TYPE] ASC, [AGREEMENT_NO] ASC, [LETTER_STATUS] ASC);
@@ -151,4 +153,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Tanggal surat peringatan tersebut diterima', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WARNING_LETTER', @level2type = N'COLUMN', @level2name = N'RECEIVED_DATE';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_WARNING_LETTER_07102025_1]
+    ON [dbo].[WARNING_LETTER]([GENERATE_TYPE] ASC, [CLIENT_NO] ASC, [LETTER_STATUS] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_WARNING_LETTER_07102025]
+    ON [dbo].[WARNING_LETTER]([LETTER_STATUS] ASC, [GENERATE_TYPE] ASC);
 

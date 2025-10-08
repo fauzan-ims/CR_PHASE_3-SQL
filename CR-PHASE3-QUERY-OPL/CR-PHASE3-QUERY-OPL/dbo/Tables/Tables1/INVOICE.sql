@@ -63,6 +63,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IDX_INVOICE1]
     ON [dbo].[INVOICE]([INVOICE_STATUS] ASC, [CRE_BY] ASC);
@@ -187,4 +189,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0t
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UNTUK MENGCOVER CASE MUNDUR TANGGAL', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'INVOICE', @level2type = N'COLUMN', @level2name = N'NEW_INVOICE_DATE';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_INVOICE_07102025_2]
+    ON [dbo].[INVOICE]([CLIENT_NO] ASC, [INVOICE_DUE_DATE] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_INVOICE_07102025_1]
+    ON [dbo].[INVOICE]([INVOICE_STATUS] ASC, [CLIENT_NO] ASC, [INVOICE_DUE_DATE] ASC)
+    INCLUDE([CLIENT_NAME], [TOTAL_BILLING_AMOUNT]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_INVOICE_07102025]
+    ON [dbo].[INVOICE]([INVOICE_STATUS] ASC, [INVOICE_DUE_DATE] ASC)
+    INCLUDE([CLIENT_NO]);
 

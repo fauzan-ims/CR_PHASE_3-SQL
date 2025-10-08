@@ -1,7 +1,6 @@
-﻿
--- Stored Procedure
+﻿-- Stored Procedure
 
-CREATE PROCEDURE [dbo].[xsp_asset_depreciation_schedule_fiscal_generate]
+CREATE PROCEDURE dbo.xsp_asset_depreciation_schedule_fiscal_generate
 (
 	@p_code						nvarchar(50)
 	--
@@ -41,7 +40,7 @@ begin
 		and		transaction_code = ''
 
 		select	@original_price		= ass.purchase_price --original_price -- arga 06-oct-2022 ket : for wom (-/+)
-				,@purchase_date		= isnull(ass.final_date,purchase_date)
+				,@purchase_date		= purchase_date	--(+)diubah karena purchase date asset setharusnya receive date terakhir dari semua komponen asset, raffy 2025/10/07 imon 2510000041
 				,@depre_code		= depre_category_comm_code
 				,@usefull			= mdcf.usefull * 12 
 				--,@residual_value	= ass.residual_value

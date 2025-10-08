@@ -196,7 +196,8 @@ begin
 			,@condition							nvarchar(50)
 			,@gps_vendor_code					nvarchar(50)
 			,@gps_vendor_name					nvarchar(250)
-			,@gps_received_date					datetime
+			,@gps_received_date					DATETIME
+			,@received_date_asset				datetime
 			
 
 	begin try
@@ -220,6 +221,12 @@ begin
 		begin
 		    set @all_invoice_paid = '1'
 		end
+
+		select	@received_date_asset	= max(grn.receive_date)
+		from	dbo.final_good_receipt_note_detail fgrnd
+		inner join dbo.good_receipt_note_detail grnd on grnd.id = fgrnd.good_receipt_note_detail_id
+		inner join dbo.good_receipt_note grn on grn.code = grnd.good_receipt_note_code
+		where	fgrnd.final_good_receipt_note_code = @p_final_grn_code
 
 		begin --push to Asset, push to adjustment, Update Remaining QTY di Purchase Order	
 			declare curr_asset cursor fast_forward read_only for
@@ -552,7 +559,7 @@ begin
 																		  ,@p_type_name = @type_name
 																		  ,@p_category_code = @category_code
 																		  ,@p_category_name = @category_name
-																		  ,@p_purchase_date = @receive_date				--@purchase_date
+																		  ,@p_purchase_date = @received_date_asset --@receive_date	@purchase_date (+)diubah karena purchase date asset setharusnya receive date terakhir dari semua komponen asset, raffy 2025/10/07 imon 2510000041
 																		  ,@p_purchase_price = @price_amount_final_grn
 																		  ,@p_invoice_no = null
 																		  ,@p_invoice_date = null

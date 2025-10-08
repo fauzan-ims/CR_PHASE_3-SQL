@@ -1,14 +1,14 @@
 ﻿CREATE PROCEDURE dbo.xsp_stock_on_customer_not_active_end_contract_getrows
 (
-	@p_keywords			NVARCHAR(50)
-	,@p_pagenumber		INT
-	,@p_rowspage		INT
-	,@p_order_by		INT
-	,@p_sort_by			NVARCHAR(5)
-	,@p_branch_code		NVARCHAR(50)
+	@p_keywords			nvarchar(50)
+	,@p_pagenumber		int
+	,@p_rowspage		int
+	,@p_order_by		int
+	,@p_sort_by			nvarchar(5)
+	,@p_branch_code		nvarchar(50)
 )
-AS
-BEGIN
+as
+begin
 	declare @rows_count int = 0 ;
 
 	if exists
@@ -22,56 +22,42 @@ BEGIN
 		set @p_branch_code = 'ALL' ;
 	end ;
 
-	SELECT	@rows_count = COUNT(1)
-	FROM	dbo.asset	ast WITH (NOLOCK)
-			INNER JOIN	dbo.asset_vehicle	av WITH (NOLOCK)	ON av.asset_code	= ast.code
-			INNER JOIN IFINOPL.dbo.AGREEMENT_ASSET aa WITH (NOLOCK)	ON aa.ASSET_NO		= ast.ASSET_NO
-			INNER JOIN IFINOPL.dbo.AGREEMENT_MAIN am WITH (NOLOCK)	ON am.AGREEMENT_NO = aa.AGREEMENT_NO
-			OUTER APPLY (
-				SELECT MAX(due_date) AS max_due_date
-				FROM IFINOPL.dbo.AGREEMENT_ASSET_AMORTIZATION aaa WITH (NOLOCK)
-				WHERE aaa.ASSET_NO = ast.ASSET_NO
+	select	@rows_count = count(1)
+	from	dbo.asset	ast with (nolock)
+			inner join	dbo.asset_vehicle	av with (nolock)	on av.asset_code	= ast.code
+			inner join ifinopl.dbo.agreement_asset aa with (nolock)	on aa.asset_no		= ast.asset_no
+			inner join ifinopl.dbo.agreement_main am with (nolock)	on am.agreement_no = aa.agreement_no
+			outer apply (
+				select max(due_date) as max_due_date
+				from ifinopl.dbo.agreement_asset_amortization aaa with (nolock)
+				where aaa.asset_no = ast.asset_no
 			) amort
-	WHERE		ast.branch_code = CASE @p_branch_code
-										WHEN 'all' THEN ast.branch_code
-										ELSE @p_branch_code
-									END
-	--AND			
-	--AND		(ast.CODE IN (SELECT hr.FA_CODE FROM dbo.HANDOVER_REQUEST hr WHERE STATUS = 'HOLD' AND TYPE='PICK UP')
-	--		OR ast.CODE IN (SELECT ha.FA_CODE FROM dbo.HANDOVER_ASSET ha WHERE STATUS = 'HOLD' AND TYPE='PICK UP'))
-	AND			aa.MATURITY_DATE			< dbo.xfn_get_system_date()
-	AND			ast.STATUS					= 'STOCK'
-	AND			ast.FISICAL_STATUS			= 'ON CUSTOMER'
-	AND			ast.RENTAL_STATUS			= 'IN USE'
-	--AND			(ast.MONITORING_STATUS		= '' OR ast.MONITORING_STATUS			is NULL)
-	AND		(
-				ast.code																			LIKE '%' + @p_keywords + '%'
-				or ast.branch_code																	LIKE '%' + @p_keywords + '%'
-				or ast.branch_name																	LIKE '%' + @p_keywords + '%'
-				or ast.item_name																	LIKE '%' + @p_keywords + '%'
-				or av.built_year																	LIKE '%' + @p_keywords + '%'
-				or av.plat_no																		LIKE '%' + @p_keywords + '%'	
-				or av.engine_no																		LIKE '%' + @p_keywords + '%'
-				or av.chassis_no																	LIKE '%' + @p_keywords + '%'
-				or ast.agreement_external_no														LIKE '%' + @p_keywords + '%'
-				or ast.client_name																	LIKE '%' + @p_keywords + '%'
-				or case when aa.is_purchase_requirement_after_lease = '1' then 'Yes' else 'No' end  LIKE '%' + @p_keywords + '%'
-				or am.marketing_name																LIKE '%' + @p_keywords + '%'
-				OR CONVERT(VARCHAR(30), 
-						CASE
-							WHEN aa.first_payment_type = 'adv' AND aa.billing_type = 'mnt' THEN DATEADD(MONTH, 1, amort.max_due_date)
-							WHEN aa.first_payment_type = 'adv' AND aa.billing_type = 'qrt' THEN DATEADD(MONTH, 3, amort.max_due_date)
-							WHEN aa.first_payment_type = 'adv' AND aa.billing_type = 'ann' THEN DATEADD(MONTH, 12, amort.max_due_date)
-							WHEN aa.first_payment_type = 'adv' AND aa.billing_type = 'sma' THEN DATEADD(MONTH, 6, amort.max_due_date)
-							ELSE amort.max_due_date
-						END, 103
-				) LIKE '%' + @p_keywords + '%'
-				OR ast.parking_location							LIKE '%' + @p_keywords + '%'
-				OR ast.unit_province_name						LIKE '%' + @p_keywords + '%'
-				OR ast.unit_city_name						    LIKE '%' + @p_keywords + '%'
-
-
-
+	where		ast.branch_code = case @p_branch_code
+										when 'all' THEN ast.branch_code
+										else @p_branch_code
+									end
+	and			aa.maturity_date			< dbo.xfn_get_system_date()
+	and			ast.status					= 'STOCK'
+	and			ast.fisical_status			= 'ON CUSTOMER'
+	and			ast.rental_status			= 'IN USE'
+	and			aa.asset_status				= 'TERMINATE'
+	and		(
+				ast.code																			like '%' + @p_keywords + '%'
+				or ast.branch_code																	like '%' + @p_keywords + '%'
+				or ast.branch_name																	like '%' + @p_keywords + '%'
+				or ast.item_name																	like '%' + @p_keywords + '%'
+				or av.built_year																	like '%' + @p_keywords + '%'
+				or av.plat_no																		like '%' + @p_keywords + '%'	
+				or av.engine_no																		like '%' + @p_keywords + '%'
+				or av.chassis_no																	like '%' + @p_keywords + '%'
+				or ast.agreement_external_no														like '%' + @p_keywords + '%'
+				or ast.client_name																	like '%' + @p_keywords + '%'
+				or case when aa.is_purchase_requirement_after_lease = '1' then 'yes' else 'no' end  like '%' + @p_keywords + '%'
+				or am.marketing_name																like '%' + @p_keywords + '%'
+				or convert(varchar(30), aa.maturity_date, 103)	like '%' + @p_keywords + '%'
+				or ast.parking_location							like '%' + @p_keywords + '%'
+				or ast.unit_province_name						like '%' + @p_keywords + '%'
+				or ast.unit_city_name						    like '%' + @p_keywords + '%'
 			) ;
 
 	SELECT		ast.code		
@@ -89,39 +75,30 @@ BEGIN
 				,ast.status_condition
 				,ast.status_progress
 				,ast.status_remark
-				,CONVERT(VARCHAR(30), CASE
-					WHEN aa.first_payment_TYPE = 'adv' AND aa.BILLING_TYPE = 'MNT' THEN DATEADD(MONTH, 1, amort.max_due_date)
-					WHEN aa.first_payment_TYPE = 'adv' AND aa.BILLING_TYPE = 'QRT' THEN DATEADD(MONTH, 3, amort.max_due_date)
-					WHEN aa.first_payment_TYPE = 'adv' AND aa.BILLING_TYPE = 'ANN' THEN DATEADD(MONTH, 12, amort.max_due_date)
-					WHEN aa.first_payment_TYPE = 'adv' AND aa.BILLING_TYPE = 'SMA' THEN DATEADD(MONTH, 6, amort.max_due_date)
-					ELSE amort.max_due_date
-				END, 103) AS end_contract_date
-				,convert(varchar(30),	ast.disposal_date, 103)
+				,convert(varchar(30),aa.maturity_date, 103)		'end_contract_date'
+				,convert(varchar(30),ast.disposal_date, 103)
 				,ast.parking_location
 				,ast.unit_province_name
 				,ast.unit_city_name
 				,@rows_count 'rowcount'
-	from	dbo.asset ast WITH (NOLOCK)
-			inner join	dbo.asset_vehicle			av WITH (NOLOCK)	ON av.asset_code	= ast.code
-			inner JOIN IFINOPL.dbo.AGREEMENT_ASSET	aa WITH (NOLOCK)	ON aa.ASSET_NO		= ast.ASSET_NO
-			INNER JOIN IFINOPL.dbo.AGREEMENT_MAIN	am WITH (NOLOCK)	ON am.AGREEMENT_NO	= aa.AGREEMENT_NO
-			OUTER APPLY (
-				SELECT MAX(due_date) AS max_due_date
-				FROM IFINOPL.dbo.AGREEMENT_ASSET_AMORTIZATION aaa WITH (NOLOCK)
-				WHERE aaa.ASSET_NO = ast.ASSET_NO
+	from	dbo.asset ast with (nolock)
+			inner join	dbo.asset_vehicle			av with (nolock)	on av.asset_code	= ast.code
+			inner join ifinopl.dbo.agreement_asset	aa with (nolock)	on aa.asset_no		= ast.asset_no
+			inner join ifinopl.dbo.agreement_main	am with (nolock)	on am.agreement_no	= aa.agreement_no
+			outer apply (
+				select max(due_date) as max_due_date
+				from ifinopl.dbo.agreement_asset_amortization aaa with (nolock)
+				where aaa.asset_no = ast.asset_no
 			) amort
 	where		ast.branch_code = case @p_branch_code
 										when 'all' then ast.branch_code
 										else @p_branch_code
-									END
-	--AND		(ast.CODE IN (SELECT hr.FA_CODE FROM dbo.HANDOVER_REQUEST hr WHERE STATUS = 'HOLD' AND TYPE='PICK UP')
-	--		OR ast.CODE IN (SELECT ha.FA_CODE FROM dbo.HANDOVER_ASSET ha WHERE STATUS = 'HOLD' AND TYPE='PICK UP'))
-	AND			aa.MATURITY_DATE			< dbo.xfn_get_system_date()
-	AND			ast.STATUS					= 'STOCK'
-	AND			ast.FISICAL_STATUS			= 'ON CUSTOMER'
-	AND			ast.RENTAL_STATUS			= 'IN USE'
-	--AND			(ast.MONITORING_STATUS		= '' OR ast.MONITORING_STATUS			is NULL)
-	AND		(
+									end
+	and			ast.status					= 'STOCK'
+	and			ast.fisical_status			= 'ON CUSTOMER'
+	and			ast.rental_status			= 'IN USE'
+	and			aa.asset_status				= 'TERMINATE'
+	and		(
 				ast.code																			LIKE '%' + @p_keywords + '%'
 				or ast.branch_code																	LIKE '%' + @p_keywords + '%'
 				or ast.branch_name																	LIKE '%' + @p_keywords + '%'
@@ -134,18 +111,10 @@ BEGIN
 				or ast.client_name																	LIKE '%' + @p_keywords + '%'
 				or case when aa.is_purchase_requirement_after_lease = '1' then 'Yes' else 'No' end  LIKE '%' + @p_keywords + '%'
 				or am.marketing_name																LIKE '%' + @p_keywords + '%'
-				OR convert(varchar(30), 
-						case
-							when aa.first_payment_type = 'adv' and aa.billing_type = 'mnt' then dateadd(month, 1, amort.max_due_date)
-							when aa.first_payment_type = 'adv' and aa.billing_type = 'qrt' then dateadd(month, 3, amort.max_due_date)
-							when aa.first_payment_type = 'adv' and aa.billing_type = 'ann' then dateadd(month, 12, amort.max_due_date)
-							when aa.first_payment_type = 'adv' and aa.billing_type = 'sma' then dateadd(month, 6, amort.max_due_date)
-							else amort.max_due_date
-						end, 103
-				) like '%' + @p_keywords + '%'
-				OR ast.parking_location							LIKE '%' + @p_keywords + '%'
-				OR ast.unit_province_name						LIKE '%' + @p_keywords + '%'
-				OR ast.unit_city_name						    LIKE '%' + @p_keywords + '%'
+				or convert(varchar(30), aa.maturity_date, 103)	like '%' + @p_keywords + '%'
+				or ast.parking_location							like '%' + @p_keywords + '%'
+				or ast.unit_province_name						like '%' + @p_keywords + '%'
+				or ast.unit_city_name						    like '%' + @p_keywords + '%'
 
 
 
@@ -158,17 +127,8 @@ BEGIN
 													 when 4 then ast.agreement_external_no
 													 when 5 then aa.is_purchase_requirement_after_lease
 													 when 6 then am.marketing_name
-													 when 7 then convert(varchar(30), isnull(
-														case
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'mnt' then dateadd(month, 1, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'qrt' then dateadd(month, 3, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'ann' then dateadd(month, 12, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'sma' then dateadd(month, 6, amort.max_due_date)
-															else amort.max_due_date
-														end,
-														'1900-01-01'
-													), 120)
-													WHEN 8 THEN parking_location
+													 when 7 then convert(varchar(30), maturity_date, 120)
+													 when 8 then parking_location
 												 end
 				end asc
 				,case
@@ -179,17 +139,8 @@ BEGIN
 													 when 4 then ast.agreement_external_no
 													 when 5 then aa.is_purchase_requirement_after_lease
 													 when 6 then am.marketing_name
-													 when 7 then convert(varchar(30), isnull(
-														case
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'mnt' then dateadd(month, 1, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'qrt' then dateadd(month, 3, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'ann' then dateadd(month, 12, amort.max_due_date)
-															when aa.first_payment_type = 'adv' and aa.billing_type = 'sma' then dateadd(month, 6, amort.max_due_date)
-															else amort.max_due_date
-														end,
-														'1900-01-01'
-													), 120)
-													WHEN 8 THEN parking_location
+													 when 7 then convert(varchar(30), maturity_date, 120)
+													 when 8 then parking_location
 												   end
 				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
 end ;

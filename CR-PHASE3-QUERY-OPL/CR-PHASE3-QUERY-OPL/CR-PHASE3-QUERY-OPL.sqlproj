@@ -15239,5 +15239,9 @@
     </Build>
     <Build Include="Security\dblink_confins_qa_2.sql" />
     <Build Include="Security\Permissions.sql" />
+    <Build Include="dbo\Stored Procedures\xsp_mtn_hold_maturity_full_version.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
 </Project>

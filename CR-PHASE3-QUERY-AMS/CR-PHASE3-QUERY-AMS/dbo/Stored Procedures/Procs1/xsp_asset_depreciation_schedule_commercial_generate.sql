@@ -38,26 +38,26 @@ begin
 		where	asset_code = @p_code
 		and		transaction_code = ''
 
-		select	@original_price		= ass.purchase_price --original_price -- arga 06-oct-2022 ket : for wom (-/+)
-				,@purchase_date		= isnull(ass.final_date,purchase_date)
+		select	@original_price		= ass.purchase_price --original_price -- arga 06-oct-2022 ket : for wom (-/+) (+)diubah karena purchase date asset setharusnya receive date terakhir dari semua komponen asset, raffy 2025/10/07 imon 2510000041
+				,@purchase_date		= purchase_date
 				,@depre_code		= depre_category_comm_code
 				,@usefull			= mdcc.usefull * 12 
 				,@residual_value	= ass.residual_value
 				,@rate				= mdcc.rate
 				,@method_type		= mdcc.method_type
 				,@base_amount		= ass.purchase_price
-				,@end_date_depre	= eomonth(dateadd(month,mdcc.usefull*12,ass.purchase_date))
-		from	 dbo.asset ass
-				left join dbo.master_depre_category_commercial mdcc on (mdcc.code = ass.depre_category_comm_code and ass.company_code = mdcc.company_code)
-		where	 ass.code = @p_code
+				,@end_date_depre	= EOMONTH(DATEADD(MONTH,mdcc.usefull*12,ass.purchase_date))
+		FROM	 dbo.asset ass
+				LEFT JOIN dbo.master_depre_category_commercial mdcc ON (mdcc.code = ass.depre_category_comm_code AND ass.company_code = mdcc.company_code)
+		WHERE	 ass.code = @p_code
 
-		update	dbo.asset
-		set		net_book_value_comm			= @original_price
+		UPDATE	dbo.asset
+		SET		net_book_value_comm			= @original_price
 				--
 				,mod_date					= @p_mod_date
 				,mod_by						= @p_mod_by
 				,mod_ip_address				= @p_mod_ip_address
-		where	code						= @p_code ;
+		WHERE	code						= @p_code ;
 
 		set @counter = 1 ;
 		--set @original_price = @original_price - @residual_value
