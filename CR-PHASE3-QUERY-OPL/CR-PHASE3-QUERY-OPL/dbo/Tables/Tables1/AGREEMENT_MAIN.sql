@@ -50,6 +50,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IDX_AGREEMENT_MAIN_20231026]
     ON [dbo].[AGREEMENT_MAIN]([AGREEMENT_STATUS] ASC)
@@ -100,4 +102,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Rounding ty
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Rounding amount', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AGREEMENT_MAIN', @level2type = N'COLUMN', @level2name = N'ROUND_AMOUNT';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_AGREEMENT_MAIN_20251014]
+    ON [dbo].[AGREEMENT_MAIN]([AGREEMENT_STATUS] ASC)
+    INCLUDE([AGREEMENT_EXTERNAL_NO], [BRANCH_CODE], [BRANCH_NAME], [CLIENT_NO], [CLIENT_NAME], [OPL_STATUS]);
 

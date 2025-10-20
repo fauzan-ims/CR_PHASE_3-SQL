@@ -1,4 +1,4 @@
-﻿CREATE procedure [dbo].[xsp_monitoring_maintenance_getrows]
+﻿CREATE PROCEDURE dbo.xsp_monitoring_maintenance_getrows
 (
 	@p_keywords		nvarchar(50)
 	,@p_pagenumber	int
@@ -125,6 +125,8 @@ begin
 											 when 'ALL' then ass.branch_code
 											 else @p_branch_code
 										 end
+				and ams.maintenance_date
+							between @p_from_date and @p_to_date
 				and ass.status in
 	(
 		'STOCK', 'REPLACEMENT'

@@ -292,3 +292,11 @@ ALTER ROLE [db_datawriter] ADD MEMBER [dsf-lita];
 GO
 ALTER ROLE [db_datawriter] ADD MEMBER [billy.baktiar];
 
+
+GO
+ALTER ROLE [db_owner] ADD MEMBER [jellf];
+
+
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [aldandi];
+

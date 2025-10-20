@@ -38,6 +38,7 @@ begin
 			,@sppa_remark				nvarchar(4000)
 			,@accessories				nvarchar(4000)
 			,@register_type				nvarchar(50)
+			,@system_date				datetime = dbo.fn_get_system_date()
 				
 	begin try
 		if exists (select 1 from dbo.sppa_request where code = @p_code and register_status = 'HOLD')
@@ -73,7 +74,7 @@ begin
 			exec dbo.xsp_sppa_main_insert @p_code				= @sppa_code OUTPUT
 										  ,@p_sppa_branch_code	= @branch_code
 										  ,@p_sppa_branch_name	= @branch_name
-										  ,@p_sppa_date			= @p_mod_date 
+										  ,@p_sppa_date			= @system_date
 										  ,@p_sppa_status		= 'HOLD' 
 										  ,@p_sppa_remarks		= @remarks 
 										  ,@p_insurance_code	= @insurance_code
@@ -369,7 +370,3 @@ begin
 		return ;
 	end catch ;	
 end ;
-
-
-
-

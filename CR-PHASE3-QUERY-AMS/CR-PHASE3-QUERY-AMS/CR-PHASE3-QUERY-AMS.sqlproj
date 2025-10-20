@@ -13250,5 +13250,11 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Security\Permissions.sql" />
+    <Build Include="Security\jellf.sql" />
+    <Build Include="Security\aldandi.sql" />
+    <Build Include="dbo\Stored Procedures\xsp_asset_for_fixed_asset_lookup_for_asset_allocation.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
 </Project>

@@ -76,7 +76,6 @@ BEGIN
 				raiserror(@msg ,16,-1)
 			end
 		end
-
 		
 		if (@result_promise_date < @desk_date)
 		begin
@@ -84,6 +83,34 @@ BEGIN
 			raiserror(@msg, 16, -1) ;
 		end
         
+		if (@result_code = 'MD004')   -- jika janji bayar
+		begin
+			if(cast(@result_promise_date as date) <= cast(@next_fu_date as date))
+			begin
+				set @msg = 'Promise Date Must be Geater Than FU Date';
+				raiserror(@msg, 16, 1) ;
+			end
+
+			if(cast(@result_promise_date as date) < cast(dbo.xfn_get_system_date() as date))
+			begin
+				set @msg = 'Promise Date Must Be Geater Than System Date';
+				raiserror(@msg, 16, 1) ;
+			end
+            
+			-- jika di invoice ada yg promise datenya < dari promise di header
+			if exists (select 1 from dbo.deskcoll_invoice where deskcoll_main_id = @p_id and result_code = @result_code  and cast(promise_date as date) < cast(@result_promise_date as date)) 
+			begin
+				set @msg = 'Promise Date Cannot Be Less Than Promise Date At Invoice No: '
+							+ (	select	top 1 inv.invoice_external_no 
+								from	dbo.deskcoll_invoice  a
+										inner join dbo.invoice inv on inv.invoice_no = a.invoice_no
+								where	deskcoll_main_id = @p_id 
+								and		result_code = @result_code  
+								and		cast(promise_date as date) < cast(@result_promise_date as date))
+				raiserror(@msg, 16, 1) ;
+			end
+		end
+
 		--if exists (select 1 from dbo.deskcoll_main where id = @p_id and ISNULL(result_code,'') = '')
 		--begin
 		--	set @msg = 'Please save desk collection result first';
@@ -236,4 +263,4 @@ BEGIN
 
 		return ;
 	end catch ;	
-end  
+end

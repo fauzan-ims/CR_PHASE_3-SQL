@@ -553,8 +553,8 @@ begin
 																		  ,@p_po_no = @po_no
 																		  ,@p_requestor_code = @requestor_code
 																		  ,@p_requestor_name = @requestor_name
-																		  ,@p_vendor_code = @vendor_code
-																		  ,@p_vendor_name = @vendor_name
+																		  ,@p_vendor_code = @supplier_code
+																		  ,@p_vendor_name = @supplier_name
 																		  ,@p_type_code = @type_code
 																		  ,@p_type_name = @type_name
 																		  ,@p_category_code = @category_code

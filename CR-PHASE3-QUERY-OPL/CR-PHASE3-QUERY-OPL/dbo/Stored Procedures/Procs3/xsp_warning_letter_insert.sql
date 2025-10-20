@@ -20,18 +20,22 @@
 )
 as
 begin
-	declare @msg						 nvarchar(max)
-			,@year						 nvarchar(2)
-			,@month						 nvarchar(2)
-			,@code						 nvarchar(50)
-			,@installment_amount		 decimal(18, 2)
-			,@installment_no			 int
-			,@overdue_days				 int
-			,@overdue_penalty_amount	 decimal(18, 2)
-			,@overdue_installment_amount decimal(18, 2)
-			,@remark					 nvarchar(4000)
-			,@agreement_external_no		 nvarchar(50)
-			,@client_name				 nvarchar(50) ;
+	declare @msg							nvarchar(max)
+			,@year							nvarchar(2)
+			,@month							nvarchar(2)
+			,@code							nvarchar(50)
+			,@installment_amount			decimal(18, 2)
+			,@installment_no				int
+			,@overdue_days					int
+			,@overdue_penalty_amount		decimal(18, 2)
+			,@overdue_installment_amount	decimal(18, 2)
+			,@remark						nvarchar(4000)
+			,@agreement_external_no			nvarchar(50)
+			,@client_name					nvarchar(50) 
+			,@total_agreement_count			bigint
+			,@total_asset_count				bigint
+			,@total_monthly_rental_amount	decimal(18, 2)
+			,@total_overdue_amount			decimal(18, 2)
 
 	set @year = substring(cast(datepart(year, @p_cre_date) as nvarchar), 3, 2) ;
 	set @month = replace(str(cast(datepart(month, @p_cre_date) as nvarchar), 2, 0), ' ', '0') ;
@@ -77,6 +81,27 @@ begin
 		and		cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date)
 		group by inv.client_name
 
+
+		select	@total_agreement_count			= count(inv.AGREEMENT_NO)
+				,@total_overdue_amount			= sum(obligation_amount)
+		from	dbo.INVOICE i 
+		join dbo.INVOICE_DETAIL inv on inv.INVOICE_NO = i.INVOICE_NO 
+		join dbo.AGREEMENT_OBLIGATION on AGREEMENT_OBLIGATION.AGREEMENT_NO = inv.AGREEMENT_NO
+		where	i.CLIENT_NO			= @p_client_no
+		and		i.invoice_status	= 'POST'
+		and		cast(i.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date)
+		group by i.client_name
+
+		select	@total_asset_count				= count(AGREEMENT_ASSET.ASSET_NO)
+				,@total_monthly_rental_amount	= sum(monthly_rental_rounded_amount)
+		from	dbo.INVOICE i 
+		join dbo.INVOICE_DETAIL inv on inv.INVOICE_NO = i.INVOICE_NO 
+		join dbo.AGREEMENT_ASSET on AGREEMENT_ASSET.ASSET_NO = inv.ASSET_NO
+		where	client_no			= @p_client_no
+		and		i.invoice_status	= 'POST'
+		and		cast(i.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date)
+		group by i.client_name
+
 		set @overdue_penalty_amount = dbo.xfn_client_get_ovd_penalty(@p_client_no, dbo.xfn_get_system_date()) ; --overdue_penalty_amount
 		set @overdue_installment_amount = dbo.xfn_client_get_ol_ar(@p_client_no, dbo.xfn_get_system_date()) ; -- overdue_installment_amount
 
@@ -100,6 +125,11 @@ begin
 			,installment_no
 			,client_no
 			,client_name
+			--
+			,total_agreement_count
+			,total_asset_count
+			,total_monthly_rental_amount
+			,total_overdue_amount
 			--
 			,cre_date
 			,cre_by
@@ -127,6 +157,11 @@ begin
 			,@installment_no
 			,@p_client_no
 			,@client_name
+			--
+			,@total_agreement_count
+			,@total_asset_count
+			,@total_monthly_rental_amount
+			,@total_overdue_amount
 			--
 			,@p_cre_date
 			,@p_cre_by

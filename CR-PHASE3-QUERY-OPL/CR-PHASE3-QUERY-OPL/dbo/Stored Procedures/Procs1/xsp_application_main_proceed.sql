@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_application_main_proceed]
+﻿CREATE PROCEDURE dbo.xsp_application_main_proceed
 (
 	@p_application_no		nvarchar(50) 
 	,@p_last_return			nvarchar(3)		= 'NO'
@@ -41,6 +41,7 @@ begin
 			,@fa_code						nvarchar(50)
 			,@client_no						nvarchar(50)
 			,@is_valid						nvarchar(1)
+			,@periode						int
 
 	begin try 
 		-- validation
@@ -69,6 +70,7 @@ begin
 					,@client_code					= am.client_code
 					,@is_simulation					= am.is_simulation
 					,@client_no						= cm.client_no
+					,@periode						= am.periode
 			from	dbo.application_main am
 					left join dbo.client_main cm on (cm.code = am.client_code)
 					left join dbo.application_information ai on (ai.application_no = am.application_no)
@@ -222,7 +224,7 @@ begin
 																	 )
 				where	aa.application_no			= @p_application_no
 						and isnull(am.billing_amount, 0) = 0
-
+						
 				set @msg = 'Please Check Application Asset Amortization For Asset : ' + @asset_no;
 
 				raiserror(@msg, 16, 1) ;
@@ -233,15 +235,16 @@ begin
 				select	1
 				from	dbo.application_asset aa
 						left join dbo.application_amortization am on (
-																		 am.asset_no			 = aa.asset_no
-																		 and   am.installment_no = 1
-																	 )
+																			am.asset_no			 = aa.asset_no
+																			and   am.installment_no = 1
+																		)
 						outer apply (
 							select top 1 am.billing_amount from dbo.application_amortization am
 							where am.asset_no = aa.asset_no
 							order by am.installment_no desc
 						) aml
 				where	aa.application_no			= @p_application_no
+						and	aa.lease_rounded_amount	<> aml.billing_amount -- jika nilai prorate
 						and aa.lease_rounded_amount <> (isnull(am.billing_amount, 0) + isnull(aml.billing_amount,0))
 						and aa.prorate = 'yes'
 			)
@@ -249,18 +252,19 @@ begin
 				select	@asset_no = aa.asset_no
 				from	dbo.application_asset aa
 						left join dbo.application_amortization am on (
-																		 am.asset_no			 = aa.asset_no
-																		 and   am.installment_no = 1
-																	 )
+																			am.asset_no			 = aa.asset_no
+																			and   am.installment_no = 1
+																		)
 						outer apply (
 							select top 1 am.billing_amount from dbo.application_amortization am
 							where am.asset_no = aa.asset_no
 							order by am.installment_no desc
 						) aml
 				where	aa.application_no			= @p_application_no
+				and		aa.lease_rounded_amount	<> aml.billing_amount -- jika nilai prorate
 				and		aa.lease_rounded_amount <> (isnull(am.billing_amount, 0) + isnull(aml.billing_amount,0))
 				and		aa.prorate = 'yes'
-
+				
 				set @msg = 'Please Check Application Asset Amortization For Asset : ' + @asset_no;
 
 				raiserror(@msg, 16, 1) ;
@@ -809,5 +813,3 @@ begin
 		return ;
 	end catch ; 
 end ;
-
-

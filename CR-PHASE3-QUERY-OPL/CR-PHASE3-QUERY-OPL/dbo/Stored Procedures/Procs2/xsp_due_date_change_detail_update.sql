@@ -1,6 +1,6 @@
 ﻿--created by, Rian at 04/05/2023 
 
-CREATE PROCEDURE [dbo].[xsp_due_date_change_detail_update]
+CREATE PROCEDURE dbo.xsp_due_date_change_detail_update
 (
 	@p_id						BIGINT
 	,@p_due_date_change_code	nvarchar(50)
@@ -13,8 +13,8 @@ CREATE PROCEDURE [dbo].[xsp_due_date_change_detail_update]
 	,@p_is_change				nvarchar(1)		= '0'
 	--,@p_is_change_billing_date	nvarchar(1)		= '0' --jika yang di ubah adalah billing date
 	,@p_billing_mode			nvarchar(15)	= null
-	,@p_prorate					nvarchar(15)	= 'NO'
-	,@p_date_for_billing		int				= 0
+	,@p_prorate					nvarchar(15)	= null
+	,@p_date_for_billing		int				= null
 )
 as
 begin
@@ -29,12 +29,18 @@ begin
 			,@first_payment_type    nvarchar(3)
 			,@billing_date			datetime
             ,@old_billing_date		datetime
-
+			--
+			,@billing_mode			nvarchar(15)
+			,@prorate				nvarchar(15)
+			,@date_for_billing		int			
 	begin try
 
 	
 		--ambil agreement no
 		select	@agreement_no = agreement_no
+				,@billing_mode		= billing_mode
+				,@prorate			= is_prorate
+				,@date_for_billing	= billing_mode_date
 		from	dbo.due_date_change_main
 		where	code = @p_due_date_change_code;
 
@@ -48,11 +54,19 @@ begin
 		from	dbo.agreement_asset_amortization
 		where	asset_no = @asset_no ;
 
-
 		select	@first_payment_type = first_payment_type
 		from	dbo.agreement_asset
 		where	asset_no = @asset_no ;
 
+		
+		if(isnull(@p_billing_mode,'') = '') set @p_billing_mode = @billing_mode
+		if(isnull(@p_prorate,'') = '') set @p_prorate = @prorate
+
+		if(@p_billing_mode <> @billing_mode)
+		begin
+			if(isnull(@p_date_for_billing,0) = 0) set @p_date_for_billing = @date_for_billing
+		end
+		
 		--if (@first_payment_type = 'ARR')
 		begin
 			select	@min_installment_no = min(billing_no)
@@ -82,22 +96,12 @@ begin
 		where	asset_no	   = @asset_no
 				and billing_no = @min_installment_no ;
 
-		select	@old_due_date = max(due_date)
-				,@old_billing_date = max(billing_date)
+		select	@old_due_date		= max(due_date)
+				,@old_billing_date	= max(billing_date)
 		from	dbo.agreement_asset_amortization
 		where	asset_no	   = @asset_no
-		and
-			(
-				isnull(invoice_no, '')		   <> ''
-				or
-				(
-					due_date				   <= dbo.xfn_get_system_date()
-					and isnull(invoice_no, '') = ''
-					and billing_no < @min_installment_no
-				)
-			) ;
-
-
+		and		isnull(invoice_no, '')		   <> ''
+		
 		-- BILLING
 		--if (@p_is_change_billing_date = '1')
 		--begin
@@ -189,32 +193,36 @@ begin
 		--end
 
 		-- DUE
-		if (@p_is_change = '1')
-		begin
+		IF (@p_is_change = '1')
+		BEGIN
 
-			if (@p_new_due_date_day is null)
-			begin
-				set @msg = 'Please Insert New Due Date.'
-				raiserror (@msg, 16, -1)
-			end 
+			IF (@p_new_due_date_day IS NULL)
+			BEGIN
+				SET @msg = 'Please Insert New Due Date.'
+				RAISERROR (@msg, 16, -1)
+			END 
 			
 			--validasi jika invoice already generate
-			if (isnull(@min_installment_no, 0) = 0)
-			begin
-				set @msg = 'Due Date must be greater Than First Billing Date or last Invoice Date';
-				raiserror(@msg, 16, -1) ;
-			end
+			IF (ISNULL(@min_installment_no, 0) = 0)
+			BEGIN
+				SET @msg = 'Due Date must be greater Than First Billing Date or last Invoice Date';
+				RAISERROR(@msg, 16, -1) ;
+			END
 
 			--validasi new due date day tidak boleh lebih kecil dari old date
-			if (@min_installment_no = '1')
-			begin
-				select	@old_due_date = handover_bast_date
-				from	dbo.agreement_asset
-				where	asset_no	   = @asset_no
-
-				if (cast(@p_new_due_date_day as date) < cast(@old_due_date as date))
+			IF (@min_installment_no = '1')
+			BEGIN
+				
+				if @old_due_date is null
 				begin
-					set @msg =  'New Due Date must be greater or Equal than : ' + convert(varchar(30), @old_due_date, 103);
+					select	@old_due_date = handover_bast_date
+					from	dbo.agreement_asset
+					where	asset_no	   = @asset_no
+				end
+				
+				if (cast(@p_new_due_date_day as date) <= cast(@old_due_date as date))
+				begin
+					SET @msg =  'New Due Date must be greater or Equal than : ' + CONVERT(VARCHAR(30), @old_due_date, 103);
 					raiserror (@msg, 16, -1)
 				end
 			end
@@ -258,9 +266,9 @@ begin
 					,new_due_date_day		= @p_new_due_date_day
 					,os_rental_amount		= dbo.xfn_agreement_get_all_os_principal(@agreement_no, @p_new_due_date_day, @asset_no)
 					--
-					--,billing_mode			= @p_billing_mode
+					,billing_mode			= @p_billing_mode
 					,prorate				= @p_prorate	
-					--,date_for_billing		= @p_date_for_billing	
+					,date_for_billing		= @p_date_for_billing	
 					--
 					,mod_date				= @p_mod_date
 					,mod_by					= @p_mod_by

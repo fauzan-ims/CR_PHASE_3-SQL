@@ -2,7 +2,7 @@
 
 -- Stored Procedure
 
-CREATE PROCEDURE [dbo].[xsp_good_receipt_note_getrows_for_monitoring_ap]
+CREATE PROCEDURE dbo.xsp_good_receipt_note_getrows_for_monitoring_ap
 (
 	@p_keywords	   nvarchar(50)
 	,@p_pagenumber int
@@ -52,6 +52,7 @@ begin
 					and grnd.receive_quantity <> 0
 					and isnull(apr.status,'') <> 'PAID'
 					and grn.code not in (select invoice_or_gnr_no from dbo.list_data_cleansing_invoice_dan_monitoring_ap_sebelum_crpriority_naik)
+					and	air.code is not null
 					and
 					(
 						grn.code																																like '%' + @p_keywords + '%'
@@ -144,6 +145,7 @@ begin
 					and grnd.receive_quantity <> 0
 					and isnull(apr.status,'') <> 'PAID'
 					and grn.code not in (select invoice_or_gnr_no from dbo.list_data_cleansing_invoice_dan_monitoring_ap_sebelum_crpriority_naik)
+					and	air.code is not NULL
 					and
 					(
 						grn.code																																like '%' + @p_keywords + '%'

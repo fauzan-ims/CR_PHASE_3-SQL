@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_application_asset_for_allocation_asset_getrows]
+﻿CREATE PROCEDURE dbo.xsp_application_asset_for_allocation_asset_getrows
 (
 	@p_keywords		   nvarchar(50)
 	,@p_pagenumber	   int
@@ -94,6 +94,7 @@ begin
 				,'Name : ' + aa.deliver_to_name 'deliver_to_name'
 				,'Phone : ' + aa.deliver_to_area_no + ' ' + aa.deliver_to_phone_no 'deliver_phone_no'
 				,'Address : ' + aa.deliver_to_address 'deliver_to_address'
+				,aa.unit_source
 				,@rows_count 'rowcount'
 	from		application_asset aa
 				inner join dbo.sys_general_subcode sgs with (nolock) on (sgs.code			  = aa.asset_type_code)

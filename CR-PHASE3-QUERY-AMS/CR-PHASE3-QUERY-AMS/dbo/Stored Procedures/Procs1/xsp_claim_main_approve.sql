@@ -42,6 +42,7 @@ BEGIN
 			,@claim_amount							decimal(18,2)
 			,@sell_request_amount					decimal(18,2)
 			,@claim_remark							nvarchar(4000)
+			,@insurance_name						nvarchar(250)
 
 	begin try 
 	if @p_is_policy_terminate = 'T'
@@ -67,6 +68,7 @@ BEGIN
 			--,@sum_insured				= sum_insured
 			,@process_reff_name			= 'CLAIM APPROVED ' + @p_code + ' for Branch ' + cm.branch_name + ' - ' + cm.claim_remarks
 			,@claim_remark				= cm.claim_remarks
+			,@insurance_name			= ipm.insured_name
 	from	dbo.claim_main cm
 			inner	join dbo.insurance_policy_main ipm	on (ipm.code = cm.policy_code)
 			--inner join asset aa on (aa.code = ipm.fa_code)
@@ -132,7 +134,7 @@ BEGIN
 									 ,@p_status					= 'HOLD'
 									 ,@p_sell_type				= 'CLAIM'
 									 ,@p_auction_code			= ''
-									 ,@p_buyer_name				= 'CLAIM'
+									 ,@p_buyer_name				= @insurance_name
 									 ,@p_claim_amount			= @p_claim_amount
 									 ,@p_cre_date				= @p_mod_date		
 									 ,@p_cre_by					= @p_mod_by			
@@ -375,5 +377,3 @@ BEGIN
 		return ;
 	end catch ;	
 end ;
-
-

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_invoice_delivery_update]
+﻿CREATE PROCEDURE dbo.xsp_invoice_delivery_update
 (
 	@p_code				  nvarchar(50)
 	,@p_branch_code		  nvarchar(50)
@@ -18,6 +18,7 @@
 	,@p_delivery_doc_reff_no   nvarchar(50)	 = null
 	,@p_delivery_reject_date   datetime		 = null
 	,@p_delivery_reason_code   nvarchar(50)	 = null
+	,@p_client_address		   nvarchar(max) = null
 	-- Louis Rabu, 02 Juli 2025 10.17.37 -- 
 	--
 	,@p_mod_date		  datetime
@@ -66,6 +67,7 @@ begin
 				,delivery_reject_date   = @p_delivery_reject_date   
 				,delivery_reason_code   = @p_delivery_reason_code   
 				-- Louis Rabu, 02 Juli 2025 10.18.02 -- 
+				,client_address			= @p_client_address
 				--
 				,mod_date			 = @p_mod_date
 				,mod_by				 = @p_mod_by

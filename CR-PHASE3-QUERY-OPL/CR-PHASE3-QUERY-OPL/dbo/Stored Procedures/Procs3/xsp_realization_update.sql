@@ -13,6 +13,7 @@
 	,@p_mod_date			datetime
 	,@p_mod_by				nvarchar(15)
 	,@p_mod_ip_address		nvarchar(15)
+	,@p_exp_date			datetime = null		
 )
 as
 begin
@@ -28,6 +29,7 @@ begin
 				,delivery_vendor_pic_name	= @p_deliver_pic
 				,result						= @p_result
 				,agreement_date				= @p_agreement_date
+				,exp_date					= @p_exp_date
 				--
 				,mod_date					= @p_mod_date
 				,mod_by						= @p_mod_by
@@ -65,4 +67,3 @@ begin
 		return ;
 	end catch ;	
 end ;
-

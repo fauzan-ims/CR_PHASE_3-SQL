@@ -10,11 +10,15 @@ as
 begin
 	declare @msg			 nvarchar(max)
 			,@result_code	 nvarchar(50)
-			,@result_remarks nvarchar(4000) ;
+			,@result_remarks nvarchar(4000) 
+			,@promise_date_header	datetime
+			,@promise_amount_header	decimal(18,2)
 
 	begin try
-		select	@result_code	 = result_code
-				,@result_remarks = result_remarks
+		select	@result_code			= result_code
+				,@result_remarks		= result_remarks
+				,@promise_date_header	= result_promise_date
+				,@promise_amount_header	= result_promise_amount
 		from	dbo.deskcoll_main
 		where	id = @p_id ;
 
@@ -27,6 +31,8 @@ begin
 		update	dbo.deskcoll_invoice
 		set		result_code			= @result_code
 				,remark				= @result_remarks
+				,promise_date		= @promise_date_header
+				,promise_amount		= @promise_amount_header
 				,mod_date			= @p_mod_date
 				,mod_by				= @p_mod_by
 				,mod_ip_address		= @p_mod_ip_address

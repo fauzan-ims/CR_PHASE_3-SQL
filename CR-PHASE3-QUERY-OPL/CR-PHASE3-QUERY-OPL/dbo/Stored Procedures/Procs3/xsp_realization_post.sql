@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_realization_post]
+﻿CREATE PROCEDURE dbo.xsp_realization_post
 (
 	@p_code				nvarchar(50)
 	,@p_result			nvarchar(4000) = null
@@ -17,6 +17,44 @@ begin
 
 	begin try
 			
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path, '')	= '' and isnull(file_path_memo,'') = '')
+		)
+		begin
+			set @msg = 'Please Upload File Signed Agreement Or File Memo' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
+
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path, '')	= '' )
+		)
+		begin
+			set @msg = 'Please Upload File Signed Agreement' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
+
+
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path_memo,'') <> '')
+		)
+		begin
+			set @msg = 'Cannot Post For Upload File Memo' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
+
+		
 		--kebutuhan data maintenance
 		begin
 			exec dbo.xsp_mtn_realization_contract @p_realization_no		= @p_code
@@ -273,4 +311,3 @@ begin
 		return ; 
 	end catch ;
 end ;
-

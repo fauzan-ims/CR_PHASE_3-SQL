@@ -1,6 +1,6 @@
 ﻿--created by, Rian at 29/05/2023 
 
-CREATE PROCEDURE [dbo].[xsp_realization_proceed]
+CREATE PROCEDURE dbo.xsp_realization_proceed
 (
 	@p_code			   nvarchar(50)
 	--
@@ -17,23 +17,24 @@ begin
 	begin try
 		select @application_no = application_no from dbo.realization where code = @p_code
 		
+		--fauzan, soalnya input document realization dipindah ke status on process
 		--validasi jika tbo blm di validated
-		if exists
-		(
-			select	1
-			from	dbo.realization_doc
-			where	realization_code	= @p_code
-					and is_required = '1' and promise_date is null  and isnull(is_received,'')<>'1'
-		)
-		begin
-			set @msg = N'Please Input Promise Date : ' + (select top 1 sgd.document_name
-			from	dbo.realization_doc ad
-					inner join dbo.sys_general_document sgd on (sgd.code = ad.document_code)
-			where	realization_code	= @p_code
-					and is_required = '1' and promise_date is null and isnull(ad.is_received,'')<>'1')
+		--if exists
+		--(
+		--	select	1
+		--	from	dbo.realization_doc
+		--	where	realization_code	= @p_code
+		--			and is_required = '1' and promise_date is null  and isnull(is_received,'')<>'1'
+		--)
+		--begin
+		--	set @msg = N'Please Input Promise Date : ' + (select top 1 sgd.document_name
+		--	from	dbo.realization_doc ad
+		--			inner join dbo.sys_general_document sgd on (sgd.code = ad.document_code)
+		--	where	realization_code	= @p_code
+		--			and is_required = '1' and promise_date is null and isnull(ad.is_received,'')<>'1')
 
-			raiserror(@msg, 16, -1) ;
-		end ;
+		--	raiserror(@msg, 16, -1) ;
+		--end ;
 	 
 		--validasi jika remark tidak di isi
 		if exists

@@ -32,6 +32,8 @@ begin
 
 	BEGIN TRY
 
+		-- SEPRIA 201020205: HAPUS TASK MAIN YANG STATUS NEW
+		DELETE dbo.TASK_MAIN WHERE DESK_STATUS = 'NEW'
 
 		declare c_main	cursor local fast_forward for
 		select	distinct inv.client_no
@@ -46,7 +48,7 @@ begin
 								order by am.agreement_date desc
 							) ind
 		where	inv.invoice_status = 'POST'
-		and		cast(inv.invoice_due_date as date) < cast(@system_date as date)
+		--and		cast(inv.invoice_due_date as date) < cast(@system_date as date) --SEPRIA 17102025: UAT PHASE 3 (170) MUNCULIN SEMUA CLIENT YANG PUNYA INVOICE POST BAIK YANG BELUM DUE DAN SUDAH DUE
 		and		inv.client_no not in (select client_no from dbo.task_main where desk_status in ('NEW','HOLD') or cast(task_date as date) = cast(@system_date as date))
 		and		inv.client_no not in (select client_no from dbo.deskcoll_main where cast(result_promise_date as date) = cast(@system_date as date) and desk_status = 'POST')
 
@@ -95,7 +97,7 @@ begin
 				inner join dbo.deskcoll_main b on a.deskcoll_main_id = b.id
 		where	a.desk_status = 'POST'
 		and		isnull(b.result_promise_date,'') <> ''
-		and		cast(b.result_promise_date as date) = cast(@system_date as date)
+		--and		cast(b.result_promise_date as date) = cast(@system_date as date) --SEPRIA 17102025: UAT PHASE 3 (170) MUNCULIN SEMUA CLIENT YANG PUNYA INVOICE POST BAIK YANG BELUM DUE DAN SUDAH DUE
 		and		a.client_no not in (select client_no from dbo.task_main where desk_status IN ('NEW','HOLD') or cast(task_date as date) = cast(@system_date as date))
 		and		a.client_no not in (select client_no from dbo.deskcoll_main where desk_status IN ('NEW','HOLD') or cast(task_date as date) = cast(@system_date as date))
 

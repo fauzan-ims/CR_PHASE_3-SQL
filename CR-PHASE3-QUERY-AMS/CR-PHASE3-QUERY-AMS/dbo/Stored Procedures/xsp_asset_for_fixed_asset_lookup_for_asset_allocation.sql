@@ -8,7 +8,7 @@
 --]
 
 
-CREATE PROCEDURE dbo.xsp_asset_for_fixed_asset_lookup
+CREATE PROCEDURE dbo.xsp_asset_for_fixed_asset_lookup_for_asset_allocation
 (
 	@p_keywords		   nvarchar(50)
 	,@p_pagenumber	   int
@@ -75,12 +75,12 @@ begin
 						inner join dbo.asset_vehicle av on (av.asset_code	= ass.code)
 				where	ass.status						   = @p_asset_status
 				------------------------------------------------------------------------------------------------------
-						and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.rental_status, '') end
-						and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else isnull(ass.fisical_status, '') end
-						and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.process_status, '') end
-						and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.activity_status, '') end
-						and	isnull(ass.condition, '') = @p_condition
-						--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = '' -->> INI DI TUTUP SAMA FAUZAN 13102025, JIKA BUTUH PERTANYAAN, SILAHKAN HUB SEPRIA.
+						--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.rental_status, '') end
+						--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else isnull(ass.fisical_status, '') end
+						--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.process_status, '') end
+						--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.activity_status, '') end
+						--and	isnull(ass.condition, '') = @p_condition
+						and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = '' -->> INI DI TUTUP SAMA FAUZAN 13102025, JIKA BUTUH PERTANYAAN, SILAHKAN HUB SEPRIA.
 				------------------------------------------------------------------------------------------------------
 				union
 				select	ass.code
@@ -109,12 +109,12 @@ begin
 						inner join dbo.asset_machine am on (am.asset_code	= ass.code)
 				where	ass.status						   = @p_asset_status
 				------------------------------------------------------------------------------------------------------
-						and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-						and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-						and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-						and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
-						and	isnull(ass.condition, '') = @p_condition
-						--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+						--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+						--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+						--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+						--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
+						--and	isnull(ass.condition, '') = @p_condition
+						and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 				------------------------------------------------------------------------------------------------------                      
 				union
 				select	ass.code
@@ -143,12 +143,12 @@ begin
 						inner join dbo.asset_he ah on (ah.asset_code	= ass.code)
 				where	ass.status							= @p_asset_status
 				------------------------------------------------------------------------------------------------------
-						and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-						and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-						and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-						and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
-						and	isnull(ass.condition, '') = @p_condition
-						--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+						--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+						--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+						--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+						--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
+						--and	isnull(ass.condition, '') = @p_condition
+						and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 				------------------------------------------------------------------------------------------------------
 				union
 				select	ass.code
@@ -177,12 +177,12 @@ begin
 						inner join dbo.asset_electronic ae on (ae.asset_code = ass.code)
 				where	ass.status							= @p_asset_status
 				------------------------------------------------------------------------------------------------------
-						and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-						and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-						and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-						and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
-						and	isnull(ass.condition, '') = @p_condition
-						--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+						--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+						--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+						--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+						--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
+						--and	isnull(ass.condition, '') = @p_condition
+						and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 				------------------------------------------------------------------------------------------------------
 			) asset
 	where	(
@@ -242,12 +242,12 @@ begin
 							-- (+) Ari 2023-09-15
 					where	ass.status							= @p_asset_status
 					------------------------------------------------------------------------------------------------------
-							and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.rental_status, '') end
-							and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else isnull(ass.fisical_status, '') end
-							and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.process_status, '') end
-							and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.activity_status, '') end
-							and	isnull(ass.condition, '') = @p_condition
-							--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+							--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.rental_status, '') end
+							--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else isnull(ass.fisical_status, '') end
+							--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.process_status, '') end
+							--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else isnull(ass.activity_status, '') end
+							--and	isnull(ass.condition, '') = @p_condition
+							and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 					------------------------------------------------------------------------------------------------------
 					union
 					select	ass.code
@@ -293,12 +293,12 @@ begin
 							-- (+) Ari 2023-09-15
 					where	ass.status							= @p_asset_status
 					------------------------------------------------------------------------------------------------------
-							and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-							and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-							and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-							and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
-							and	isnull(ass.condition, '') = @p_condition
-							--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+							--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+							--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+							--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+							--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
+							--and	isnull(ass.condition, '') = @p_condition
+							and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 					------------------------------------------------------------------------------------------------------
 					union
 					select	ass.code
@@ -344,12 +344,12 @@ begin
 							-- (+) Ari 2023-09-15
 					where	ass.status							= @p_asset_status
 					------------------------------------------------------------------------------------------------------
-							and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-							and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-							and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-							and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
-							and	isnull(ass.condition, '') = @p_condition
-							--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+							--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+							--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+							--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+							--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status end
+							--and	isnull(ass.condition, '') = @p_condition
+							and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 					------------------------------------------------------------------------------------------------------
 					union
 					select	ass.code
@@ -395,12 +395,12 @@ begin
 							-- (+) Ari 2023-09-15
 					where	ass.status							= @p_asset_status
 					------------------------------------------------------------------------------------------------------
-							and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
-							and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
-							and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
-							and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status END
-							and	isnull(ass.condition, '') = @p_condition
-							--and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
+							--and isnull(ass.rental_status, '')   = case when isnull(ass.re_rent_status, '') = '' then '' else ass.rental_status end
+							--and isnull(ass.fisical_status, '')  = case when isnull(ass.re_rent_status, '') = '' then 'ON HAND' else ass.fisical_status end
+							--and isnull(ass.process_status, '')  = case when isnull(ass.re_rent_status, '') = '' then '' else ass.process_status end
+							--and	isnull(ass.activity_status, '') = case when isnull(ass.re_rent_status, '') = '' then '' else ass.activity_status END
+							--and	isnull(ass.condition, '') = @p_condition
+							and STATUS = 'REPLACEMENT' AND FISICAL_STATUS = 'ON HAND' AND ISNULL(RENTAL_STATUS, '') = ''
 					------------------------------------------------------------------------------------------------------
 				) asset
 	where		(

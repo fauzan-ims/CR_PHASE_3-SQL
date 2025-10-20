@@ -25,6 +25,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IDX_AGREEMENT_ASSET_AMORTIZATION_20230929]
     ON [dbo].[AGREEMENT_ASSET_AMORTIZATION]([BILLING_NO] ASC, [ASSET_NO] ASC)
@@ -83,4 +85,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Tanggal jat
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nilai angsuran yang dibayarkan', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'AGREEMENT_ASSET_AMORTIZATION', @level2type = N'COLUMN', @level2name = N'BILLING_AMOUNT';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_AGREEMENT_ASSET_AMORTIZATION_20251014]
+    ON [dbo].[AGREEMENT_ASSET_AMORTIZATION]([ASSET_NO] ASC)
+    INCLUDE([DUE_DATE], [BILLING_DATE], [GENERATE_CODE]);
 

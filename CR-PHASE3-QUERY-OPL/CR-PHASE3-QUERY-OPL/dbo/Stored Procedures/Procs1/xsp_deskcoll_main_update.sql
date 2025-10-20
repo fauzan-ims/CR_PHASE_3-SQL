@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_deskcoll_main_update]
+﻿CREATE PROCEDURE dbo.xsp_deskcoll_main_update
 (
 	@p_id							    bigint
 	,@p_result_code					    nvarchar(50)
@@ -21,21 +21,31 @@ begin
 		set @p_is_need_next_fu = '1' ;
 	else
 		set @p_is_need_next_fu = '0' ;
-	if(@p_result_promise_date <= @p_next_fu_date)
-	BEGIN
-		set @msg = 'Promise Date Must be Geater then FU Date';
-		raiserror(@msg, 16, 1) ;
-	END
 
-	if(@p_result_promise_date < dbo.xfn_get_system_date())
+	if (@p_result_code = 'MD004')   -- jika janji bayar
 	begin
-		set @msg = 'promise date must be geater then system date';
-		raiserror(@msg, 16, 1) ;
+		if(cast(@p_result_promise_date as date) <= cast(@p_next_fu_date as date))
+		begin
+			set @msg = 'Promise Date Must be Geater than FU Date';
+			raiserror(@msg, 16, 1) ;
+		end
+
+		if(cast(@p_result_promise_date as date) < cast(dbo.xfn_get_system_date() as date))
+		begin
+			set @msg =  'Promise Date Must Be Geater Than System Date';
+			raiserror(@msg, 16, 1) ;
+		end
 	end
+	else
+    begin
+        set @p_result_promise_date		= null
+		set @p_result_promise_amount	= 0.00
+    end
+    
 
-	if(@p_next_fu_date < dbo.xfn_get_system_date())
-	begin
-		set @msg = 'fu date must be geater then system date';
+	IF(@p_next_fu_date < dbo.xfn_get_system_date())
+	BEGIN
+		SET @msg = 'Fu Date Must Be Geater Than System Date';
 		raiserror(@msg, 16, 1) ;
 	end
 	--if not exists(select 1 from dbo.sys_global_param where code = 'CDPTP' and value = @p_result_code)

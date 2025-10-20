@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_master_selling_attachment_group_update]
+﻿CREATE PROCEDURE dbo.xsp_master_selling_attachment_group_update
 (
 	@p_code								nvarchar(50)
 	,@p_description						nvarchar(250)
@@ -53,6 +53,10 @@
 as
 begin
 	declare @msg nvarchar(max) ;
+
+		--SEPRIA 15102025: SEMENTARA SAJA. INI KARENA VALUE YG DIKIRIM SALAH
+		--IF @p_sell_type = 'MOCIL' SET @p_sell_type = 'CLAIM'
+
 
 	if exists
 	(

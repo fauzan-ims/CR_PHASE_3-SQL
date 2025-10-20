@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_sale_detail_insert]
+﻿CREATE PROCEDURE dbo.xsp_sale_detail_insert
 (
 	@p_id						  BIGINT		 = 0 OUTPUT
 	,@p_sale_code				  NVARCHAR(50)
@@ -155,6 +155,9 @@ begin
 		--	end ;
 		--end ;
 
+		if @sale_type = 'CLAIM'
+			set @p_sale_value = @p_claim_amount
+		
 		insert into sale_detail
 		(
 			sale_code
@@ -485,7 +488,7 @@ begin
 			inner join dbo.master_selling_attachment_group_detail b on a.code = b.document_group_code
 			where	a.sell_type = @sale_type
 					--and b.is_required = '1'
-					--and a.is_active = '1'
+					and a.is_active = '1'
 			
 			open curr_attachment
 			

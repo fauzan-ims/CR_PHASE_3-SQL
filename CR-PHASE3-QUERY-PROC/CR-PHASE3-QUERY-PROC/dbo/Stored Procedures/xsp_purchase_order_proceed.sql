@@ -1,7 +1,6 @@
-﻿
--- Stored Procedure
+﻿-- Stored Procedure
 
-CREATE PROCEDURE [dbo].[xsp_purchase_order_proceed]
+CREATE PROCEDURE dbo.xsp_purchase_order_proceed
 (
 	@p_code			   nvarchar(50)
 	--
@@ -60,7 +59,7 @@ begin
 
 		if not exists(select 1 from dbo.purchase_order_detail where po_code = @p_code)
 		begin
-			set @msg = N'Pleaser insert item first.'
+			set @msg = N'Please insert item first.'
 			raiserror(@msg, 16, -1) ;
 		end
 

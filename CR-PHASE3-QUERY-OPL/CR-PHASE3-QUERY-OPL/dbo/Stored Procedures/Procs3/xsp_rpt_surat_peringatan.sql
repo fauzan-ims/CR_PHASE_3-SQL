@@ -39,8 +39,6 @@ begin
 		from	dbo.sys_global_param
 		where	code = 'COMP2' ;
 
-		set @report_title = 'Peringatan Kelalaian Pembayaran Uang Sewa Operasi (Operating Lease)' ;
-
 		select	@report_image = value
 		from	dbo.sys_global_param
 		where	code = 'IMGDSF' ;
@@ -61,6 +59,30 @@ begin
 		from	dbo.sys_global_param
 		where	code = 'COMCITY' ;
 
+		select	@penasihat_hukum = value
+		from	dbo.sys_global_param
+		where	code = 'PNSHTHKM' ;
+
+		-- (+) Ari 2023-12-28 ket : get from global param, infonya pakai yg somasi
+		select	@sp = value 
+		from	dbo.sys_global_param
+		where	code = 'DKPAS'
+
+		--fauzan
+		--select	@report_comany_name = MAX(CASE WHEN code = 'COMP2' THEN value END)
+		--		,@report_image = MAX(CASE WHEN code = 'IMGDSF' THEN value END)
+		--		,@bank_name = MAX(CASE WHEN code = 'BANK' THEN value END)
+		--		,@bank_account_name = MAX(CASE WHEN code = 'BANKNAME' THEN value END)
+		--		,@bank_account_no = MAX(CASE WHEN code = 'BANKNO' THEN value END)
+		--		,@report_company_city = MAX(CASE WHEN code = 'COMCITY' THEN value END)
+		--		,@penasihat_hukum = MAX(CASE WHEN code = 'PNSHTHKM' THEN value END)
+		--		,@sp = MAX(CASE WHEN code = 'DKPAS' THEN value END)
+		--from	dbo.sys_global_param
+		--where	code IN ('COMP2', 'IMGDSF', 'BANK', 'BANKNAME', 'BANKNO', 'COMCITY', 'PNSHTHKM', 'DKPAS');
+
+		set @report_title = 'Peringatan Kelalaian Pembayaran Uang Sewa Operasi (Operating Lease)' ;
+
+
 		select	@branch_code_dept = wld.branch_code
 		from	dbo.warning_letter_delivery wld
 		inner join dbo.warning_letter wl on wl.delivery_code = wld.code
@@ -74,14 +96,7 @@ begin
 		where	sbs.signer_type_code = 'HEADOPR'
 				and sbs.branch_code = @branch_code_dept ;
 
-		select	@penasihat_hukum = value
-		from	dbo.sys_global_param
-		where	code = 'PNSHTHKM' ;
 
-		-- (+) Ari 2023-12-28 ket : get from global param, infonya pakai yg somasi
-		select	@sp = value 
-		from	dbo.sys_global_param
-		where	code = 'DKPAS'
 
 		INSERT INTO dbo.RPT_SURAT_PERINGATAN
 		(
@@ -147,8 +162,8 @@ begin
 			,@p_mod_ip_address
 		    ,''
 		    ,@jabatan 
-		FROM dbo.WARNING_LETTER_DELIVERY wld
-		INNER JOIN dbo.WARNING_LETTER wl ON wl.DELIVERY_CODE = wld.CODE
+		FROM dbo.WARNING_LETTER_DELIVERY wld with (nolock)
+		outer apply(SELECT LETTER_NO FROM  dbo.WARNING_LETTER wl with (nolock) where wl.DELIVERY_CODE = wld.CODE) wl
 		WHERE wl.LETTER_NO = @p_letter_no
 		--AND NOT EXISTS (
 		--		SELECT 1
@@ -210,13 +225,13 @@ begin
 			,@p_mod_date
 			,@p_mod_by
 			,@p_mod_ip_address 
-		FROM dbo.WARNING_LETTER_DELIVERY wld
-		INNER JOIN dbo.WARNING_LETTER wl ON wl.DELIVERY_CODE = wld.CODE
-		INNER JOIN dbo.INVOICE inv ON inv.CLIENT_NO = wld.CLIENT_NO
-		INNER JOIN dbo.INVOICE_DETAIL invd ON invd.INVOICE_NO = inv.INVOICE_NO
-		INNER JOIN dbo.AGREEMENT_MAIN am ON am.AGREEMENT_NO = invd.AGREEMENT_NO
-		INNER JOIN dbo.APPLICATION_EXTENTION aex ON aex.APPLICATION_NO = am.APPLICATION_NO
-		INNER JOIN dbo.AGREEMENT_ASSET agast ON agast.ASSET_NO = invd.ASSET_NO AND agast.AGREEMENT_NO = am.AGREEMENT_NO
+		FROM dbo.WARNING_LETTER_DELIVERY wld with (nolock)
+		outer apply(SELECT LETTER_NO, overdue_days from  dbo.WARNING_LETTER wl with (nolock) where wl.DELIVERY_CODE = wld.CODE) wl
+		outer apply(SELECT INVOICE_NO, invoice_external_no, invoice_due_date, INVOICE_STATUS FROM dbo.INVOICE inv with (nolock) where inv.CLIENT_NO = wld.CLIENT_NO) inv
+		outer apply(SELECT AGREEMENT_NO, ASSET_NO, billing_amount, ppn_amount, billing_no, INVOICE_NO FROM dbo.INVOICE_DETAIL invd with (nolock) where invd.INVOICE_NO = inv.INVOICE_NO) invd
+		INNER JOIN dbo.AGREEMENT_MAIN am with (nolock) ON am.AGREEMENT_NO = invd.AGREEMENT_NO
+		outer apply(select main_contract_no from dbo.APPLICATION_EXTENTION aex with (nolock) where aex.APPLICATION_NO = am.APPLICATION_NO) aex
+		INNER JOIN dbo.AGREEMENT_ASSET agast with (nolock) ON agast.ASSET_NO = invd.ASSET_NO AND agast.AGREEMENT_NO = am.AGREEMENT_NO
 		OUTER APPLY (
 			SELECT 
 				CASE am.first_payment_type
@@ -224,18 +239,18 @@ begin
 					ELSE period_date
 				END AS period_date,
 				period_due_date
-			FROM dbo.xfn_due_date_period(invd.asset_no, CAST(invd.billing_no AS INT)) aa
+			FROM dbo.xfn_due_date_period(invd.asset_no, CAST(invd.billing_no AS INT)) aa 
 			WHERE invd.billing_no = aa.billing_no
 			  AND invd.asset_no = aa.asset_no
 		) period
 		OUTER APPLY (
 			SELECT 
 				ISNULL(aob.OBLIGATION_AMOUNT, 0) - ISNULL(aobp.PAYMENT_AMOUNT, 0) AS ob_amount
-			FROM dbo.AGREEMENT_OBLIGATION aob
+			FROM dbo.AGREEMENT_OBLIGATION aob with (nolock)
 			OUTER APPLY (
 				SELECT 
 					SUM(ISNULL(aobp.PAYMENT_AMOUNT, 0)) AS PAYMENT_AMOUNT
-				FROM dbo.AGREEMENT_OBLIGATION_PAYMENT aobp
+				FROM dbo.AGREEMENT_OBLIGATION_PAYMENT aobp with (nolock)
 				WHERE aobp.OBLIGATION_CODE = aob.CODE
 			) aobp
 			WHERE aob.INVOICE_NO = invd.INVOICE_NO
@@ -257,6 +272,7 @@ begin
 		--	  AND aob.OBLIGATION_TYPE = 'OVDP'
 		--) aob
 		WHERE wl.LETTER_NO = @p_letter_no
+		AND		inv.INVOICE_STATUS = 'POST'
 		GROUP BY 
 			wl.LETTER_NO,
 			am.AGREEMENT_NO,

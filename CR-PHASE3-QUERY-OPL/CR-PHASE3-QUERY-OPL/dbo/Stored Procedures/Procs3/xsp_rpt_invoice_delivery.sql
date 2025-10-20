@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE dbo.xsp_rpt_invoice_delivery
 (
-	@p_user_id			NVARCHAR(MAX)
+	@p_user_id			nvarchar(MAX)
 	,@p_delivery_code	NVARCHAR(50)
 	--,@p_invoice_no		nvarchar(50)
 	--
@@ -36,7 +36,7 @@ begin
 		    ,@tanggal_kirim			DATETIME
 		    ,@no_tanda_terima		NVARCHAR(50)
 			,@topovdp				INT
-			,@messanger				NVARCHAR(50);
+			,@disiapkan_oleh		nvarchar(50);
 
 	begin try
 		select	@report_image = value
@@ -53,48 +53,48 @@ begin
 		
 		set @report_title = 'INVOICE TANDA TERIMA' ;
 
-		SELECT @messanger = NAME FROM IFINSYS.dbo.SYS_EMPLOYEE_MAIN WHERE code = @p_mod_by
+		select @disiapkan_oleh = name from ifinsys.dbo.sys_employee_main where code = @p_mod_by
 
-
-		INSERT INTO dbo.RPT_INVOICE_DELIVERY
+		insert into dbo.rpt_invoice_delivery
 		(
-		     USER_ID
-		    ,REPORT_COMPANY
-		    ,REPORT_TITLE
-		    ,REPORT_IMAGE
-		    ,CUSTOMER_NAME
-		    ,CLIENT_NO
-		    ,NPWP_NO
-		    ,BILLING_TO_ADDRESS
-		    ,TANGGAL_KIRIM
-		    ,NO_TANDA_TERIMA
+		     user_id
+		    ,report_company
+		    ,report_title
+		    ,report_image
+		    ,customer_name
+		    ,client_no
+		    ,npwp_no
+		    ,billing_to_address
+		    ,tanggal_kirim
+		    ,no_tanda_terima
 			--
-			,DISIAPKAN_OLEH
-			,MESSANGER
-			,DITERIMA_OLEH
+			,disiapkan_oleh
+			,messanger
+			,diterima_oleh
 			--
-		    ,CRE_DATE
-		    ,CRE_BY
-		    ,CRE_IP_ADDRESS
-		    ,MOD_DATE
-		    ,MOD_BY
-		    ,MOD_IP_ADDRESS
+		    ,cre_date
+		    ,cre_by
+		    ,cre_ip_address
+		    ,mod_date
+		    ,mod_by
+		    ,mod_ip_address
 		)
-		SELECT	   
+		select	   
 			 @p_user_id
 		    ,@report_company
 		    ,@report_title
 		    ,@report_image
-		    ,a.CLIENT_NAME
-		    ,ind.CLIENT_NO
-		    ,a.CLIENT_NPWP
-		    ,ind.CLIENT_ADDRESS
-		    ,a.DELIVERY_DATE
-		    ,a.DELIVERY_CODE
+		    ,a.client_name
+		    ,ind.client_no
+		    ,a.client_npwp
+		    ,ind.client_address
+		    ,ind.date
+		    ,ind.code
 			--
-			,a.POSTING_BY
-			,@messanger
-			,a.CLIENT_NAME
+			,@disiapkan_oleh
+			,case when ind.method = 'internal' then ind.employee_name
+					when ind.method = 'external' then ind.external_pic_name else '' end
+			,a.client_name
 			--
 			,@p_cre_date
 			,@p_cre_by
@@ -102,48 +102,43 @@ begin
 			,@p_mod_date
 			,@p_mod_by
 			,@p_mod_ip_address
-		FROM dbo.INVOICE_DELIVERY ind
-			
-			OUTER APPLY(
-						SELECT		 MAX(idd.DELIVERY_DATE) DELIVERY_DATE
-									,MAX(idd.DELIVERY_CODE) DELIVERY_CODE
-									,MAX(inv.CLIENT_NAME) CLIENT_NAME
-									,MAX(inv.CLIENT_NPWP) CLIENT_NPWP
-									,MAX(inv.POSTING_BY) POSTING_BY
-									--,MAX(cm.CLIENT_NAME) CLIENT_NAME
-						FROM		dbo.INVOICE_DELIVERY_DETAIL idd 
-						INNER JOIN	dbo.CLIENT_MAIN cm ON cm.CLIENT_NO = ind.CLIENT_NO 
-						INNER JOIN	dbo.INVOICE inv ON inv.INVOICE_NO = idd.INVOICE_NO 
-						WHERE		idd.DELIVERY_CODE = ind.CODE
-						)a
-		WHERE ind.CODE = @p_delivery_code;
+		from dbo.invoice_delivery ind
+			outer apply (
+							select	top 1 inv.client_name
+									,inv.client_npwp
+									,inv.posting_by
+							from	dbo.invoice_delivery_detail indd
+									inner join dbo.invoice inv on inv.invoice_no = indd.invoice_no
+							where	indd.delivery_code = ind.code
+					)a
+		where ind.code = @p_delivery_code;
 
-		INSERT INTO dbo.RPT_INVOICE_DELIVERY_DETAIL
+		insert into dbo.rpt_invoice_delivery_detail
 		(
-		     USER_ID
-		    ,CUSTOMER_NAME
-		    ,BRANCH_CODE
-		    ,NO_INVOICE
-		    ,NILAI_DPP
-		    ,PPN
-		    ,TOTAL_TAGIHAN
-		    ,TANGGAL_INVOICE
-		    ,KELENGKAPAN_DOKUMEN_KETERANGAN
+		     user_id
+		    ,customer_name
+		    ,branch_code
+		    ,no_invoice
+		    ,nilai_dpp
+		    ,ppn
+		    ,total_tagihan
+		    ,tanggal_invoice
+		    ,kelengkapan_dokumen_keterangan
 		)
-		SELECT
-			@p_user_id
-			,inv.client_name
-			,ind.branch_code
-			,idd.invoice_no
-			,inv.total_billing_amount
-			,inv.total_ppn_amount
-			,inv.total_billing_amount + inv.total_ppn_amount
-			,inv.invoice_due_date
-			,ind.remark
-		FROM	dbo.INVOICE_DELIVERY_DETAIL idd
-		inner join dbo.invoice inv with(nolock) on (inv.invoice_no = idd.invoice_no)
-		INNER JOIN dbo.INVOICE_DELIVERY ind ON ind.CODE = idd.DELIVERY_CODE
-		WHERE idd.DELIVERY_CODE = @p_delivery_code
+		select
+				@p_user_id
+				,inv.client_name
+				,inv.branch_code
+				,inv.invoice_external_no
+				,inv.total_billing_amount
+				,inv.total_ppn_amount
+				,inv.total_billing_amount + inv.total_ppn_amount
+				,inv.new_invoice_date
+				,inv.invoice_name
+		from	dbo.invoice_delivery_detail idd
+				inner join dbo.invoice inv with(nolock) on (inv.invoice_no = idd.invoice_no)
+				inner join dbo.invoice_delivery ind on ind.code = idd.delivery_code
+		where idd.delivery_code = @p_delivery_code
 		
 	end try
 	begin catch

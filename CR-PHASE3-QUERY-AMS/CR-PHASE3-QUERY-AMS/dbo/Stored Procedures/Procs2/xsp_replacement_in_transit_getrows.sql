@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_replacement_in_transit_getrows]
+﻿CREATE PROCEDURE dbo.xsp_replacement_in_transit_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -34,9 +34,9 @@ begin
 										else @p_branch_code
 									end
 	and		(ast.code in (select hr.fa_code from dbo.handover_request hr
-							where hr.type in ('return in','replace out') and hr.status = 'hold')
+							where hr.type in ('return in','replace out','replace gts in') and hr.status = 'hold')
 			or ast.code in (select hr.fa_code from dbo.handover_asset hr
-							where hr.type in ('return in','replace out') and hr.status = 'hold'))
+							where hr.type in ('return in','replace out', 'replace gts in') and hr.status = 'hold'))
 	and		(
 				ast.code										like '%' + @p_keywords + '%'
 				or ast.branch_code								like '%' + @p_keywords + '%'
@@ -85,9 +85,9 @@ begin
 										else @p_branch_code
 									end
 	and		(ast.code in (select hr.fa_code from dbo.handover_request hr
-							where hr.type in ('return in','replace out') and hr.status = 'hold')
+							where hr.type in ('return in','replace out','replace gts in') and hr.status = 'hold')
 			or ast.code in (select hr.fa_code from dbo.handover_asset hr
-							where hr.type in ('return in','replace out') and hr.status = 'hold'))
+							where hr.type in ('return in','replace out', 'replace gts in') and hr.status = 'hold'))
 	and		(
 				ast.code										like '%' + @p_keywords + '%'
 				or ast.branch_code								like '%' + @p_keywords + '%'

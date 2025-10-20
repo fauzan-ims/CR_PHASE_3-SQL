@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_sale_detail_getrows_for_sold_request]
+﻿CREATE PROCEDURE dbo.xsp_sale_detail_getrows_for_sold_request
 (
 	@p_keywords	   nvarchar(50)
 	,@p_pagenumber int
@@ -11,12 +11,17 @@ as
 begin
 	declare @rows_count int = 0 ;
 ;
-
-
 	select	@rows_count = count(1)
-	from	sale_detail					 sd
-			inner join dbo.asset		 ass on (ass.code	  = sd.asset_code)
-			inner join dbo.asset_vehicle av on (av.asset_code = ass.code)
+	from		sale_detail					 sd
+				inner join dbo.sale sl on sl.code = sd.sale_code
+				inner join dbo.asset		 ass on (ass.code	  = sd.asset_code)
+				inner join dbo.asset_vehicle av on (av.asset_code = ass.code)
+				outer apply (	select	top 1 am.agreement_external_no, am.client_name
+								from	ifinopl.dbo.agreement_asset ags
+										inner join ifinopl.dbo.agreement_main am on am.agreement_no = ags.agreement_no
+								where	fa_code = sd.asset_code
+								order by return_date desc
+							) ags
 	where	sale_code = @p_sale_code
 			and
 			(
@@ -35,8 +40,8 @@ begin
 				or	sd.sale_detail_status			like '%' + @p_keywords + '%'
 				or	sd.total_expense				like '%' + @p_keywords + '%'
 				or	sd.total_income					like '%' + @p_keywords + '%'
-				or	agreement_external_no			like '%' + @p_keywords + '%'
-				or	ass.client_name					like '%' + @p_keywords + '%'
+				or	case when sl.sell_type not in ('cop') then ags.agreement_external_no else ass.agreement_external_no end 		like '%' + @p_keywords + '%'
+				or	case when sl.sell_type not in ('cop') then ags.client_name else ass.client_name end 							like '%' + @p_keywords + '%'
 				or	ass.status						like '%' + @p_keywords + '%'
 			) ;
 
@@ -58,14 +63,15 @@ begin
 				,sd.sale_detail_status
 				,sd.total_expense				'expense_amount'
 				,sd.total_income				'income_amount'
-				,ass.agreement_external_no
-				,ass.client_name
+				,case when sl.sell_type not in ('cop') then ags.agreement_external_no else ass.agreement_external_no end 'agreement_external_no'
+				,case when sl.sell_type not in ('cop') then ags.client_name else ass.client_name end 'client_name'
 				,ass.status						'status_asset'
 				,av.built_year
-				,case 
-					when ass.type_code = 'VHCL' then 'Vehicle'
-					else ''
-				end 'type_code'
+				--,case 
+				--	when ass.type_code = 'VHCL' then 'Vehicle'
+				--	else ''
+				--end 'type_code'
+				,ass.item_name	'type_code'
 				,sd.condition
 				,sd.auction_location
 				,ISNULL(sd.auction_base_price, 0.00) AS auction_base_price
@@ -73,8 +79,15 @@ begin
 				,sd.claim_amount
 				,@rows_count					'rowcount'
 	from		sale_detail					 sd
+				inner join dbo.sale sl on sl.code = sd.sale_code
 				inner join dbo.asset		 ass on (ass.code	  = sd.asset_code)
 				inner join dbo.asset_vehicle av on (av.asset_code = ass.code)
+				outer apply (	select	top 1 am.agreement_external_no, am.client_name
+								from	ifinopl.dbo.agreement_asset ags
+										inner join ifinopl.dbo.agreement_main am on am.agreement_no = ags.agreement_no
+								where	fa_code = sd.asset_code
+								order by return_date desc
+							) ags
 	where		sale_code = @p_sale_code
 				and
 				(
@@ -93,8 +106,8 @@ begin
 					or	sd.sale_detail_status			like '%' + @p_keywords + '%'
 					or	sd.total_expense				like '%' + @p_keywords + '%'
 					or	sd.total_income					like '%' + @p_keywords + '%'
-					or	agreement_external_no			like '%' + @p_keywords + '%'
-					or	ass.client_name					like '%' + @p_keywords + '%'
+					or	case when sl.sell_type not in ('cop')  then ags.agreement_external_no else ass.agreement_external_no end 		like '%' + @p_keywords + '%'
+					or	case when sl.sell_type not in ('cop')  then ags.client_name else ass.client_name end 							like '%' + @p_keywords + '%'
 					or	ass.status						like '%' + @p_keywords + '%'
 				)
 	order by	case

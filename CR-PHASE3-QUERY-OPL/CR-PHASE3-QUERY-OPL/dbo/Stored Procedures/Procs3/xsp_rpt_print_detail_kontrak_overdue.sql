@@ -73,10 +73,10 @@ BEGIN
 
 	SELECT	 @p_user_id
 			,@getdate
-			,INDET.AGREEMENT_NO
+			,replace(INDET.AGREEMENT_NO, '.', '/')
 			,INDET.ASSET_NAME
 			,INDET.ASSET_COUNT
-			,INVOICE.INVOICE_NO
+			,replace(INVOICE.INVOICE_NO, '.', '/')
 			,'2025-08-08' PERIODE
 			,INDET.DPP_AMOUNT
 			,INDET.PPN_AMOUNT

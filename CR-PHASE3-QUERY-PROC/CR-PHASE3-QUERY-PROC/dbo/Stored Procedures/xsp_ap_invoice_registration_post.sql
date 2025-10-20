@@ -1,7 +1,7 @@
 ﻿-- Stored Procedure
 
 
-CREATE PROCEDURE [dbo].[xsp_ap_invoice_registration_post]
+CREATE PROCEDURE dbo.xsp_ap_invoice_registration_post
 (
 	@p_code			   nvarchar(50)
 	,@p_company_code   nvarchar(50)
@@ -676,9 +676,7 @@ begin
 					select @p_final_grn_code = final_good_receipt_note_code from dbo.final_good_receipt_note_detail where po_object_id = @podoi_id
 
 					if (@transaction_code IN ('NGRNINV'))
-
 					begin
-
 						if not exists (	select	1
 						from	dbo.final_good_receipt_note_detail fgrnd
 								left join dbo.ap_invoice_registration_detail invd on invd.grn_detail_id = fgrnd.good_receipt_note_detail_id
@@ -687,19 +685,17 @@ begin
 						and		isnull(inv.status,'') not in ('APPROVE','POST')
 						)
 						begin
-
 							--jika sudah coa asset, update final asset agar depre schedule job bisa jalan
 							update	dbo.eproc_interface_asset
 							set		
-									--is_final_all		= '1'
-									--,
-									purchase_price		= isnull(@return_value,0) - isnull(@discount_amount,0)
+									is_final_all		= '1'
+									,purchase_price		= isnull(@return_value,0) - isnull(@discount_amount,0)
 									,original_price		= isnull(@return_value,0)
 									,mod_by				= @p_mod_by
 									,mod_date			= @p_mod_date
 									,mod_ip_address		= @p_mod_ip_address
 							where	code = @asset_code
-							--and		isnull(is_final_all,'0') = '0'
+							and		isnull(is_final_all,'0') = '0'
 						end
 					end
 

@@ -2,7 +2,7 @@
 	created : arif / 12 des 2022
 */
 
-CREATE PROCEDURE [dbo].[xsp_invoice_delivery_request_proceed]
+CREATE PROCEDURE dbo.xsp_invoice_delivery_request_proceed
 (
 	@p_invoice_no	   nvarchar(50)
 	--
@@ -38,9 +38,10 @@ begin
 		if exists
 		(
 			select	1
-			from	dbo.invoice
+			from	dbo.invoice inv
+					inner join dbo.invoice_delivery ind on ind.code = inv.deliver_code
 			where	invoice_no = @p_invoice_no
-					and deliver_code is not null
+			and		ind.status in ('HOLD','ON PROCESS')
 		)
 		begin
 			set @msg = N'Data already procceed.' ;

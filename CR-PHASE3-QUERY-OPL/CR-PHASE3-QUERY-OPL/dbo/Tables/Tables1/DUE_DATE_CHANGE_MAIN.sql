@@ -28,6 +28,8 @@
 );
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Kode pada proses perubahan tanggal jatuh tempo tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DUE_DATE_CHANGE_MAIN', @level2type = N'COLUMN', @level2name = N'CODE';
 
@@ -70,4 +72,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nomor recei
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Tanggal received voucher pada proses perubahan tanggal jatuh tempo tersebut', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'DUE_DATE_CHANGE_MAIN', @level2type = N'COLUMN', @level2name = N'RECEIVED_VOUCHER_DATE';
+
+
+GO
+CREATE NONCLUSTERED INDEX [idx_DUE_DATE_CHANGE_MAIN_20251014]
+    ON [dbo].[DUE_DATE_CHANGE_MAIN]([CHANGE_STATUS] ASC)
+    INCLUDE([CHANGE_DATE], [AGREEMENT_NO]);
 

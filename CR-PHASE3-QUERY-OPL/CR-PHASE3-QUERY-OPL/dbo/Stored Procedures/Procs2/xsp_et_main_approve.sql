@@ -191,7 +191,117 @@ begin
 											,@p_mod_by			= @p_mod_by
 											,@p_mod_ip_address	= @p_mod_ip_address
 			end
+		
+			if (@refund_amount > 0)
+				begin
+					set @remark	=  'Payment ET from Operating lease '+ @p_code
 
+					exec dbo.xsp_opl_interface_payment_request_insert @p_code					= @code_interface output
+																	  ,@p_branch_code			= @branch_code
+																	  ,@p_branch_name			= @branch_name
+																	  ,@p_payment_branch_code	= @branch_code
+																	  ,@p_payment_branch_name	= @branch_name
+																	  ,@p_payment_source		= 'ET FOR OPERATING LEASE'
+																	  ,@p_payment_request_date	= @p_mod_date
+																	  ,@p_payment_source_no		= @p_code
+																	  ,@p_payment_status		= 'HOLD'
+																	  ,@p_payment_currency_code = @currency
+																	  ,@p_payment_amount		= @refund_amount
+																	  ,@p_payment_remarks		= @remark
+																	  ,@p_to_bank_account_name	= ''
+																	  ,@p_to_bank_name			= ''
+																	  ,@p_to_bank_account_no	= ''
+																	  ,@p_process_date			= null
+																	  ,@p_process_reff_no		= null
+																	  ,@p_process_reff_name		= null
+																	  ,@p_manual_upload_status	= ''
+																	  ,@p_manual_upload_remarks = ''
+																	  ,@p_job_status			= 'HOLD'
+																	  ,@p_failed_remarks		= ''
+																	  ,@p_cre_date				= @p_mod_date		
+																	  ,@p_cre_by				= @p_mod_by			
+																	  ,@p_cre_ip_address		= @p_mod_ip_address
+																	  ,@p_mod_date				= @p_mod_date		
+																	  ,@p_mod_by				= @p_mod_by			
+																	  ,@p_mod_ip_address		= @p_mod_ip_address
+
+					declare curr_withholding_proceed cursor fast_forward read_only for
+					select  mt.sp_name
+							,mtp.debet_or_credit
+							,mtp.gl_link_code
+							,mt.transaction_name
+					from	dbo.master_transaction_parameter mtp 
+							left join dbo.sys_general_subcode sgs on (sgs.code = mtp.process_code)
+							left join dbo.master_transaction mt on (mt.code = mtp.transaction_code)
+					where	mtp.process_code = 'ETM'	
+			
+					open curr_withholding_proceed
+					
+					fetch next from curr_withholding_proceed 
+					into @sp_name
+						,@debet_or_credit
+						,@gl_link_code
+						,@transaction_name
+					
+					while @@fetch_status = 0
+					begin
+						exec @return_value = @sp_name @p_code; -- sp ini mereturn value angka 
+					
+						if (@debet_or_credit ='DEBIT')
+						begin
+							set @orig_amount_db = @return_value
+						end
+						else
+						begin
+							set @orig_amount_db = @return_value * -1
+						end
+				
+						set @remarks = 'ET for agreement  ' + isnull(@agreement_no,'') + ' ' + isnull(@client_name,'');
+
+						exec dbo.xsp_opl_interface_payment_request_detail_insert @p_id							= 0
+																				 ,@p_payment_request_code		= @code_interface
+																				 ,@p_branch_code				= @branch_code
+																				 ,@p_branch_name				= @branch_name
+																				 ,@p_gl_link_code				= @gl_link_code
+																				 ,@p_agreement_no				= @agreement_no
+																				 ,@p_facility_code				= @facility_code
+																				 ,@p_facility_name				= @facility_name
+																				 ,@p_purpose_loan_code			= ''
+																				 ,@p_purpose_loan_name			= ''
+																				 ,@p_purpose_loan_detail_code	= ''
+																				 ,@p_purpose_loan_detail_name	= ''
+																				 ,@p_orig_currency_code			= @currency
+																				 ,@p_orig_amount				= @orig_amount_db
+																				 ,@p_division_code				= ''
+																				 ,@p_division_name				= ''
+																				 ,@p_department_code			= ''
+																				 ,@p_department_name			= ''
+																				 ,@p_remarks					= @remarks
+																				 ,@p_cre_date					= @p_mod_date		
+																				 ,@p_cre_by						= @p_mod_by			
+																				 ,@p_cre_ip_address				= @p_mod_ip_address
+																				 ,@p_mod_date					= @p_mod_date		
+																				 ,@p_mod_by						= @p_mod_by			
+																				 ,@p_mod_ip_address				= @p_mod_ip_address
+
+					fetch next from curr_withholding_proceed 
+					into @sp_name
+						,@debet_or_credit
+						,@gl_link_code
+						,@transaction_name
+					end
+			
+					close curr_withholding_proceed
+					deallocate curr_withholding_proceed
+
+					--validasi
+					set @msg = dbo.xfn_finance_request_check_balance('PAYMENT',@code_interface)
+					if @msg <> ''
+					begin
+						raiserror(@msg,16,1);
+					end
+				end
+                
 				if(@credit_amount > 0)
 				begin
 					
@@ -275,9 +385,8 @@ begin
 									,et_no		= @p_code
 							where	code = @code_credit_no
 
-
 							set @credit_amount_detail = @credit_amount
-
+						
 							while @credit_amount_detail > 0
 							begin
 							   
@@ -292,10 +401,12 @@ begin
 									set @credit_amount_detail	= @credit_amount_detail - @credit_amount_asset
 								end
 								
-							    select	top 1 @id_credit_note_detail =  id 
-								from	dbo.credit_note_detail
+							    select	top 1 @id_credit_note_detail =  cnd.id 
+								from	dbo.credit_note_detail cnd
+										inner join dbo.invoice_detail invd on invd.id = cnd.invoice_detail_id
 								where	credit_note_code = @code_credit_no
 								and		adjustment_amount = 0
+								and		invd.asset_no = @asset_no
 
 								if @id_credit_note_detail is not null
 								begin
@@ -425,115 +536,7 @@ begin
 					--deallocate curr_credit_note
 				end
 				
-				if (@refund_amount > 0)
-				begin
-					set @remark	=  'Payment ET from Operating lease '+ @p_code
-
-					exec dbo.xsp_opl_interface_payment_request_insert @p_code					= @code_interface output
-																	  ,@p_branch_code			= @branch_code
-																	  ,@p_branch_name			= @branch_name
-																	  ,@p_payment_branch_code	= @branch_code
-																	  ,@p_payment_branch_name	= @branch_name
-																	  ,@p_payment_source		= 'ET FOR OPERATING LEASE'
-																	  ,@p_payment_request_date	= @p_mod_date
-																	  ,@p_payment_source_no		= @p_code
-																	  ,@p_payment_status		= 'HOLD'
-																	  ,@p_payment_currency_code = @currency
-																	  ,@p_payment_amount		= @refund_amount
-																	  ,@p_payment_remarks		= @remark
-																	  ,@p_to_bank_account_name	= ''
-																	  ,@p_to_bank_name			= ''
-																	  ,@p_to_bank_account_no	= ''
-																	  ,@p_process_date			= null
-																	  ,@p_process_reff_no		= null
-																	  ,@p_process_reff_name		= null
-																	  ,@p_manual_upload_status	= ''
-																	  ,@p_manual_upload_remarks = ''
-																	  ,@p_job_status			= 'HOLD'
-																	  ,@p_failed_remarks		= ''
-																	  ,@p_cre_date				= @p_mod_date		
-																	  ,@p_cre_by				= @p_mod_by			
-																	  ,@p_cre_ip_address		= @p_mod_ip_address
-																	  ,@p_mod_date				= @p_mod_date		
-																	  ,@p_mod_by				= @p_mod_by			
-																	  ,@p_mod_ip_address		= @p_mod_ip_address
-
-					declare curr_withholding_proceed cursor fast_forward read_only for
-					select  mt.sp_name
-							,mtp.debet_or_credit
-							,mtp.gl_link_code
-							,mt.transaction_name
-					from	dbo.master_transaction_parameter mtp 
-							left join dbo.sys_general_subcode sgs on (sgs.code = mtp.process_code)
-							left join dbo.master_transaction mt on (mt.code = mtp.transaction_code)
-					where	mtp.process_code = 'ETM'	
-			
-					open curr_withholding_proceed
-					
-					fetch next from curr_withholding_proceed 
-					into @sp_name
-						,@debet_or_credit
-						,@gl_link_code
-						,@transaction_name
-					
-					while @@fetch_status = 0
-					begin
-						exec @return_value = @sp_name @p_code; -- sp ini mereturn value angka 
-					
-						if (@debet_or_credit ='DEBIT')
-						begin
-							set @orig_amount_db = @return_value
-						end
-						else
-						begin
-							set @orig_amount_db = @return_value * -1
-						end
 				
-						set @remarks = 'ET for agreement  ' + isnull(@agreement_no,'') + ' ' + isnull(@client_name,'');
-
-						exec dbo.xsp_opl_interface_payment_request_detail_insert @p_id							= 0
-																				 ,@p_payment_request_code		= @code_interface
-																				 ,@p_branch_code				= @branch_code
-																				 ,@p_branch_name				= @branch_name
-																				 ,@p_gl_link_code				= @gl_link_code
-																				 ,@p_agreement_no				= @agreement_no
-																				 ,@p_facility_code				= @facility_code
-																				 ,@p_facility_name				= @facility_name
-																				 ,@p_purpose_loan_code			= ''
-																				 ,@p_purpose_loan_name			= ''
-																				 ,@p_purpose_loan_detail_code	= ''
-																				 ,@p_purpose_loan_detail_name	= ''
-																				 ,@p_orig_currency_code			= @currency
-																				 ,@p_orig_amount				= @orig_amount_db
-																				 ,@p_division_code				= ''
-																				 ,@p_division_name				= ''
-																				 ,@p_department_code			= ''
-																				 ,@p_department_name			= ''
-																				 ,@p_remarks					= @remarks
-																				 ,@p_cre_date					= @p_mod_date		
-																				 ,@p_cre_by						= @p_mod_by			
-																				 ,@p_cre_ip_address				= @p_mod_ip_address
-																				 ,@p_mod_date					= @p_mod_date		
-																				 ,@p_mod_by						= @p_mod_by			
-																				 ,@p_mod_ip_address				= @p_mod_ip_address
-
-					fetch next from curr_withholding_proceed 
-					into @sp_name
-						,@debet_or_credit
-						,@gl_link_code
-						,@transaction_name
-					end
-			
-					close curr_withholding_proceed
-					deallocate curr_withholding_proceed
-
-					--validasi
-					set @msg = dbo.xfn_finance_request_check_balance('PAYMENT',@code_interface)
-					if @msg <> ''
-					begin
-						raiserror(@msg,16,1);
-					end
-				end
                 
 				if exists (	select	1
 							from	dbo.et_detail etd
@@ -694,6 +697,3 @@ begin
 	end catch ;	
 	
 end
-
-
-

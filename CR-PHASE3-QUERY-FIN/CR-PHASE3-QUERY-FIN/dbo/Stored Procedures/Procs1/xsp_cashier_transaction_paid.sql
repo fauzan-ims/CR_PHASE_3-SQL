@@ -714,7 +714,8 @@ begin
 						begin
 						    set @deposit_type = 'OTHER'
 						end
-
+						select @agreement_branch_code = isnull(@agreement_branch_code, @branch_code)
+						select @agreement_branch_name = isnull(@agreement_branch_name, @branch_name)
 						--01/07/2021 deposit insert ke fin_interface_agreement_deposit_history
 						exec dbo.xsp_fin_interface_agreement_deposit_history_insert @p_id						= 0                    
 						                                                            ,@p_branch_code				= @agreement_branch_code
@@ -822,6 +823,8 @@ begin
 						set @base_amount_cr = abs(@base_amount);
 					end
 					select 1, @transaction_code, @remarks, @gl_link_transaction_code
+					select @agreement_branch_code = isnull(@agreement_branch_code, @branch_code)
+					select @agreement_branch_name = isnull(@agreement_branch_name, @branch_name)
 					exec dbo.xsp_fin_interface_journal_gl_link_transaction_detail_insert @p_id							= 0
 																						 ,@p_gl_link_transaction_code	= @gl_link_transaction_code
 																						 ,@p_branch_code				= @agreement_branch_code
@@ -1246,6 +1249,3 @@ begin
 	end catch ;
 
 end
-
-
-

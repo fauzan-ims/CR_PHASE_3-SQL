@@ -38,22 +38,76 @@ begin
 		if (cast(@p_exp_date as date) < cast(dbo.xfn_get_system_date() as date))
 		begin
 			set @msg = N'Exp Date Must be Greater Than System Date.' ;
-
 			raiserror(@msg, 16, -1) ;
 		end
-		if exists (select 1 from dbo.realization where isnull(file_memo, '') = '' and code = @p_code)
+	
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path, '')	= '' and isnull(file_path_memo,'') = '')
+		)
 		begin
-			set @msg = N'Please Input Upload Memo And Exp Date' ;
-
-			RAISERROR(@msg, 16, -1) ;
-		end 
-		else if exists (select 1 from dbo.realization where exp_date is null and code = @p_code)
-		begin
-			set @msg = N'Please Input Upload Memo And Exp Date' ;
-
+			set @msg = 'Please Upload File Signed Agreement Or File Memo' ;
 			raiserror(@msg, 16, -1) ;
-		end 
-			
+		end ; 
+
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path_memo,'') = '')
+		)
+		begin
+			set @msg = 'Please Upload File Memo' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
+
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path, '')	<> '')
+		)
+		begin
+			set @msg = 'Cannot Post With Note For Upload File Signed Agreement ' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
+
+		if exists
+			(
+				select	1
+				from	dbo.realization
+				where	code	= @p_code
+				and		exp_date is null
+			)
+			begin
+				set @msg = 'Please Input Expired Date' ;
+				raiserror(@msg, 16, 1) ;
+			end
+
+		if exists
+			(
+				select	1
+				from	dbo.realization_doc
+				where	realization_code	= @p_code
+				and		is_required = '1' 
+				and		(promise_date is null and isnull(is_received,'0') = '0')
+			)
+			begin
+				set @msg	= N'Please Input Promise Date Or Check Received For Document Realization : ' 
+							+ (select top 1 sgd.document_name
+							from	dbo.realization_doc ad
+									inner join dbo.sys_general_document sgd on (sgd.code = ad.document_code)
+							where	realization_code	= @p_code
+							and		is_required = '1' 
+							and		(promise_date is null and isnull(is_received,'0') = '0'))
+
+				raiserror(@msg, 16, -1) ;
+			end 
 
 		--kebutuhan data maintenance
 		begin
@@ -77,11 +131,11 @@ begin
 			from	dbo.realization_doc
 			where	realization_code	= @p_code
 					and is_required		= '1' 
-					and promise_date is null 
+					and (promise_date is not null or isnull(is_received,'') <> '0')
 					and isnull(is_valid,'') <> 1
 		)
 		begin
-			set @msg = N'Please Input Promise Date : ' + 
+			set @msg = N'Please Valid Document Realization For: ' + 
 			(
 			    select stuff((
 			        select ', ' + sgd.document_name
@@ -89,8 +143,8 @@ begin
 			        inner join dbo.sys_general_document sgd on sgd.code = ad.document_code
 			        where ad.REALIZATION_CODE = @p_code
 			          and is_required = '1'
-			          and promise_date is NULL
-			          and isnull(is_valid,'') <> 1
+			          and (promise_date is not null or isnull(is_received,'') <> '0')
+					  and isnull(is_valid,'') <> 1
 			        for xml path(''), type
 			    ).value('.', 'nvarchar(max)'), 1, 2, '')   -- buang koma pertama
 			);

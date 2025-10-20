@@ -1,6 +1,4 @@
-﻿
-
-CREATE PROCEDURE [dbo].[xsp_realization_getrow]
+﻿CREATE PROCEDURE dbo.xsp_realization_getrow
 (
 	@p_code nvarchar(50)
 )
@@ -34,6 +32,7 @@ begin
 			-- (+) Ari 2024-01-30
 			,rz.file_memo
 			,rz.file_path_memo
+			,rz.exp_date
 	from	realization rz
 			inner join dbo.application_main am on (am.application_no = rz.application_no)
 			inner join dbo.client_main cm on (cm.code				 = am.client_code)
@@ -73,4 +72,5 @@ begin
 			,am.periode
 			,rz.file_memo
 			,rz.file_path_memo
+			,rz.exp_date
 end ;

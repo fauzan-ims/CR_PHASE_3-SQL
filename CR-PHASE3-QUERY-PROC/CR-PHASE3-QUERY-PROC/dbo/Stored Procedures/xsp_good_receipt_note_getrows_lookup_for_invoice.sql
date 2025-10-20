@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_good_receipt_note_getrows_lookup_for_invoice]
+﻿CREATE PROCEDURE dbo.xsp_good_receipt_note_getrows_lookup_for_invoice
 (
 	@p_keywords				nvarchar(50)
 	,@p_pagenumber			int
@@ -33,7 +33,7 @@ begin
 						where ssd.id = pod.supplier_selection_detail_id
 				)asv
 	where		grn.supplier_code = @p_supplier_code
-	and			grn.status in ('APPROVE')
+	and			grn.status in ('POST','APPROVE')
 	and			isnull(podoi.id,0) not in (	select	isnull(invdf.purchase_order_detail_object_info_id,0)
 									from	dbo.ap_invoice_registration_detail_faktur invdf
 											inner join dbo.ap_invoice_registration_detail invd on invd.id = invdf.invoice_registration_detail_id
@@ -75,7 +75,7 @@ begin
 						where ssd.id = pod.supplier_selection_detail_id
 				)asv
 	where		grn.supplier_code = @p_supplier_code
-	and			grn.status in ('APPROVE')
+	and			grn.status in ('POST','APPROVE')
 	and			isnull(podoi.id,0) not in (	select	isnull(invdf.purchase_order_detail_object_info_id,0)
 									from	dbo.ap_invoice_registration_detail_faktur invdf
 											inner join dbo.ap_invoice_registration_detail invd on invd.id = invdf.invoice_registration_detail_id

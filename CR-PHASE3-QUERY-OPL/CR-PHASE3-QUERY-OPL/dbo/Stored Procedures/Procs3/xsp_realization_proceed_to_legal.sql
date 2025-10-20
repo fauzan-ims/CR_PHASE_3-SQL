@@ -1,6 +1,6 @@
 ﻿-- Louis Selasa, 06 Juni 2023 15.06.48 -- 
 
-CREATE PROCEDURE [dbo].[xsp_realization_proceed_to_legal]
+CREATE PROCEDURE dbo.xsp_realization_proceed_to_legal
 (
 	@p_code			   nvarchar(50)
 	--
@@ -29,23 +29,75 @@ begin
 		)
 		begin
 			set @msg = 'Please Print Contract' ;
-
 			raiserror(@msg, 16, 1) ;
 		end
+        
+		--Valiasi jika file tidak di upload
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		(isnull(file_path, '')	= '' and isnull(file_path_memo,'') = '')
+		)
+		begin
+			set @msg = 'Please Upload File Signed Agreement Or File Memo' ;
+			raiserror(@msg, 16, -1) ;
+		end ; 
 
 		if exists
 		(
 			select	1
 			from	dbo.realization
 			where	code					  = @p_code
-					and isnull(file_path, '') = ''
+			and		(isnull(file_path, '')	<> '' and isnull(file_path_memo,'') <> '')
 		)
 		begin
-			set @msg = 'Please Upload Document' ;
-
+			set @msg = 'Please Select Only One Of Upload File Signed Agreement Or File Memo' ;
 			raiserror(@msg, 16, -1) ;
 		end ; 
-			
+
+		--validasi jika tbo blm di validated
+		if exists
+		(
+			select	1
+			from	dbo.realization
+			where	code					  = @p_code
+			and		isnull(file_path_memo,'') <> ''
+		)
+		begin
+			if exists
+			(
+				select	1
+				from	dbo.realization
+				where	code	= @p_code
+				and		exp_date is null
+			)
+			begin
+				set @msg = 'Please Input Expired Date' ;
+				raiserror(@msg, 16, 1) ;
+			end
+		
+			if exists
+			(
+				select	1
+				from	dbo.realization_doc
+				where	realization_code	= @p_code
+				and		is_required = '1' 
+				and		(promise_date is null and isnull(is_received,'0') = '0')
+			)
+			begin
+				set @msg	= N'Please Input Promise Date Or Check Received For Document Realization : ' 
+							+ (select top 1 sgd.document_name
+							from	dbo.realization_doc ad
+									inner join dbo.sys_general_document sgd on (sgd.code = ad.document_code)
+							where	realization_code	= @p_code
+							and		is_required = '1' 
+							and		(promise_date is null and isnull(is_received,'0') = '0'))
+
+				raiserror(@msg, 16, -1) ;
+			end 
+		end
 		----validasi jika tbo blm di validated
 		--if exists
 		--(

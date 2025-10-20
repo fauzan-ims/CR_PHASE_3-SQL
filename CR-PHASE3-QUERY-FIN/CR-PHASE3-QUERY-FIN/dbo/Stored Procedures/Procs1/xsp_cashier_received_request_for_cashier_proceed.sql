@@ -163,7 +163,7 @@ begin
 															,@p_cashier_exch_rate			= @p_rate
 															,@p_cashier_base_amount			= @base_amount
 															,@p_cashier_remarks				= ''
-															,@p_agreement_no				= @agreement_no			
+															,@p_agreement_no				= NULL -- sepria 14/10/2025: masuk jadinya per client, agreement di kosongkan. @agreement_no			
 															,@p_client_no					= @client_no	-- Louis Kamis, 26 Juni 2025 10.04.36 -- 
 															,@p_client_name					= @client_name	-- Louis Kamis, 26 Juni 2025 10.04.36 -- 
 															,@p_deposit_amount				= 0
@@ -234,7 +234,7 @@ begin
 															,@p_cashier_exch_rate			= @p_rate
 															,@p_cashier_base_amount			= 0
 															,@p_cashier_remarks				= ''
-															,@p_agreement_no				= @agreement_no			
+															,@p_agreement_no				= NULL -- sepria 14/10/2025: masuk jadinya per client, agreement di kosongkan. @agreement_no		
 															,@p_client_no					= @client_no	-- Louis Kamis, 26 Juni 2025 10.04.36 -- 
 															,@p_client_name					= @client_name	-- Louis Kamis, 26 Juni 2025 10.04.36 -- 
 															,@p_deposit_amount				= 0

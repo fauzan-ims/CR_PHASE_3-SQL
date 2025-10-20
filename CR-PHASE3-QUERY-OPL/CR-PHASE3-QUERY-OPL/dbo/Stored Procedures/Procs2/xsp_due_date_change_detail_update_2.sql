@@ -3,15 +3,15 @@
 CREATE PROCEDURE dbo.xsp_due_date_change_detail_update_2
 (
 	@p_id						BIGINT
-	,@p_due_date_change_code	nvarchar(50)
+	,@p_due_date_change_code	NVARCHAR(50)
 	--,@p_new_due_date_day		datetime		= null
 	--
-	,@p_mod_date				datetime
-	,@p_mod_by					nvarchar(15)
-	,@p_mod_ip_address			nvarchar(15)
-	,@p_new_billing_date_day	datetime		= null	
-	,@p_is_change				nvarchar(1)		= '0'
-	,@p_is_change_billing_date	nvarchar(1)		= '0' --jika yang di ubah adalah billing date
+	,@p_mod_date				DATETIME
+	,@p_mod_by					NVARCHAR(15)
+	,@p_mod_ip_address			NVARCHAR(15)
+	,@p_new_billing_date_day	DATETIME		= NULL	
+	,@p_is_change				NVARCHAR(1)		= '0'
+	,@p_is_change_billing_date	NVARCHAR(1)		= '0' --jika yang di ubah adalah billing date
 	,@p_billing_mode			nvarchar(15)	= null
 	,@p_prorate					nvarchar(15)	= 'NO'
 	,@p_date_for_billing		int				= 0
@@ -29,12 +29,18 @@ begin
 			,@first_payment_type    nvarchar(3)
 			,@billing_date			datetime
             ,@old_billing_date		datetime
-
+			--
+			,@billing_mode			nvarchar(15)
+			,@prorate				nvarchar(15)
+			,@date_for_billing		int		
 	begin try
 
 	
 		--ambil agreement no
-		select	@agreement_no = agreement_no
+		select	@agreement_no		= agreement_no
+				,@billing_mode		= billing_mode
+				,@prorate			= is_prorate
+				,@date_for_billing	= billing_mode_date
 		from	dbo.due_date_change_main
 		where	code = @p_due_date_change_code;
 
@@ -52,6 +58,15 @@ begin
 		select	@first_payment_type = first_payment_type
 		from	dbo.agreement_asset
 		where	asset_no = @asset_no ;
+
+		if(isnull(@p_billing_mode,'') = '') set @p_billing_mode = @billing_mode
+		if(isnull(@p_prorate,'') = '') set @p_prorate = @prorate
+
+		if(@p_billing_mode <> @billing_mode)
+		begin
+			if(isnull(@p_date_for_billing,0) = 0) set @p_date_for_billing = @date_for_billing
+		end
+		
 
 		--if (@first_payment_type = 'ARR')
 		--begin
@@ -96,7 +111,6 @@ begin
 					and billing_no < @min_installment_no
 				)
 			) ;
-
 
 		-- BILLING
 		if (@p_is_change_billing_date = '1')

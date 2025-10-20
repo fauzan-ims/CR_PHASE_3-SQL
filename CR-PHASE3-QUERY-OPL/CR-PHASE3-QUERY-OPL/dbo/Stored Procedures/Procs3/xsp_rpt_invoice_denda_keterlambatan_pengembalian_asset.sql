@@ -134,8 +134,8 @@ begin
 				,@npwp_no
 				,dbo.xfn_bulan_indonesia(agreement_asset.handover_bast_date) --dbo.xfn_bulan_indonesia(case when am.FIRST_PAYMENT_TYPE = 'ADV' then dateadd(month,aa.multiplier,aam.start_sewa) else aam.start_sewa end)
 				,dbo.xfn_bulan_indonesia(ai.maturity_date) --dbo.xfn_bulan_indonesia(case when am.FIRST_PAYMENT_TYPE = 'ADV' then dateadd(month,aa.multiplier,aam.end_sewa) else aam.end_sewa end)
-				,dbo.xfn_bulan_indonesia(DATEADD(day, 1, ai.maturity_date)) --dbo.xfn_bulan_indonesia(ai.maturity_date)
-				,dbo.xfn_bulan_indonesia(dbo.xfn_get_system_date())
+				,dbo.xfn_bulan_indonesia(dateadd(day, 1, ai.maturity_date)) --dbo.xfn_bulan_indonesia(ai.maturity_date)
+				,dbo.xfn_bulan_indonesia(isnull(aa.return_date,dbo.xfn_get_system_date()))
 				,@jatuh_tempo
 				,am.agreement_external_no
 				,am.client_name
@@ -164,8 +164,8 @@ begin
 															)
 				left join ifinsys.dbo.sys_branch_signer sbs on (
 																   sbs.branch_code = am.branch_code
-																   and sbs.signer_type_code = 'DEPTHEAD'
-																   --and sbs.signer_type_code = 'HEADOPR'
+																   --and sbs.signer_type_code = 'DEPTHEAD'
+																   and sbs.signer_type_code = 'HEADOPR'
 															   )
 				left join ifinsys.dbo.sys_employee_position em on (
 																	  em.emp_code = sbs.emp_code
@@ -207,9 +207,11 @@ begin
 							aa.billing_to_address
 							,aa.billing_to_npwp 
 							,mbt.multiplier
+							,aa.return_date
 					from	dbo.agreement_asset aa
 							inner join dbo.master_billing_type mbt on (mbt.code = aa.billing_type)
 					where	aa.agreement_no = am.agreement_no
+					order by aa.return_date desc
 				) aa
 				outer apply(
 					select min(ags.handover_bast_date) 'handover_bast_date'

@@ -1,4 +1,4 @@
-﻿CREATE procedure dbo.xsp_monitoring_asset_sold_getrows
+﻿CREATE PROCEDURE dbo.xsp_monitoring_asset_sold_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -43,7 +43,7 @@ begin
 				or av.engine_no								like '%' + @p_keywords + '%'
 				or av.chassis_no							like '%' + @p_keywords + '%'
 				or convert(varchar(30),	sd.sale_date, 103)	like '%' + @p_keywords + '%'
-				or sl.sell_type								like '%' + @p_keywords + '%'
+				or CASE WHEN sl.sell_type = 'COP' THEN 'Purchase Request After Lease' else sl.SELL_TYPE END							like '%' + @p_keywords + '%'
 				or sl.description							like '%' + @p_keywords + '%'
 				or ast.unit_province_name				    like '%' + @p_keywords + '%'
 				or ast.unit_city_name				        like '%' + @p_keywords + '%'
@@ -59,7 +59,7 @@ begin
 				,av.engine_no
 				,av.chassis_no
 				,convert(varchar(30), sd.sale_date, 103) as sold_date
-				,sl.sell_type
+				,CASE WHEN sl.sell_type = 'COP' THEN 'Purchase Request After Lease' else sl.SELL_TYPE END 'sell_type'
 				,sl.description
 				,ast.parking_location
 				,ast.unit_province_name
@@ -85,7 +85,7 @@ begin
 				or av.engine_no								like '%' + @p_keywords + '%'
 				or av.chassis_no							like '%' + @p_keywords + '%'
 				or convert(varchar(30),	sd.sale_date, 103)	like '%' + @p_keywords + '%'
-				or sl.sell_type								like '%' + @p_keywords + '%'
+				or CASE WHEN sl.sell_type = 'COP' THEN 'Purchase Request After Lease' else sl.SELL_TYPE END							like '%' + @p_keywords + '%'
 				or sl.description							like '%' + @p_keywords + '%'
 				or ast.unit_province_name				    like '%' + @p_keywords + '%'
 				or ast.unit_city_name				        like '%' + @p_keywords + '%'
@@ -98,7 +98,7 @@ begin
 													 when 2 then ast.item_name
 													 when 3 then av.plat_no
 													 when 4 then cast(sd.sale_date as sql_variant)
-													 when 5 then sl.sell_type
+													 when 5 then CASE WHEN sl.sell_type = 'COP' THEN 'Purchase Request After Lease' else sl.SELL_TYPE END
 													 when 6 then sl.description
 													 when 7 then isnull(ast.unit_province_name, '')
 												 end
@@ -109,7 +109,7 @@ begin
 													 when 2 then ast.item_name
 													 when 3 then av.plat_no
 													 when 4 then cast(sd.sale_date as sql_variant)
-													 when 5 then sl.sell_type
+													 when 5 then CASE WHEN sl.sell_type = 'COP' THEN 'Purchase Request After Lease' else sl.SELL_TYPE END
 													 when 6 then sl.description
 													 when 7 then isnull(ast.unit_province_name, '')
 												   end

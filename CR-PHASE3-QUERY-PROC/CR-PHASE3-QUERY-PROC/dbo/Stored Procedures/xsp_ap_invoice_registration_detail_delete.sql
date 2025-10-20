@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_ap_invoice_registration_detail_delete]
+﻿CREATE PROCEDURE dbo.xsp_ap_invoice_registration_detail_delete
 (
 	@p_id bigint
 )
@@ -20,7 +20,7 @@ begin
 			,@id_detail				bigint
 
 	begin try
-		select	@grn_code				= grn_code
+		select	@grn_code				= grn_detail_id
 				,@invoice_register_code = invoice_register_code
 		from	dbo.ap_invoice_registration_detail
 		where	id = @p_id ;
@@ -82,13 +82,13 @@ begin
 		(
 			select	1
 			from	dbo.ap_invoice_registration_detail
-			where	grn_code = @grn_code
+			where	grn_detail_id = @grn_code
 		)
 		begin			
 			declare curr_delete_invoice cursor fast_forward read_only for
             select id 
 			from dbo.ap_invoice_registration_detail
-			where grn_code = @grn_code
+			where grn_detail_id = @grn_code
 			
 			open curr_delete_invoice
 			
@@ -108,7 +108,7 @@ begin
 			deallocate curr_delete_invoice
 
 			delete dbo.ap_invoice_registration_detail
-			where	grn_code = @grn_code ;
+			where	grn_detail_id = @grn_code ;
 
 			update	dbo.ap_invoice_registration
 			set		invoice_amount = @total_amount_head

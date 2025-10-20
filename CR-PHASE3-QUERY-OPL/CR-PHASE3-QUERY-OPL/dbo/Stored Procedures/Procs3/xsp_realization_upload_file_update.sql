@@ -1,4 +1,4 @@
-﻿CREATE procedure dbo.xsp_realization_upload_file_update
+﻿CREATE PROCEDURE dbo.xsp_realization_upload_file_update
 (
 	@p_code			   nvarchar(50)
 	,@p_file_name	   nvarchar(250)
@@ -10,6 +10,9 @@
 )
 as
 begin
+	
+	declare @msg nvarchar(4000)
+
 	update	dbo.realization
 	set		file_name		= upper(@p_file_name)
 			,file_path		= upper(@p_file_paths)

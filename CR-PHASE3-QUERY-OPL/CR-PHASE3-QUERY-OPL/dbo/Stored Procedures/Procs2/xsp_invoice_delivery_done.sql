@@ -1,17 +1,17 @@
-﻿CREATE PROCEDURE [dbo].[xsp_invoice_delivery_done]
+﻿CREATE PROCEDURE dbo.xsp_invoice_delivery_done
 (
-	@p_code			   nvarchar(50)
+	@p_code			   NVARCHAR(50)
 	--
-	,@p_cre_date	   datetime
-	,@p_cre_by		   nvarchar(15)
-	,@p_cre_ip_address nvarchar(15)
-	,@p_mod_date	   datetime
-	,@p_mod_by		   nvarchar(15)
-	,@p_mod_ip_address nvarchar(15)
+	,@p_cre_date	   DATETIME
+	,@p_cre_by		   NVARCHAR(15)
+	,@p_cre_ip_address NVARCHAR(15)
+	,@p_mod_date	   DATETIME
+	,@p_mod_by		   NVARCHAR(15)
+	,@p_mod_ip_address NVARCHAR(15)
 )
-as
-begin
-	declare @msg			  nvarchar(max)
+AS
+BEGIN
+	DECLARE @msg			  NVARCHAR(MAX)
 			,@invoice_no	  nvarchar(50)
 			,@delivery_status nvarchar(20)
 			,@delivery_date	  datetime
@@ -49,25 +49,30 @@ begin
 		else
 		begin
 			set @msg = 'Data already Done.' ;
-
 			raiserror(@msg, 16, 1) ;
 		end ;
 
-		-- looping proses DONE
-		DECLARE c_agreement_log CURSOR FOR
-		SELECT	idd.invoice_no	
+		if exists (select 1 from dbo.invoice_delivery where isnull(delivery_result,'') = '' and code = @p_code)
+		begin
+		    set @msg = 'Please Input Result.' ;
+			raiserror(@msg, 16, 1) ;
+		end
+
+		-- looping proses done
+		declare c_agreement_log cursor for
+		select	idd.invoice_no	
 				,idd.delivery_date				
 				,ind.agreement_no		
 				,ind.asset_no
 				,id.delivery_result			
-		FROM	dbo.invoice_delivery_detail idd
+		from	dbo.invoice_delivery_detail idd
 				inner join dbo.invoice_delivery id on id.code = idd.delivery_code
-				LEFT JOIN dbo.invoice_detail ind ON (ind.invoice_no = idd.invoice_no)
-		WHERE	delivery_code = @p_code ;
+				left join dbo.invoice_detail ind on (ind.invoice_no = idd.invoice_no)
+		where	delivery_code = @p_code ;
 
-		OPEN c_agreement_log ;
+		open c_agreement_log ;
 
-		FETCH c_agreement_log
+		fetch c_agreement_log
 		into @invoice_no
 			 ,@delivery_date
 			 ,@agreement_no

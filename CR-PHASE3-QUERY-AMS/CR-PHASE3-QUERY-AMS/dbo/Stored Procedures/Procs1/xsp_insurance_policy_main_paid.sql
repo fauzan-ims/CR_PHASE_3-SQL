@@ -52,7 +52,7 @@ begin
 		group by ipa.code
 
 		
-		if exists (select 1 from dbo.insurance_policy_main where code = @p_code and policy_payment_status = 'ON PROCESS')
+		if exists (select 1 from dbo.insurance_policy_main where code = @p_code and policy_payment_status = 'APPROVE')
 		begin
 			-- untuk case jika ada gantungan payment 
 			if exists
@@ -280,5 +280,3 @@ begin
 	end catch ;	
 
 end ;
-
-

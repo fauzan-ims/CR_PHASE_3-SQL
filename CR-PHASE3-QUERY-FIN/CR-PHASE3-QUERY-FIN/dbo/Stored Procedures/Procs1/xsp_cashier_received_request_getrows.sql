@@ -89,7 +89,7 @@ begin
 						)
 		order by	case
 					when @p_sort_by = 'asc' then case @p_order_by
-														when 1 then crr.code + crr.branch_name 
+														when 1 then crr.code --+ crr.branch_name 
 														when 2 then crr.invoice_external_no 
 														when 3 then cast(crr.invoice_billing_amount as sql_variant)
 														when 4 then cast(crr.request_amount as sql_variant)
@@ -99,7 +99,7 @@ begin
 					end asc
 					,case
 					 when @p_sort_by = 'desc' then case @p_order_by
-														when 1 then crr.code + crr.branch_name 
+														when 1 then crr.code --+ crr.branch_name 
 														when 2 then crr.invoice_external_no 
 														when 3 then cast(crr.invoice_billing_amount as sql_variant)
 														when 4 then cast(crr.request_amount as sql_variant)

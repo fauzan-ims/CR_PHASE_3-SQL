@@ -75,14 +75,6 @@ begin
 
 	begin try
 		
-		--if not exists(select deskcoll_main_id from dbo.task_main where deskcoll_main_id = @p_id)
-		--begin
-			
-		--	exec dbo.xsp_deskcoll_main_getrow @p_id = 0 -- bigint
-			
-		--end
-  --      else
-  --      begin
 			insert into deskcoll_main
 			(
 				desk_date
@@ -142,30 +134,17 @@ begin
 					,desk_status	 = 'HOLD'
 			where	id				 = @p_id_task_main
 
-		--END
-
-		--delete	dbo.deskcoll_invoice
-		--where	deskcoll_main_id = @p_id ;
-
 		
 		declare curr_inv cursor fast_forward read_only for
-		select		c.invoice_no
-					,d.invoice_type
-					,max(e.billing_date)  
-					,max(e.due_date)	  
-					,max(f.obligation_day)
-		from		dbo.agreement_main							a
-					inner join dbo.agreement_asset				b on b.agreement_no = a.agreement_no
-					inner join dbo.invoice_detail				c on c.asset_no		= b.asset_no
-					inner join dbo.invoice						d on d.invoice_no	= c.invoice_no
-					inner join dbo.agreement_asset_amortization e on e.asset_no		= c.asset_no
-					inner join dbo.agreement_obligation			f on f.asset_no		= c.asset_no
-		where		a.client_no = @p_client_no
-					and d.invoice_status in
-		(
-			'POST'
-		)
-		group by	c.invoice_no, d.invoice_type;
+
+		select	inv.invoice_no
+				,inv.invoice_type
+				,inv.new_invoice_date
+				,inv.invoice_due_date
+				,datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date())
+		from	dbo.invoice inv
+		where	inv.invoice_status = 'POST'
+		and		inv.client_no = @p_client_no
 
 		open curr_inv
 		

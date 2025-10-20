@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE dbo.xsp_agreement_asset_update
 (
 	@p_asset_no				nvarchar(50)
-	,@p_return_date			datetime
-	,@p_return_remark		nvarchar(4000)
+	,@p_return_date			datetime = ''
+	,@p_return_remark		nvarchar(4000) = ''
 	--
 	,@p_mod_date			datetime
 	,@p_mod_by				nvarchar(15)

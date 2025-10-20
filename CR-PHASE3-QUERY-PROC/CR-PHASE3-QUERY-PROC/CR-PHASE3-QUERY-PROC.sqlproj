@@ -5206,5 +5206,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Security\Permissions.sql" />
+    <Build Include="Security\jellf.sql" />
+    <Build Include="Security\aldandi.sql" />
   </ItemGroup>
 </Project>

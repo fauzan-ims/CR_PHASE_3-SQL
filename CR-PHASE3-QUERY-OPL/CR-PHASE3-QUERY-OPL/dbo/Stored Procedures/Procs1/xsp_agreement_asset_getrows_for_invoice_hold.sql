@@ -1,18 +1,18 @@
 ﻿-- Louis Jumat, 04 Juli 2025 11.23.56 -- 
-CREATE PROCEDURE [dbo].[xsp_agreement_asset_getrows_for_invoice_hold]
+CREATE PROCEDURE dbo.xsp_agreement_asset_getrows_for_invoice_hold
 (
-	@p_keywords	   NVARCHAR(50)
-	,@p_pagenumber INT
-	,@p_rowspage   INT
-	,@p_order_by   INT
-	,@p_sort_by	   NVARCHAR(5)
-	,@p_branch_code	NVARCHAR(50)
-	,@p_client_no	NVARCHAR(50) = ''
-	,@p_opl_status	NVARCHAR(20)
+	@p_keywords	   nvarchar(50)
+	,@p_pagenumber int
+	,@p_rowspage   int
+	,@p_order_by   int
+	,@p_sort_by	   nvarchar(5)
+	,@p_branch_code	nvarchar(50) = 'ALL'
+	,@p_client_no	nvarchar(50) = ''
+	,@p_opl_status	nvarchar(20) = 'ALL'
 )
-AS
-BEGIN
-	DECLARE @rows_count INT = 0 ;
+as
+begin
+	declare @rows_count int = 0 ;
 
 	if exists
 	(
@@ -27,52 +27,33 @@ BEGIN
 
 	select	@rows_count = count(1)
 	from	dbo.agreement_asset aa
-			outer apply
-	(
-		select		top 1
-					aaa.due_date
-					,aaa.billing_date
-		from		dbo.agreement_asset_amortization aaa
-		where		aa.asset_no						  = aaa.asset_no
-					and isnull(aaa.generate_code, '') = ''
-		order by	aaa.due_date asc
-	) aaa
+			outer apply	(
+					select		top 1
+								aaa.due_date
+								,aaa.billing_date
+					from		dbo.agreement_asset_amortization aaa
+					where		aa.asset_no						  = aaa.asset_no
+								and isnull(aaa.generate_code, '') = ''
+					order by	aaa.due_date asc
+				) aaa
 			inner join dbo.agreement_main am on (am.agreement_no			 = aa.agreement_no)
-			left join dbo.et_main em on (
-											em.agreement_no					 = aa.agreement_no
-											and em.et_status not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-										)
-			left join dbo.WRITE_OFF_MAIN wom on (
-													wom.AGREEMENT_NO		 = aa.AGREEMENT_NO
-													and wom.WO_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-												)
-			left join dbo.WAIVED_OBLIGATION wob on (
-													   wob.AGREEMENT_NO		 = aa.AGREEMENT_NO
-													   and wob.WAIVED_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-												   )
-			left join dbo.DUE_DATE_CHANGE_MAIN ddcm on (
-														   ddcm.AGREEMENT_NO = aa.AGREEMENT_NO
-														   and ddcm.CHANGE_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-													   )
-			left join dbo.STOP_BILLING sb on (
-												 sb.AGREEMENT_NO			 = aa.AGREEMENT_NO
-												 and   sb.STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-											 )
+			left join dbo.et_detail etd on etd.asset_no = aa.asset_no and etd.is_terminate = '1'
+			inner join dbo.et_main em on em.code = etd.et_code and em.et_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT')
+			--outer apply (	select	et.code, et_date, et.et_status
+			--				from	dbo.et_main et
+			--						inner join dbo.et_detail etd on etd.et_code = et.code
+			--				where	etd.is_terminate = '1'
+			--				and		et.agreement_no = aa.agreement_no
+			--				and		aa.asset_no = etd.asset_no
+			--				and		et.et_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT')) em
+			left join dbo.write_off_main wom on (wom.agreement_no		 = aa.AGREEMENT_NO
+												and		wom.wo_status not in (N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.waived_obligation wob on ( wob.agreement_no		 = aa.agreement_no
+													   and wob.waived_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.due_date_change_main ddcm on (   ddcm.agreement_no = aa.agreement_no
+														   and ddcm.change_status not in (N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.stop_billing sb on ( sb.agreement_no			 = aa.agreement_no
+												 and   sb.status not in	(	N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
 	where	isnull(am.opl_status, '') <> ''
 			and am.agreement_status	  = 'GO LIVE'
 			and aa.asset_status		  = 'RENTED'
@@ -141,53 +122,34 @@ BEGIN
 				,convert(varchar(20), aaa.due_date, 103) 'due_date'
 				,convert(varchar(20), aaa.billing_date, 103) 'billing_date'
 				,@rows_count 'rowcount'
-	from		dbo.agreement_asset aa
-				outer apply
-	(
-		select		top 1
-					aaa.due_date
-					,aaa.billing_date
-		from		dbo.agreement_asset_amortization aaa
-		where		aa.asset_no						  = aaa.asset_no
-					and isnull(aaa.generate_code, '') = ''
-		order by	aaa.due_date asc
-	) aaa
-				inner join dbo.agreement_main am on (am.agreement_no			 = aa.agreement_no)
-				left join dbo.et_main em on (
-												em.agreement_no					 = aa.agreement_no
-												and em.et_status not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-											)
-				left join dbo.WRITE_OFF_MAIN wom on (
-														wom.AGREEMENT_NO		 = aa.AGREEMENT_NO
-														and wom.WO_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-													)
-				left join dbo.WAIVED_OBLIGATION wob on (
-														   wob.AGREEMENT_NO		 = aa.AGREEMENT_NO
-														   and wob.WAIVED_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-													   )
-				left join dbo.DUE_DATE_CHANGE_MAIN ddcm on (
-															   ddcm.AGREEMENT_NO = aa.AGREEMENT_NO
-															   and ddcm.CHANGE_STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-														   )
-				left join dbo.STOP_BILLING sb on (
-													 sb.AGREEMENT_NO			 = aa.AGREEMENT_NO
-													 and   sb.STATUS not in
-	(
-		N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'
-	)
-												 )
+	from	dbo.agreement_asset aa
+			outer apply	(
+					select		top 1
+								aaa.due_date
+								,aaa.billing_date
+					from		dbo.agreement_asset_amortization aaa
+					where		aa.asset_no						  = aaa.asset_no
+								and isnull(aaa.generate_code, '') = ''
+					order by	aaa.due_date asc
+				) aaa
+			inner join dbo.agreement_main am on (am.agreement_no			 = aa.agreement_no)
+			left join dbo.et_detail etd on etd.asset_no = aa.asset_no and etd.is_terminate = '1'
+			inner join dbo.et_main em on em.code = etd.et_code and	em.et_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT')
+			--outer apply (	select	et.code, et.et_date, et.et_status
+			--				from	dbo.et_main et
+			--						inner join dbo.et_detail etd on etd.et_code = et.code
+			--				where	etd.is_terminate = '1'
+			--				and		et.agreement_no = aa.agreement_no
+			--				and		aa.asset_no = etd.asset_no
+			--				and		et.et_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT')) em
+			left join dbo.write_off_main wom on (wom.agreement_no		 = aa.AGREEMENT_NO
+												and		wom.wo_status not in (N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.waived_obligation wob on ( wob.agreement_no		 = aa.agreement_no
+													   and wob.waived_status not in(N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.due_date_change_main ddcm on (   ddcm.agreement_no = aa.agreement_no
+														   and ddcm.change_status not in (N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
+			left join dbo.stop_billing sb on ( sb.agreement_no			 = aa.agreement_no
+												 and   sb.status not in	(	N'APPROVE', N'CANCEL', N'EXPIRED', N'REJECT'))
 	where		isnull(am.opl_status, '') <> ''
 				and am.agreement_status	  = 'GO LIVE'
 				and aa.asset_status		  = 'RENTED'

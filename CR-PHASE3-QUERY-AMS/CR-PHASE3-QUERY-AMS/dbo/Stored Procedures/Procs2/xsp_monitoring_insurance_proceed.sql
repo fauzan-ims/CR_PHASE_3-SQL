@@ -2,7 +2,7 @@
 	Created : Arif 23-02-2023
 */
 
-CREATE PROCEDURE [dbo].[xsp_monitoring_insurance_proceed]
+CREATE PROCEDURE dbo.xsp_monitoring_insurance_proceed
 (
 	@p_code				nvarchar(50)
 	,@p_flag_date		datetime	
@@ -73,7 +73,7 @@ declare @msg						  nvarchar(max)
 		,@purchase_price			  decimal(18,2)
 		,@ppn_amount				  decimal(18,2)
 		,@code_insurance_register	  nvarchar(50)
-		,@platno					  NVARCHAR(15)
+		,@platno					  nvarchar(15)
 
 	begin try
 		--- cek data apakah ada data dengan status PAID or CANCEL di tabel insurance_register
@@ -91,6 +91,12 @@ declare @msg						  nvarchar(max)
 		--	set @msg = 'Data already Proceed' ; 
 		--	raiserror(@msg, 16, -1) ;
 		--end ;
+
+		select	@branch_code = code
+				,@branch_name	= name
+		from	ifinsys.dbo.sys_branch
+		where	branch_type = 'HO'
+
 		select	@platno = plat_no
 		from	dbo.asset_vehicle 
 		where	asset_code = @p_code
@@ -124,8 +130,8 @@ declare @msg						  nvarchar(max)
 
 		-- select data yang tidak ada status PAID or CANCEL di tabel register_main 
 		select	@fa_code			= ass.code
-				,@branch_name		= 'JAKARTA HEAD OFFICE'--ass.branch_name
-				,@branch_code		= '1000'--ass.branch_code branch polis tidak perlu mengikuti branch asset karena polis selalu di proses di HO (raffy) 2025/08/30
+				--,@branch_name		= 'JAKARTA HEAD OFFICE'--ass.branch_name
+				--,@branch_code		= '1000'--15/20/2025 SEPRIA: JANGAN DI HARDCODE GINI KLO MAU AMBIL CABANG HO, AMBIL KE SYSBRANCH. --ass.branch_code branch polis tidak perlu mengikuti branch asset karena polis selalu di proses di HO (raffy) 2025/08/30
 				,@fa_name			= ass.item_name
 				,@asset_type		= ass.type_code
 				--,@sum_insured		= ass.net_book_value_comm

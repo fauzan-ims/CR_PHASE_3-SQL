@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_application_amortization_calculate]
+﻿CREATE PROCEDURE dbo.xsp_application_amortization_calculate
 (
 	@p_asset_no		   nvarchar(50)
 	--
@@ -58,7 +58,6 @@ begin
 				
 		set @no = 1 ;
 		set @first_duedate = @due_date ;
-		
 		set @maturity_date_asset = dateadd(month, @tenor, dateadd(day, -1, @due_date))
 		
 		-- @schedule_month ini adalah per berapa bulan schedule yg akan terbentuk (cth: per 1 bulan/ per 2 bulan).
@@ -72,8 +71,7 @@ begin
 				if (@first_payment_type = 'ARR')
 				begin
 					set @description = 'Billing ke ' + cast(@no as nvarchar(15)) + ' dari Periode ' + convert(varchar(30), dateadd(day, 0, @due_date), 103) + ' Sampai dengan ' + convert(varchar(30), dateadd(month, (@schedule_month * @no), dateadd(day, -1, @first_duedate)), 103)
-					set @due_date = dateadd(month, (@schedule_month * @no), dateadd(day,-1,@first_duedate))
-					set @billing_date = @due_date
+					set @due_date = dateadd(month, (@schedule_month * @no), dateadd(day,0,@first_duedate))
 				end 
 				else
 				begin
@@ -183,7 +181,7 @@ begin
 				if (@first_payment_type = 'ARR')
 				begin
 					
-					set @due_date = dateadd(month, (@schedule_month * @no-1), dateadd(day,-1,@first_duedate))
+					set @due_date = dateadd(month, (@schedule_month * @no-1), dateadd(day,1,@first_duedate))
 				
 					if (@due_date > @maturity_date_asset) or (@no = (@tenor / @schedule_month)+1)
 					begin
@@ -243,11 +241,11 @@ begin
 				begin
 					if(@no = 1)
 					begin
-					    set @jarak_hari_duedate		=  datediff(day,@first_duedate,@due_date) 
+					    set @jarak_hari_duedate		=  datediff(day,@first_duedate,@due_date)+1 
 					    set @jarak_hari_billingmode =  datediff(day,@first_duedate,dateadd(month,@schedule_month,@first_duedate)) 
 						set @billing_amount_prorate = ((@lease_rounded_amount * @schedule_month) / convert(decimal(18,2),@jarak_hari_billingmode)) * @jarak_hari_duedate
 						set @billing_amount			= @billing_amount_prorate
-
+						SELECT @first_duedate'@first_duedate',@due_date'@due_date',@jarak_hari_duedate'@jarak_hari_duedate'
 					end	
 					else if (@no = (@tenor / @schedule_month)+1)
 					begin
@@ -337,39 +335,42 @@ begin
 					set @billing_date = @due_date;
 				end
 				 
-				insert into dbo.application_amortization
-				(
-					application_no
-					,installment_no
-					,asset_no
-					,due_date
-					,billing_date
-					,billing_amount
-					,description
-					--
-					,cre_date
-					,cre_by
-					,cre_ip_address
-					,mod_date
-					,mod_by
-					,mod_ip_address
-				)
-				values
-				(	@application_no
-					,@no
-					,@p_asset_no
-					,@due_date
-					,@billing_date
-					,@billing_amount
-					,@description
-					--
-					,@p_cre_date
-					,@p_cre_by
-					,@p_cre_ip_address
-					,@p_mod_date
-					,@p_mod_by
-					,@p_mod_ip_address
-				) ;
+				 if @billing_amount <> 0
+				 begin
+					insert into dbo.application_amortization
+					(
+						application_no
+						,installment_no
+						,asset_no
+						,due_date
+						,billing_date
+						,billing_amount
+						,description
+						--
+						,cre_date
+						,cre_by
+						,cre_ip_address
+						,mod_date
+						,mod_by
+						,mod_ip_address
+					)
+					values
+					(	@application_no
+						,@no
+						,@p_asset_no
+						,@due_date
+						,@billing_date
+						,@billing_amount
+						,@description
+						--
+						,@p_cre_date
+						,@p_cre_by
+						,@p_cre_ip_address
+						,@p_mod_date
+						,@p_mod_by
+						,@p_mod_ip_address
+					) ;
+				 end
 
 				set @due_date = dateadd(month, (@schedule_month * @no), @first_duedate) ;
 				set @no += 1 ;
@@ -408,5 +409,3 @@ begin
 		return ;
 	end catch ; 
 end ;
-
-

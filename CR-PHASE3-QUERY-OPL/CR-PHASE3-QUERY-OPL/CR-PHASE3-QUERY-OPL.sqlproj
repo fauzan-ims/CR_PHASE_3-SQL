@@ -15243,5 +15243,11 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="Security\jellf.sql" />
+    <Build Include="Security\aldandi.sql" />
+    <Build Include="dbo\Stored Procedures\xsp_warning_letter_invoice_getrows_backup_17102025.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
 </Project>

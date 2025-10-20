@@ -1,6 +1,6 @@
 ﻿-- Stored Procedure
 
-CREATE PROCEDURE [dbo].[xsp_warning_letter_invoice_getrows]
+CREATE PROCEDURE dbo.xsp_warning_letter_invoice_getrows
 (
 	@p_keywords nvarchar(50)
 	,@p_pagenumber int
@@ -11,120 +11,109 @@ CREATE PROCEDURE [dbo].[xsp_warning_letter_invoice_getrows]
 )
 as
 begin
-	declare @rows_count int = 0 ;
+	declare @rows_count		int = 0 
 
-	select	@rows_count = count(1)
-	from	WARNING_LETTER
-			join dbo.AGREEMENT_OBLIGATION on AGREEMENT_OBLIGATION.AGREEMENT_NO = WARNING_LETTER.AGREEMENT_NO
-			join dbo.AGREEMENT_MAIN on AGREEMENT_MAIN.AGREEMENT_NO = AGREEMENT_OBLIGATION.AGREEMENT_NO
-			join dbo.INVOICE on INVOICE.INVOICE_NO					= AGREEMENT_OBLIGATION.INVOICE_NO
-	where AGREEMENT_MAIN.CLIENT_NO = @p_code
-		and OBLIGATION_DAY		=
-			(
-				select	max(OBLIGATION_DAY)
-				from	WARNING_LETTER
-						join dbo.AGREEMENT_OBLIGATION on AGREEMENT_OBLIGATION.AGREEMENT_NO = WARNING_LETTER.AGREEMENT_NO
-						join dbo.AGREEMENT_MAIN on AGREEMENT_MAIN.AGREEMENT_NO = AGREEMENT_OBLIGATION.AGREEMENT_NO
-				where WARNING_LETTER.CLIENT_NO = @p_code
+	SELECT	@rows_count		= COUNT(1)
+	FROM	dbo.warning_letter wld
+			inner join dbo.invoice inv on inv.client_no = wld.client_no
+			outer apply (	select	top 1 agp.payment_date 'payment_date'
+							from	dbo.invoice_detail invd
+									inner join dbo.agreement_invoice ainv on ainv.agreement_no = invd.agreement_no and ainv.asset_no = invd.asset_no and ainv.billing_no = invd.billing_no and ainv.invoice_no = invd.invoice_no 
+									left join dbo.agreement_invoice_payment agp on agp.agreement_invoice_code = ainv.code
+							where	invd.invoice_no = inv.invoice_no
+							and		agp.payment_amount > 0
+							order by agp.cre_date desc
+						) agp
+	where	wld.code = @p_code 
+	and		inv.invoice_status = 'POST'
+	and		cast(inv.invoice_due_date as date) <= cast(wld.letter_date as date) -- ambil hanya hingga tanggal sp di terbitkan
+	and		(
+				inv.invoice_external_no									like '%' + @p_keywords + '%'
+				or	inv.invoice_type									like '%' + @p_keywords + '%'
+				or	convert(varchar(15), inv.invoice_date, 102)			like '%' + @p_keywords + '%'
+				or	convert(varchar(15), inv.invoice_due_date, 102)		like '%' + @p_keywords + '%'
+				or	inv.total_amount									like '%' + @p_keywords + '%'
+				or	datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date())	like '%' + @p_keywords + '%'
+				--or	case when inv.invoice_status = 'post' then (case when cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date) then datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) else 0 end)
+				--				when inv.invoice_status = 'paid' then (case when cast(inv.invoice_due_date as date) < cast(agp.payment_date as date) then datediff(day, inv.invoice_due_date, agp.payment_date) else 0 end)
+				--				else 0 end								like '%' + @p_keywords + '%'
+				or	inv.invoice_status									like '%' + @p_keywords + '%'
+				or	 convert(varchar(15), agp.payment_date, 102)		like '%' + @p_keywords + '%'
+				--or	 convert(varchar(15), promise_date, 102)	like '%' + @p_keywords + '%'
 			)
-		and
-		(
-				LETTER_NO like '%' + @p_keywords + '%'
-				or AGREEMENT_MAIN.BRANCH_NAME like '%' + @p_keywords + '%'
-				or WARNING_LETTER.LETTER_DATE like '%' + @p_keywords + '%'
-				or AGREEMENT_MAIN.CLIENT_NAME like '%' + @p_keywords + '%'
-				or OBLIGATION_DAY like '%' + @p_keywords + '%'
-				or LETTER_TYPE like '%' + @p_keywords + '%'
-				or LETTER_STATUS like '%' + @p_keywords + '%'
-			) ;
 
-	select	warning_letter.code			'sp_no'
-			,agreement_obligation.invoice_no
-			,invoice_type
-			,billing_date			'billing_date'
-			,'2025-07-21'			'billing_due_date'
-			,500000.00				'os_invoice_amount'
-			,overdue_days
-			,invoice_status			'status'
-			,'2025-07-21'			'paid_date'
-			,'2025-07-21'			'promise_date'
-			----------------------------------------------------
-			,agreement_main.branch_name
-			,letter_date			'sp_date'
-			,case
-				when overdue_days > 60 then
-					'somasi'
-			end						'sp'
-			,generate_type
-			,agreement_main.client_name
-			,overdue_penalty_amount 'total_overdue_amount'
-			,50						'total_agreement'
-			,50						'totaal_asset'
-			,500000.00				'total_monthly_rental_amount'
-			,@rows_count			'rowcount'
-	from	WARNING_LETTER
-			join dbo.AGREEMENT_OBLIGATION on AGREEMENT_OBLIGATION.AGREEMENT_NO			= WARNING_LETTER.AGREEMENT_NO
-			join dbo.AGREEMENT_MAIN on AGREEMENT_MAIN.AGREEMENT_NO					= AGREEMENT_OBLIGATION.AGREEMENT_NO
-			join dbo.INVOICE on INVOICE.INVOICE_NO										= AGREEMENT_OBLIGATION.INVOICE_NO
-			join dbo.AGREEMENT_ASSET_AMORTIZATION on AGREEMENT_ASSET_AMORTIZATION.INVOICE_NO = dbo.AGREEMENT_OBLIGATION.INVOICE_NO
-													and AGREEMENT_ASSET_AMORTIZATION.BILLING_NO = dbo.AGREEMENT_OBLIGATION.INSTALLMENT_NO
-	where AGREEMENT_MAIN.CLIENT_NO = @p_code
-		and OBLIGATION_DAY		=
-			(
-				select	max(OBLIGATION_DAY)
-				from	WARNING_LETTER
-						join dbo.AGREEMENT_OBLIGATION on AGREEMENT_OBLIGATION.AGREEMENT_NO = WARNING_LETTER.AGREEMENT_NO
-						join dbo.AGREEMENT_MAIN on AGREEMENT_MAIN.AGREEMENT_NO = AGREEMENT_OBLIGATION.AGREEMENT_NO
-				where WARNING_LETTER.CLIENT_NO = @p_code
+	SELECT	inv.invoice_external_no							'invoice_no'
+			,inv.invoice_type								'invoice_type'
+			,FORMAT(inv.invoice_date, 'yyyy/MM/dd')			'billing_date'
+			,FORMAT(inv.invoice_due_date, 'yyyy/MM/dd')		'billing_due_date'
+			,inv.total_amount								'os_invoice_amount'
+			,datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) 'ovd_days' 
+			--,CASE WHEN inv.invoice_status = 'post' THEN (CASE WHEN CAST(inv.invoice_due_date AS DATE) < CAST(dbo.xfn_get_system_date() AS DATE) THEN DATEDIFF(DAY, inv.invoice_due_date, dbo.xfn_get_system_date()) ELSE 0 END)
+			--	WHEN inv.invoice_status = 'paid' THEN (CASE WHEN CAST(inv.invoice_due_date AS DATE) < CAST(agp.payment_date AS DATE) THEN DATEDIFF(DAY, inv.invoice_due_date, agp.payment_date) ELSE 0 END)
+			--	ELSE 0 END									'ovd_days' 
+			,inv.invoice_status								'invoice_status'
+			,FORMAT(agp.payment_date, 'yyyy/MM/dd')			'invoice_due_date'
+			,0												'total_ppn_amount'
+			,0												'total_pph_amount'
+			,NULL											'promise_date'
+			,@rows_count									'rowcount'
+	FROM	dbo.warning_letter wld
+			inner join dbo.invoice inv on inv.client_no = wld.client_no
+			outer apply (	select	top 1 agp.payment_date 'payment_date'
+							from	dbo.invoice_detail invd
+									inner join dbo.agreement_invoice ainv on ainv.agreement_no = invd.agreement_no and ainv.asset_no = invd.asset_no and ainv.billing_no = invd.billing_no and ainv.invoice_no = invd.invoice_no 
+									left join dbo.agreement_invoice_payment agp on agp.agreement_invoice_code = ainv.code
+							where	invd.invoice_no = inv.invoice_no
+							and		agp.payment_amount > 0
+							order by agp.cre_date desc
+						) agp
+	where	wld.code = @p_code 
+	and		inv.invoice_status = 'POST'
+	and		cast(inv.invoice_due_date as date) <= cast(wld.letter_date as date) -- ambil hanya hingga tanggal sp di terbitkan
+	and		(
+				inv.invoice_external_no									like '%' + @p_keywords + '%'
+				or	inv.invoice_type									like '%' + @p_keywords + '%'
+				or	convert(varchar(15), inv.invoice_date, 102)			like '%' + @p_keywords + '%'
+				or	convert(varchar(15), inv.invoice_due_date, 102)		like '%' + @p_keywords + '%'
+				or	inv.total_amount									like '%' + @p_keywords + '%'
+				or	datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date())	like '%' + @p_keywords + '%'
+				--OR	case when inv.invoice_status = 'post' then (case when cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date) then datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) else 0 end)
+				--				when inv.invoice_status = 'paid' then (case when cast(inv.invoice_due_date as date) < cast(agp.payment_date as date) then datediff(day, inv.invoice_due_date, agp.payment_date) else 0 end)
+				--				else 0 end								like '%' + @p_keywords + '%'
+				or	inv.invoice_status									like '%' + @p_keywords + '%'
+				or	 convert(varchar(15), agp.payment_date, 102)		like '%' + @p_keywords + '%'
+				--or	 convert(varchar(15), promise_date, 102)	like '%' + @p_keywords + '%'
 			)
-		and
-		(
-				LETTER_NO like '%' + @p_keywords + '%'
-				or AGREEMENT_MAIN.BRANCH_NAME like '%' + @p_keywords + '%'
-				or convert(varchar(15), WARNING_LETTER.LETTER_DATE, 102) like '%' + @p_keywords + '%'
-				or AGREEMENT_MAIN.CLIENT_NAME like '%' + @p_keywords + '%'
-				or OBLIGATION_DAY like '%' + @p_keywords + '%'
-				or LETTER_TYPE like '%' + @p_keywords + '%'
-				or LETTER_STATUS like '%' + @p_keywords + '%'
-			)
-	order by
-		case
-			when @p_sort_by = 'asc' then
-				case @p_order_by
-					when 1 then
-						LETTER_NO
-					when 2 then
-						WARNING_LETTER.BRANCH_NAME
-					when 3 then
-						convert(varchar(15), WARNING_LETTER.LETTER_DATE, 102)
-					when 4 then
-						AGREEMENT_MAIN.CLIENT_NAME
-					when 5 then
-						convert(varchar(15), OBLIGATION_DAY, 102)
-					when 6 then
-						LETTER_TYPE
-					when 7 then
-						LETTER_STATUS
-				end
-		end asc
-		,case
-			when @p_sort_by = 'desc' then
-				case @p_order_by
-					when 1 then
-						LETTER_NO
-					when 2 then
-						WARNING_LETTER.BRANCH_NAME
-					when 3 then
-						convert(varchar(15), WARNING_LETTER.LETTER_DATE, 102)
-					when 4 then
-						AGREEMENT_MAIN.CLIENT_NAME
-					when 5 then
-						convert(varchar(15), OBLIGATION_DAY, 102)
-					when 6 then
-						LETTER_TYPE
-					when 7 then
-						LETTER_STATUS
-				end
-		end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
+	order by	case
+					when @p_sort_by = 'asc' then case @p_order_by
+													when 1 then inv.invoice_external_no
+													when 2 then inv.invoice_type
+													when 3 then cast(inv.invoice_date as sql_variant)
+													when 4 then cast(inv.invoice_due_date as sql_variant)
+													when 5 then cast(inv.total_amount as sql_variant)
+													when 6 then CAST(datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) AS SQL_VARIANT)
+																--CAST(case when inv.invoice_status = 'post' then (case when cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date) then datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) else 0 end)
+																--when inv.invoice_status = 'paid' then (case when cast(inv.invoice_due_date as date) < cast(agp.payment_date as date) then datediff(day, inv.invoice_due_date, agp.payment_date) else 0 end)
+																--else 0 end as sql_variant)
+													when 7 then inv.invoice_status
+													when 8 then cast(agp.payment_date as sql_variant)
+													--when 9 then cast(promise_date as sql_variant)
+												 end
+				end asc
+				,case
+					 when @p_sort_by = 'desc' then case @p_order_by
+													when 1 then inv.invoice_external_no
+													when 2 then inv.invoice_type
+													when 3 then cast(inv.invoice_date as sql_variant)
+													when 4 then cast(inv.invoice_due_date as sql_variant)
+													when 5 then cast(inv.total_amount as sql_variant)
+													when 6 then CAST(datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) AS SQL_VARIANT)
+																--CAST(case when inv.invoice_status = 'post' then (case when cast(inv.invoice_due_date as date) < cast(dbo.xfn_get_system_date() as date) then datediff(day, inv.invoice_due_date, dbo.xfn_get_system_date()) else 0 end)
+																--when inv.invoice_status = 'paid' then (case when cast(inv.invoice_due_date as date) < cast(agp.payment_date as date) then datediff(day, inv.invoice_due_date, agp.payment_date) else 0 end)
+																--else 0 end as sql_variant)
+													when 7 then inv.invoice_status
+													when 8 then cast(agp.payment_date as sql_variant)
+													--when 9 then cast(promise_date as sql_variant)
+												 end
+				 end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
 end ;
-

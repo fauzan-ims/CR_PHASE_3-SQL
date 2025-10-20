@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_cashier_transaction_detail_getrows]
+﻿CREATE PROCEDURE dbo.xsp_cashier_transaction_detail_getrows
 (
 	@p_keywords					 nvarchar(50)
 	,@p_pagenumber				 int
@@ -75,6 +75,7 @@ begin
 				,crr.invoice_pph_amount
 				,ctd.transaction_code -- Louis Kamis, 26 Juni 2025 16.21.13 -- 
 				,replace(ctd.agreement_no, '.', '/') 'agreement_no' -- Louis Kamis, 26 Juni 2025 17.19.25 -- 
+				,format(SUM(ctd.base_amount) OVER (), 'N2', 'id-ID') AS sum_base_amount
 				,@rows_count 'rowcount'
 		from	cashier_transaction_detail ctd with (nolock)
 				left join dbo.master_transaction mt with (nolock) on (mt.code = ctd.transaction_code)
@@ -133,4 +134,3 @@ begin
 												end
 					end desc offset ((@p_pagenumber - 1) * @p_rowspage) rows fetch next @p_rowspage rows only ;
 end ;
-
