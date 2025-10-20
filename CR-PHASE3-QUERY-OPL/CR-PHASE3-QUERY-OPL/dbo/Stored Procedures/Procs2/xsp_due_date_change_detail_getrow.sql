@@ -1,6 +1,6 @@
 ﻿--created by, Rian at 04/05/2023	
 
-CREATE procedure dbo.xsp_due_date_change_detail_getrow
+CREATE PROCEDURE dbo.xsp_due_date_change_detail_getrow
 (
 	@p_id bigint
 )
@@ -14,6 +14,8 @@ begin
 			,new_due_date_day
 			,at_installment_no
 			,is_change
+			,prorate		'print_option'
+			,billing_mode
 	from	dbo.due_date_change_detail
 	where	id = @p_id ;
 end ;

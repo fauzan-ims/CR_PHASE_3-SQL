@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_inquiry_deskcoll_invoice_agreement_getrows]
+﻿CREATE PROCEDURE dbo.xsp_inquiry_deskcoll_invoice_agreement_getrows
 (
 	@p_keywords			nvarchar(50)
 	,@p_pagenumber		int
@@ -21,7 +21,9 @@ begin
 				INNER JOIN dbo.agreement_asset				c ON b.asset_no		= c.asset_no
 				INNER JOIN dbo.agreement_asset_amortization d ON d.asset_no	= b.asset_no
 				INNER JOIN dbo.agreement_main				e ON e.agreement_no	= c.agreement_no
+				INNER JOIN dbo.INVOICE						inv ON	inv.INVOICE_NO = b.INVOICE_NO
 		WHERE	a.id = @p_id
+		AND		inv.INVOICE_STATUS = 'POST'
 				AND (
 					d.billing_amount	LIKE '%' + @p_keywords + '%'
 					OR b.asset_no		LIKE '%' + @p_keywords + '%'
@@ -43,7 +45,9 @@ begin
 				INNER JOIN dbo.agreement_asset				c ON b.asset_no		= c.asset_no
 				INNER JOIN dbo.agreement_asset_amortization d ON d.asset_no	= b.asset_no
 				INNER JOIN dbo.agreement_main				e ON e.agreement_no	= c.agreement_no
+				INNER JOIN dbo.INVOICE						inv ON	inv.INVOICE_NO = b.INVOICE_NO
 		WHERE	a.id = @p_id
+		AND		inv.INVOICE_STATUS = 'POST'
 				AND (
 					d.billing_amount	LIKE '%' + @p_keywords + '%'
 					OR b.asset_no		LIKE '%' + @p_keywords + '%'
@@ -71,7 +75,9 @@ begin
 				INNER JOIN dbo.agreement_asset				c WITH (NOWAIT) ON b.asset_no		= c.asset_no
 				INNER JOIN dbo.agreement_asset_amortization d WITH (NOWAIT) ON d.asset_no	= b.asset_no
 				INNER JOIN dbo.agreement_main				e WITH (NOWAIT) ON e.agreement_no	= c.agreement_no
+				INNER JOIN dbo.INVOICE						inv ON	inv.INVOICE_NO = b.INVOICE_NO
 		WHERE	b.invoice_no = @p_invoice_no
+		AND		inv.INVOICE_STATUS = 'POST'
 				AND (
 					b.billing_amount	LIKE '%' + @p_keywords + '%'
 					OR b.asset_no		LIKE '%' + @p_keywords + '%'
@@ -92,7 +98,9 @@ begin
 				INNER JOIN dbo.agreement_asset				c WITH (NOWAIT) ON b.asset_no		= c.asset_no
 				INNER JOIN dbo.agreement_asset_amortization d WITH (NOWAIT) ON d.asset_no	= b.asset_no
 				INNER JOIN dbo.agreement_main				e WITH (NOWAIT) ON e.agreement_no	= c.agreement_no
+				INNER JOIN dbo.INVOICE						inv ON	inv.INVOICE_NO = b.INVOICE_NO
 		WHERE	b.invoice_no = @p_invoice_no
+		AND		inv.INVOICE_STATUS = 'POST'
 				AND (
 					b.billing_amount	LIKE '%' + @p_keywords + '%'
 					OR b.asset_no		LIKE '%' + @p_keywords + '%'

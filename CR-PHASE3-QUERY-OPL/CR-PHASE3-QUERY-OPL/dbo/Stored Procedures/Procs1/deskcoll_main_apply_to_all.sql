@@ -18,6 +18,12 @@ begin
 		from	dbo.deskcoll_main
 		where	id = @p_id ;
 
+		if isnull(@result_code,'') = ''
+		begin
+		    set @msg = 'Please Save Result Firts'
+			raiserror (@msg,16,1)
+		end
+
 		update	dbo.deskcoll_invoice
 		set		result_code			= @result_code
 				,remark				= @result_remarks

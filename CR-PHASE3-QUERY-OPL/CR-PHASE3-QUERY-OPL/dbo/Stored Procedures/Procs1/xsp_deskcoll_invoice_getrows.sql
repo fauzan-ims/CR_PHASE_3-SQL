@@ -23,6 +23,7 @@ begin
 							order by agp.cre_date desc
 						) agp
 	where		deskcoll_main_id = @p_deskcoll_main_id
+	and			b.invoice_status = 'POST'
 				and
 				(
 					replace(a.invoice_no, '.', '/')						like '%' + @p_keywords + '%'
@@ -58,6 +59,7 @@ begin
 							order by agp.cre_date desc
 						) agp
 	where		deskcoll_main_id = @p_deskcoll_main_id
+	and			b.invoice_status = 'POST'
 				and
 				(
 					replace(a.invoice_no, '.', '/')						like '%' + @p_keywords + '%'

@@ -163,7 +163,7 @@ begin
 		where		a.client_no = @p_client_no
 					and d.invoice_status in
 		(
-			'POST', 'PAID'
+			'POST'
 		)
 		group by	c.invoice_no, d.invoice_type;
 

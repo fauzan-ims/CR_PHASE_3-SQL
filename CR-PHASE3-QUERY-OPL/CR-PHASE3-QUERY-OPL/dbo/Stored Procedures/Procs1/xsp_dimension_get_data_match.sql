@@ -1,6 +1,6 @@
 ﻿-- Stored Procedure
 
-CREATE procedure [dbo].[xsp_dimension_get_data_match]
+CREATE PROCEDURE dbo.xsp_dimension_get_data_match
 (
 	@p_code					 nvarchar(50) output
 	,@p_reff_tabel_dimension nvarchar(50)
@@ -600,7 +600,7 @@ begin
 		close dim_cur ;
 		deallocate dim_cur ;
 	 
-		SELECT * FROM #dimension_tbl
+		--SELECT * FROM #dimension_tbl
 
 		if
 		(
@@ -695,5 +695,3 @@ begin
 		return ;
 	end catch ; 
 end ;
-
-

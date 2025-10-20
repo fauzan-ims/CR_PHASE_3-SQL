@@ -3,13 +3,13 @@
   <Version>10</Version>
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=34.101.189.66;Initial Catalog=IFINPROC;Persist Security Info=True;User ID=ims-sqlagent;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0</ConnectionString>
+      <ConnectionString>Data Source=34.101.189.66;Initial Catalog=IFINAMS;Persist Security Info=True;User ID=ims-sqlagent;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0</ConnectionString>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>
     <ProjectBasedModelProvider>
-      <ProjectGuid>{9495c97c-0fc9-4422-a911-531ebaa9de78}</ProjectGuid>
-      <Name>CR-PHASE3-QUERY-PROC</Name>
+      <ProjectGuid>{1b6af38f-cf76-44e3-9bb7-d0450b491b7e}</ProjectGuid>
+      <Name>CR-PHASE3-QUERY-AMS</Name>
     </ProjectBasedModelProvider>
   </TargetModelProvider>
   <SchemaCompareSettingsService>
@@ -343,10 +343,6 @@
       <PropertyElementName>
         <Name>ScriptRefreshModule</Name>
         <Value>True</Value>
-      </PropertyElementName>
-      <PropertyElementName>
-        <Name>TargetDatabaseName</Name>
-        <Value>CR-PHASE3-QUERY-PROC</Value>
       </PropertyElementName>
       <PropertyElementName>
         <Name>TargetConnectionString</Name>

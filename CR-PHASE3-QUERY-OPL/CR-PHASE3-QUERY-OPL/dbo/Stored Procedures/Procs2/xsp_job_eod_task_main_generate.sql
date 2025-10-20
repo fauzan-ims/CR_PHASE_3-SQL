@@ -32,31 +32,33 @@ begin
 
 	BEGIN TRY
 
+
 		declare c_main	cursor local fast_forward for
 		select	distinct inv.client_no
 				,ind.marketing_code
 				,ind.marketing_name
+				,isnull(ind.client_name,inv.client_name)		-- ambil client name dr top 1 agreement, karna tulisan client name banyak yang beda tp 1 code
 		from	dbo.invoice inv
-				outer apply (	select	top 1 am.marketing_name, am.marketing_code 
+				outer apply (	select	top 1 am.marketing_name, am.marketing_code, am.client_name
 								from	dbo.invoice_detail invd 
 										inner join dbo.agreement_main am on am.agreement_no = invd.agreement_no
-								where	invd.invoice_no = inv.invoice_no
+								where	am.client_no = inv.client_no
 								order by am.agreement_date desc
 							) ind
-		where	inv.invoice_status = 'post'
+		where	inv.invoice_status = 'POST'
 		and		cast(inv.invoice_due_date as date) < cast(@system_date as date)
-		and		inv.client_no not in (select client_no from dbo.task_main where desk_status IN ('NEW','HOLD') or cast(task_date as date) = cast(@system_date as date))
-		and		inv.client_no not in (select client_no from dbo.deskcoll_main where cast(result_promise_date as date) = cast(@system_date as date))
+		and		inv.client_no not in (select client_no from dbo.task_main where desk_status in ('NEW','HOLD') or cast(task_date as date) = cast(@system_date as date))
+		and		inv.client_no not in (select client_no from dbo.deskcoll_main where cast(result_promise_date as date) = cast(@system_date as date) and desk_status = 'POST')
 
 		open	c_main
 		fetch	c_main
 		into	@client_no
 				,@deskcoll_staff_code
 				,@deskcoll_staff_name
+				,@client_name
 
 		while @@fetch_status = 0
 		begin
-			select @client_name = client_name from dbo.client_main where client_no = @client_no
 
 			exec dbo.xsp_task_main_insert @p_id								= 0
 											,@p_task_date					= @system_date
@@ -70,12 +72,13 @@ begin
 											,@p_mod_date					= @mod_date			
 											,@p_mod_by						= @mod_by			
 											,@p_mod_ip_address				= @mod_ip_address
-			
 
 		fetch	c_main
 		into	@client_no
 				,@deskcoll_staff_code
 				,@deskcoll_staff_name
+				,@client_name
+
 
 		end
         close c_main
@@ -106,7 +109,7 @@ begin
 		
 		while @@fetch_status = 0
 		begin
-			if(@payment_promise_date = dbo.xfn_get_system_date())
+			if(@payment_promise_date = @system_date)
 			begin
 				
 				exec dbo.xsp_task_main_insert @p_id								= 0

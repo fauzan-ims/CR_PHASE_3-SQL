@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_realization_doc_generate]
+﻿CREATE PROCEDURE dbo.xsp_realization_doc_generate
 (
 	@p_realization_code		NVARCHAR(50)
 	--
@@ -23,8 +23,6 @@ BEGIN
 		                                      @p_reff_tabel_type		= 'DGRLZTN',
 											  @p_reff_from_table		= 'REALIZATION'	      
 		
-		select @document_group_code
-
 		declare generate_doc	cursor local fast_forward FOR
 		
 		select	dgd.general_doc_code
@@ -103,6 +101,3 @@ BEGIN
 		return ;
 	end catch ;	
 end
-
-
-

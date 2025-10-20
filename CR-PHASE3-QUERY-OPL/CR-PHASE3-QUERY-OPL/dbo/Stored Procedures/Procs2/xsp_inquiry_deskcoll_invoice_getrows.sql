@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[xsp_inquiry_deskcoll_invoice_getrows]
+﻿CREATE PROCEDURE dbo.xsp_inquiry_deskcoll_invoice_getrows
 (
 	@p_keywords				nvarchar(50)
 	,@p_pagenumber			int
@@ -21,6 +21,7 @@ BEGIN
 		FROM	dbo.deskcoll_invoice a WITH (NOWAIT)
 		INNER JOIN dbo.invoice b WITH (NOWAIT) ON a.invoice_no = b.invoice_no
 		WHERE	deskcoll_main_id = @p_deskcoll_main_id
+		AND		b.INVOICE_STATUS = 'POST'
 		AND	(
 				 a.invoice_no LIKE '%' + @p_keywords + '%'
 			  OR a.invoice_type LIKE '%' + @p_keywords + '%'
@@ -42,6 +43,7 @@ BEGIN
 		FROM	dbo.deskcoll_invoice a WITH (NOWAIT) 
 		INNER JOIN dbo.invoice b WITH (NOWAIT) ON a.invoice_no = b.invoice_no
 		WHERE	deskcoll_main_id = @p_deskcoll_main_id
+		AND		b.INVOICE_STATUS = 'POST'
 		AND	(
 				 a.invoice_no LIKE '%' + @p_keywords + '%'
 			  OR a.invoice_type LIKE '%' + @p_keywords + '%'
@@ -77,7 +79,7 @@ BEGIN
 		INNER JOIN dbo.agreement_asset_amortization e WITH (NOWAIT) ON e.asset_no = invd.asset_no AND e.billing_no = invd.billing_no AND e.invoice_no = b.invoice_no
 		LEFT JOIN dbo.agreement_obligation f WITH (NOWAIT) ON f.asset_no = invd.asset_no
 		WHERE	b.client_no = @p_client_no
-		AND		b.invoice_status IN ('POST', 'PAID')
+		AND		b.invoice_status IN ('POST')
 		AND	(
 				 b.invoice_no LIKE '%' + @p_keywords + '%'
 			  OR b.invoice_type LIKE '%' + @p_keywords + '%'
@@ -101,7 +103,7 @@ BEGIN
 		INNER JOIN dbo.agreement_asset_amortization e WITH (NOWAIT) ON e.asset_no = invd.asset_no AND e.billing_no = invd.billing_no AND e.invoice_no = b.invoice_no
 		LEFT JOIN dbo.agreement_obligation f WITH (NOWAIT) ON f.asset_no = invd.asset_no
 		WHERE	b.client_no = @p_client_no
-		AND		b.invoice_status IN ('POST', 'PAID')
+		AND		b.invoice_status IN ('POST')
 		AND	(
 				 b.invoice_no LIKE '%' + @p_keywords + '%'
 			  OR b.invoice_type LIKE '%' + @p_keywords + '%'

@@ -230,7 +230,6 @@ begin
 
 			-- asset
 			begin
-				
 				insert into dbo.agreement_asset
 				(
 					asset_no
@@ -352,12 +351,6 @@ begin
 					,gps_monthly_amount
 					,gps_installation_amount
 					,client_nitku -- raffy(+) 2025/02/13 CR NITKU
-					 -- Louis Jumat, 04 Juli 2025 15.01.37 -- 
-					,maturity_date
-					,unit_source
-					,start_due_date
-					,prorate
-					 -- Louis Jumat, 04 Juli 2025 15.01.37 -- 
 					--									   		 
 					,cre_date
 					,cre_by
@@ -485,12 +478,6 @@ begin
 						,gps_monthly_amount
 						,gps_installation_amount
 						,aa.client_nitku
-						 -- Louis Jumat, 04 Juli 2025 15.01.37 -- 
-						,dateadd(day,-1,(dateadd(month, aa.periode, @handover_bast_date))) --sepria 03092025, maturity h-1 dari bast + tenor
-						,unit_source
-						,start_due_date
-						,prorate
-						 -- Louis Jumat, 04 Juli 2025 15.01.37 -- 
 						--
 						,@p_cre_date
 						,@p_cre_by
@@ -538,12 +525,8 @@ begin
 				) brega
 				where	rz.code = @p_code ;
 
-					
-				select	@os_period = periode
-						,@first_payment_type = first_payment_type
-						,@handover_bast_date = handover_bast_date
-				from	dbo.agreement_asset aa
-				where	agreement_no = @p_agreement_no ; 
+
+				SELECT * FROM dbo.APPLICATION_ASSET_BUDGET WHERE ASSET_NO = '2001.OPLAA.2508.000289'
 
 				insert into dbo.agreement_asset_amortization
 				(
@@ -750,6 +733,12 @@ begin
 						inner join dbo.application_main am on (am.application_no = rz.application_no)
 				where	rz.code = @p_code ;
 
+				select	@os_period = periode
+						,@first_payment_type = first_payment_type
+						,@handover_bast_date = handover_bast_date
+				from	dbo.agreement_asset
+				where	agreement_no = @p_agreement_no ; 
+
 				select	@installment_amount = isnull(sum(isnull(lease_rounded_amount,0)),0)
 				from	dbo.agreement_asset
 				where	agreement_no = @p_agreement_no ; 
@@ -802,7 +791,7 @@ begin
 					,0
 					,@os_rental_amount 
 					,0
-					,@os_period
+					,@os_period 
 					,null
 					,null
 					,@maturity_date
